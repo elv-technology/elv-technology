@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Source_Sans_3, Montserrat, Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
@@ -43,6 +44,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className={`${sourceSans.variable} ${montserrat.variable} ${spaceGrotesk.variable} ${inter.variable} font-sans antialiased`}>
         {children}
+        <SpeedInsights />
         <Toaster richColors position="top-right" />
       </body>
     </html>
