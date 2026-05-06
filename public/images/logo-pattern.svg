@@ -1,0 +1,8 @@
+<svg viewBox="0 0 320 210" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left Bar -->
+  <polygon points="130,10 180,10 50,140 0,140" fill="#4a0a0b" />
+  <!-- Middle Bar -->
+  <polygon points="200,40 250,40 120,170 70,170" fill="#8a151b" />
+  <!-- Right Bar -->
+  <polygon points="270,70 320,70 190,200 140,200" fill="#ac3232" />
+</svg>
