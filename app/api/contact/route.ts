@@ -52,9 +52,10 @@ export async function POST(req: Request) {
       console.error('Failed to save inquiry to database:', dbError);
     }
 
+    console.log("ENV FROM:", process.env.CONTACT_FROM_EMAIL);
     const fromEmail = process.env.CONTACT_FROM_EMAIL 
       ? `${name} (${email}) <${process.env.CONTACT_FROM_EMAIL}>` 
-      : `${name} (${email}) <onboarding@resend.dev>`;
+      : `${name} (${email}) <info@etssmart.com>`;
 
     const sourceName = source === 'chatbot' ? 'ETS Chatbot' : 'Contact Form';
     const emailSubject = `New Lead from ${sourceName}`;

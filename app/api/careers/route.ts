@@ -8,7 +8,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
-    
+
     // Extract fields
     const fullName = formData.get('fullName') as string;
     const email = formData.get('email') as string;
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     const position = formData.get('position') as string;
     const otherPosition = formData.get('otherPosition') as string;
     const message = formData.get('message') as string;
-    
+
     // File processing
     const file = formData.get('file') as File | null;
     let attachments = [];
@@ -52,10 +52,11 @@ export async function POST(req: Request) {
     }
 
     const toEmail = process.env.CONTACT_TO_EMAIL || CONTACT_CONFIG.toEmail;
-    
-    const fromEmail = process.env.CONTACT_FROM_EMAIL 
-      ? `${fullName} (${email}) <${process.env.CONTACT_FROM_EMAIL}>` 
-      : `${fullName} (${email}) <onboarding@resend.dev>`;
+
+    console.log("ENV FROM:", process.env.CONTACT_FROM_EMAIL);
+    const fromEmail = process.env.CONTACT_FROM_EMAIL
+      ? `${fullName} (${email}) <${process.env.CONTACT_FROM_EMAIL}>`
+      : `${fullName} (${email}) <info@etssmart.com>`;
 
     const data = await resend.emails.send({
       from: fromEmail,
