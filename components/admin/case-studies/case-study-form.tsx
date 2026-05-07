@@ -202,7 +202,7 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="slug">Slug</Label>
-                                <Input id="slug" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} required disabled={isEditing} />
+                                <Input id="slug" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} required />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="location">Location</Label>

@@ -58,6 +58,11 @@ export async function PATCH(
         revalidatePath('/');
         revalidatePath('/blog');
         revalidatePath(`/blog/${blog.slug}`);
+        
+        // If slug changed, revalidate the old path as well
+        if (existingBlog && existingBlog.slug !== blog.slug) {
+            revalidatePath(`/blog/${existingBlog.slug}`);
+        }
 
         return NextResponse.json(blog);
     } catch (error) {

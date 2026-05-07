@@ -59,6 +59,11 @@ export async function PATCH(
         revalidatePath('/case-studies');
         revalidatePath(`/case-studies/${updatedCaseStudy.slug}`);
 
+        // If slug changed, revalidate the old path as well
+        if (existingCaseStudy && existingCaseStudy.slug !== updatedCaseStudy.slug) {
+            revalidatePath(`/case-studies/${existingCaseStudy.slug}`);
+        }
+
         return NextResponse.json(updatedCaseStudy);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to update case study' }, { status: 500 });

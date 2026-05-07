@@ -172,7 +172,7 @@ export function BlogForm({ initialData, isEditing }: BlogFormProps) {
                                     value={formData.title}
                                     onChange={e => {
                                         const title = e.target.value;
-                                        setFormData(prev => ({
+                                        setFormData((prev: any) => ({
                                             ...prev, 
                                             title,
                                             slug: !isEditing ? title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : prev.slug
@@ -188,7 +188,6 @@ export function BlogForm({ initialData, isEditing }: BlogFormProps) {
                                     value={formData.slug}
                                     onChange={e => setFormData({ ...formData, slug: e.target.value })}
                                     required
-                                    disabled={isEditing}
                                 />
                             </div>
                             <div className="space-y-2">
