@@ -10,6 +10,10 @@ export const solutionsData = {
         title: "Security and Surveillance",
         id: "security-surveillance",
         description: "Modern security is no longer about passive monitoring—it’s about intelligent systems that think, analyse, and act in real time.",
+        metadata: {
+            title: "Security & Surveillance System Installation in Abu Dhabi | ETS",
+            description: "Professional security system installation services in Abu Dhabi. AI-powered CCTV for home, offices, and industrial facilities with 24/7 monitoring."
+        },
         image: "/images/solutions/security-surveillance/hero1.png",
         image2: "/images/solutions/security-surveillance/security-survillience1.png",
         items: [
@@ -171,20 +175,24 @@ export const solutionsData = {
         title: "Audio Visual Solutions",
         id: "audio-visual",
         description: "Advancements in audio-visual technology are reshaping how organizations collaborate, train, and communicate.",
+        metadata: {
+            title: "Public Address System/BGM System | ETS",
+            description: "Leading provider of Public Address (PA) and BGM solutions in Abu Dhabi. We design and install high-quality audio distribution systems for hospitality and corporate needs."
+        },
         image: "/images/solutions/audio-visual/hero.png",
         image2: "/images/solutions/audio-visual/hero1.png",
         items: [
             {
-                title: "Music Systems and BGM Solutions",
-                id: "music-bgm",
-                icon: Music,
+                title: "Public Address & BGM Systems",
+                id: "public-address-bgm",
+                icon: Mic2,
                 image: "/images/solutions/audio-visual/Music Systems and BGM Solutions1.png",
                 image2: "/images/solutions/audio-visual/Music Systems and BGM Solutions.jpg",
                 content: {
-                    heading: "Music Systems and BGM Solutions for Hospitality in UAE",
+                    heading: "Public Address (PA) & Background Music (BGM) Solutions in Abu Dhabi, UAE",
                     description: [
-                        "Music plays a critical role in shaping guest experience in hotels, restaurants, lounges, and hospitality venues. A well-designed music system and background music (BGM) solution enhances ambience, supports brand identity, and delivers consistent sound quality across all areas without overpowering conversations or disturbing guests.",
-                        "ELV Technology Solutions provides professional Music Systems and BGM Solutions in Abu Dhabi, Dubai, and across the UAE, designed specifically for hospitality environments where audio quality, zoning, and control is essential."
+                        "Public Address (PA) and Background Music (BGM) systems are essential for clear communication, emergency announcements, and creating the right atmosphere in commercial spaces. Whether it's a hotel, mall, office, or industrial facility, a reliable audio distribution system ensures your message reaches everyone clearly.",
+                        "ELV Technology Solutions is a leading provider of Public Address Systems in Abu Dhabi, Dubai, and across the UAE. We design and install high-performance audio solutions tailored to hospitality, retail, and corporate environments where sound quality and zoning control are critical."
                     ],
                     subsections: [
                         {
@@ -227,8 +235,8 @@ export const solutionsData = {
                             ]
                         },
                         {
-                            title: "Professional Installation & Long-Term Reliability",
-                            description: "We provide complete music system and BGM installation in Abu Dhabi and Dubai, including system design, equipment selection, cabling, testing, and commissioning. Every system is engineered for stable performance, ease of use, and future scalability. Whether you need Music Systems and BGM Solutions in the UAE for a single restaurant or a multi-property hospitality group, ELV Technology Solutions delivers audio environments that support guest comfort, brand consistency, and operational control."
+                            title: "Professional Public Address & BGM Installation",
+                            description: "We provide complete Public Address and BGM system installation in Abu Dhabi and Dubai, including system design, equipment selection (amplifiers, speakers, paging microphones), cabling, testing, and commissioning. Every system is engineered for stable performance, ease of use, and integration with fire alarm systems for emergency override. Whether you need a simple Public Address System in Abu Dhabi for a retail store or a complex multi-zone BGM solution for a hotel, ELV Technology Solutions delivers audio environments that prioritize clarity and reliability."
                         }
                     ]
                 }

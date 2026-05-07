@@ -1,4 +1,10 @@
 import { solutionsData } from "@/lib/solutions-data";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Public Address System/BGM System | ETS",
+    description: "Leading provider of Public Address (PA) and BGM solutions in Abu Dhabi. We design and install high-quality audio distribution systems for hospitality and corporate needs.",
+};
 import SolutionVerticalHero from "@/components/solutions/solution-vertical-hero";
 import SolutionVideoHero from "@/components/solutions/solution-video-hero";
 import SolutionDetailSection from "@/components/solutions/solution-detail-section";

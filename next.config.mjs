@@ -43,6 +43,35 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/public-address-solutions.html',
+        destination: '/solutions/audio-visual#public-address-bgm',
+        permanent: true,
+      },
+      {
+        source: '/public-address-solutions.htmll',
+        destination: '/solutions/audio-visual#public-address-bgm',
+        permanent: true,
+      },
+      {
+        source: '/smatv-solutions.html',
+        destination: '/solutions/network-communications#iptv-smatv',
+        permanent: true,
+      },
+      {
+        source: '/security-surveillance-solutions.html',
+        destination: '/solutions/security-surveillance',
+        permanent: true,
+      },
+      {
+        source: '/audio-visual-solutions.html',
+        destination: '/solutions/audio-visual',
+        permanent: true,
+      }
+    ];
+  },
 }
 
 export default nextConfig
