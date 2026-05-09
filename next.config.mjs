@@ -69,10 +69,59 @@ const nextConfig = {
         source: '/audio-visual-solutions.html',
         destination: '/solutions/audio-visual',
         permanent: true,
+      },
+      {
+        source: '/access-control-solutions.html',
+        destination: '/solutions/security-surveillance#access-control',
+        permanent: true,
+      },
+      {
+        source: '/gate-barrier-solutions.html',
+        destination: '/solutions/security-surveillance#gate-barrier',
+        permanent: true,
+      },
+      {
+        source: '/nurse-call-solutions.html',
+        destination: '/solutions/security-surveillance#nurse-call',
+        permanent: true,
+      },
+      {
+        source: '/queue-management-solutions.html',
+        destination: '/solutions/security-surveillance#queue-management',
+        permanent: true,
+      },
+      {
+        source: '/disabled-toilet-alarm.html',
+        destination: '/solutions/security-surveillance#disabled-alarm',
+        permanent: true,
+      },
+      {
+        source: '/home-automation-solutions.html',
+        destination: '/solutions/home-automation',
+        permanent: true,
+      },
+      {
+        source: '/about-us.html',
+        destination: '/about',
+        permanent: true,
+      },
+      {
+        source: '/contact-us.html',
+        destination: '/contact',
+        permanent: true,
+      },
+      {
+        source: '/careers.html',
+        destination: '/careers',
+        permanent: true,
+      },
+      {
+        source: '/access-control-installation-abu-dhabi.html',
+        destination: '/solutions/security-surveillance#access-control',
+        permanent: true,
       }
     ];
   },
 }
 
 export default nextConfig
-

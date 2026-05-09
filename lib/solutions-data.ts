@@ -368,6 +368,10 @@ export const solutionsData = {
         title: "Network & Communications",
         id: "network-communications",
         description: "ELV Technology Solutions provides professional networking services in Abu Dhabi and across the UAE, specializing in structured cabling, wired networks, and enterprise-grade wireless (Wi-Fi) solutions.",
+        metadata: {
+            title: "SMATV, IPTV System Suppliers in Abu Dhabi, Dubai | ETS",
+            description: "ETS is a leading supplier, designer, and installation provider for SMATV and IPTV systems in Abu Dhabi and Dubai, delivering high-quality satellite TV channels and content distribution."
+        },
         image: "/images/solutions/network-communications/hero.png",
         image2: "/images/solutions/network-communications/hero.png",
         intro: [

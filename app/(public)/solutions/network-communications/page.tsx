@@ -1,4 +1,10 @@
 import { solutionsData } from "@/lib/solutions-data";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "SMATV, IPTV System Suppliers in Abu Dhabi, Dubai | ETS",
+    description: "ETS is a leading supplier, designer, and installation provider for SMATV and IPTV systems in Abu Dhabi and Dubai, delivering high-quality satellite TV channels and content distribution.",
+};
 import SolutionVerticalHero from "@/components/solutions/solution-vertical-hero";
 import SolutionVideoHero from "@/components/solutions/solution-video-hero";
 import SolutionDetailSection from "@/components/solutions/solution-detail-section";

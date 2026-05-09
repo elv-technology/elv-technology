@@ -1,6 +1,12 @@
 import HomeLayout from "@/components/home/home-layout";
 import { getDb } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ELV Systems | ELV Company in Abu Dhabi - ETS SMART",
+  description: "ELV Technology Solutions is a Security Surveillance solutions providing company in Abu Dhabi, UAE Offers CCTV camera installation, ELV system integration, and comprehensive technology services.",
+};
 
 export default async function HomePage() {
   const caseStudies = await prisma.caseStudy.findMany({
