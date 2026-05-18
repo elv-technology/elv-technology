@@ -1,8 +1,16 @@
+import { Metadata } from "next";
 import { solutionsData } from "@/lib/solutions-data";
 import SolutionVerticalHero from "@/components/solutions/solution-vertical-hero";
 import HomeAutomationVideo from "@/components/solutions/home-automation-video";
 import SolutionDetailSection from "@/components/solutions/solution-detail-section";
 import { CTASection } from "@/components/partners-clients/cta-section";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://www.etssmart.com/solutions/home-automation",
+  },
+};
+
 
 export default function HomeAutomationPage() {
     const data = solutionsData.homeAutomation;

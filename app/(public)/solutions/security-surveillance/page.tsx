@@ -2,6 +2,9 @@ import { solutionsData } from "@/lib/solutions-data";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://www.etssmart.com/solutions/security-surveillance",
+  },
     title: "Security & Surveillance System Installation in Abu Dhabi | ETS",
     description: "Professional security system installation services in Abu Dhabi. AI-powered CCTV for home, offices, and industrial facilities with 24/7 monitoring.",
 };

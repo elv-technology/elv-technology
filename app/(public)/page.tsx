@@ -1,4 +1,5 @@
 import HomeLayout from "@/components/home/home-layout";
+import FaqSchema from "@/components/seo/FaqSchema";
 import { getDb } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
@@ -6,6 +7,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "ELV Systems | ELV Company in Abu Dhabi - ETS SMART",
   description: "ELV Technology Solutions is a Security Surveillance solutions providing company in Abu Dhabi, UAE Offers CCTV camera installation, ELV system integration, and comprehensive technology services.",
+  alternates: {
+    canonical: "https://www.etssmart.com/",
+  },
 };
 
 export default async function HomePage() {
@@ -38,5 +42,10 @@ export default async function HomePage() {
     faqs
   };
 
-  return <HomeLayout initialData={initialData} />;
+  return (
+    <>
+      <FaqSchema />
+      <HomeLayout initialData={initialData} />
+    </>
+  );
 }
