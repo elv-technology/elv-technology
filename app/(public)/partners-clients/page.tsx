@@ -6,6 +6,8 @@ import { CTASection } from '@/components/partners-clients/cta-section';
 import { getCollection } from '@/lib/db';
 
 export const metadata: Metadata = {
+  title: "ETS Smart Partners & Clients | Trusted ELV Company UAE",
+  description: "ETS Smart partners with 20+ global technology brands & serves 36+ enterprise clients across UAE. A trusted ELV & AV integrator in Abu Dhabi since 2020.",
   alternates: {
     canonical: "https://www.etssmart.com/partners-clients",
   },

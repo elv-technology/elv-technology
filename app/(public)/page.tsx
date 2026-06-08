@@ -5,8 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "ELV Systems | ELV Company in Abu Dhabi - ETS SMART",
-  description: "ELV Technology Solutions is a Security Surveillance solutions providing company in Abu Dhabi, UAE Offers CCTV camera installation, ELV system integration, and comprehensive technology services.",
+  title: "ELV Companies in Abu Dhabi | MCC Approved – ETS Smart",
+  description: "ETS Smart is an MCC-approved ELV company in Abu Dhabi offering CCTV, Access Control, AV Systems & Home Automation. Trusted by 100+ enterprise clients in UAE.",
   alternates: {
     canonical: "https://www.etssmart.com/",
   },

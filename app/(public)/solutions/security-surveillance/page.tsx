@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.etssmart.com/solutions/security-surveillance",
   },
-    title: "Security & Surveillance System Installation in Abu Dhabi | ETS",
-    description: "Professional security system installation services in Abu Dhabi. AI-powered CCTV for home, offices, and industrial facilities with 24/7 monitoring.",
+  title: "CCTV Installation Company in Abu Dhabi | ETS Smart",
+  description: "ETS Smart is an ADMCC-approved CCTV company in Abu Dhabi offering CCTV installation, access control & security system solutions for homes & businesses in UAE.",
 };
 import SolutionVerticalHero from "@/components/solutions/solution-vertical-hero";
 import SolutionVideoHero from "@/components/solutions/solution-video-hero";

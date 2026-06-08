@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.etssmart.com/solutions/network-communications",
   },
-    title: "SMATV, IPTV System Suppliers in Abu Dhabi, Dubai | ETS",
-    description: "ETS is a leading supplier, designer, and installation provider for SMATV and IPTV systems in Abu Dhabi and Dubai, delivering high-quality satellite TV channels and content distribution.",
+  title: "Network & SMATV Solutions in Abu Dhabi | ETS Smart",
+  description: "ETS Smart provides structured cabling, wireless network, SMATV, IPTV & IP phone solutions in Abu Dhabi. Trusted network & communications company in UAE.",
 };
 import SolutionVerticalHero from "@/components/solutions/solution-vertical-hero";
 import SolutionVideoHero from "@/components/solutions/solution-video-hero";
