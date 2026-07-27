@@ -139,17 +139,22 @@ export const solutionsData = {
                 image: "/images/solutions/security-surveillance/Queue Management System.png",
                 image2: "/images/solutions/security-surveillance/Queue Management System1.png",
                 content: {
-                    heading: "Queue Management System in UAE",
+                    heading: "Smart Queue Management System in UAE",
                     description: [
-                        "ELV Technology Solutions supplies and installs compliant Disabled Toilet Alarm Systems in Abu Dhabi, Dubai, and across the UAE, ensuring emergency assistance for people with disabilities in public and commercial buildings.",
-                        "A disabled toilet alarm system allows users to activate an emergency call using a pull cord or button, sending an audible and visual alert to designated staff locations. These systems are critical for accessibility compliance and occupant safety in accordance with local regulations and international standards.",
-                        "We provide complete disabled toilet alarm system design and installation, including pull cords, reset buttons, indicator panels, sounders, and power supplies. Our installations ensure clear signalling, fast response, and reliable operation during emergencies.",
-                        "As an experienced ELV system integrator in the UAE, ELV Technology Solutions ensures proper placement, labelling, testing, and commissioning of disabled toilet alarm systems in Abu Dhabi and Dubai. Our solutions are suitable for malls, offices, hospitals, schools, hotels, and public facilities.",
-                        "For organizations seeking dependable disabled toilet alarm system installation in the UAE, ELV Technology Solutions delivers safety-focused solutions that meet accessibility requirements and operational needs."
-                    ]
-                    // Note: The user text for Queue Management System seems to be a copy-paste error in the source request (it repeats Disabled Toilet Alarm text).
-                    // However, per instructions "do not remove any contents in it", I am keeping it as is, or I can try to infer if I should fix it.
-                    // Given "do not remove any contents", I will paste the text they gave for Queue Management System.
+                        "ELV Technology Solutions supplies and installs advanced Queue Management Systems (QMS) in Abu Dhabi, Dubai, and across the UAE, helping organizations streamline customer flow, reduce wait times, and improve service efficiency.",
+                        "A queue management system is essential for customer-facing environments like banks, clinics, hospitals, government service centers, and retail outlets. By organizing customer journeys, it reduces perceived wait times, eliminates chaotic lines, and optimizes staff productivity.",
+                        "We provide complete queue management system design and installation, including hardware setup (touchscreen ticketing kiosks, LED counter displays, main announcement screens, and media displays) and software configuration (ticketing flows, virtual queuing, SMS notifications, and real-time dashboard analytics).",
+                        "As an experienced ELV system integrator in the UAE, ELV Technology Solutions ensures seamless integration of queue management systems with digital signage, customer feedback terminals, and local networks. Our solutions are scalable and custom-tailored to suit the specific workflow of your organization.",
+                        "For businesses looking for reliable queue management system installation in the UAE, ELV Technology Solutions delivers end-to-end solutions that optimize customer journeys and service efficiency."
+                    ],
+                    keyFeatures: {
+                        points: [
+                            "Touchscreen Ticket Kiosks & Virtual Queuing",
+                            "Multi-Counter LED & Audio Announcements",
+                            "Real-Time Service Monitoring & Dashboards",
+                            "Customer Journey Analytics & Reporting"
+                        ]
+                    }
                 }
             },
             {
