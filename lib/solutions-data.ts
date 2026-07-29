@@ -139,13 +139,13 @@ export const solutionsData = {
                 image: "/images/solutions/security-surveillance/Queue Management System.png",
                 image2: "/images/solutions/security-surveillance/Queue Management System1.png",
                 content: {
-                    heading: "Smart Queue Management System in UAE",
+                    heading: "Queue Management System in UAE",
                     description: [
-                        "ELV Technology Solutions supplies and installs advanced Queue Management Systems (QMS) in Abu Dhabi, Dubai, and across the UAE, helping organizations streamline customer flow, reduce wait times, and improve service efficiency.",
-                        "A queue management system is essential for customer-facing environments like banks, clinics, hospitals, government service centers, and retail outlets. By organizing customer journeys, it reduces perceived wait times, eliminates chaotic lines, and optimizes staff productivity.",
-                        "We provide complete queue management system design and installation, including hardware setup (touchscreen ticketing kiosks, LED counter displays, main announcement screens, and media displays) and software configuration (ticketing flows, virtual queuing, SMS notifications, and real-time dashboard analytics).",
-                        "As an experienced ELV system integrator in the UAE, ELV Technology Solutions ensures seamless integration of queue management systems with digital signage, customer feedback terminals, and local networks. Our solutions are scalable and custom-tailored to suit the specific workflow of your organization.",
-                        "For businesses looking for reliable queue management system installation in the UAE, ELV Technology Solutions delivers end-to-end solutions that optimize customer journeys and service efficiency."
+                        "ELV Technology Solutions supplies and installs advanced Queue Management Systems in Abu Dhabi, Dubai, and across the UAE, helping organizations streamline customer flow, reduce waiting times, and improve service efficiency.",
+                        "A Queue Management System organizes customer queues through electronic ticketing, digital displays, self-service kiosks, and call-forward systems. It enables businesses to manage customer traffic efficiently while providing a better and more organized customer experience.",
+                        "We provide complete Queue Management System design, supply, installation, configuration, testing, and commissioning. Our solutions include ticket dispensers, touch-screen kiosks, queue display monitors, customer calling units, central management software, reporting tools, and integration with existing business systems where required.",
+                        "As an experienced ELV system integrator in the UAE, ELV Technology Solutions delivers reliable and scalable Queue Management Systems tailored to the operational needs of banks, hospitals, government offices, retail outlets, telecom service centers, educational institutions, and other customer service environments. Our solutions help improve service efficiency, optimize staff productivity, and provide real-time monitoring and performance reporting.",
+                        "For organizations seeking dependable Queue Management System installation in the UAE, ELV Technology Solutions delivers customized solutions designed to enhance customer satisfaction, improve operational efficiency, and support seamless service management."
                     ],
                     keyFeatures: {
                         points: [
