@@ -14,7 +14,8 @@ export default function VideoSection({ onVideoLoad }: { onVideoLoad?: () => void
       {/* Video — always visible, no opacity hide; the overlay handles aesthetics */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
-        preload="auto"
+        poster="/images/home/hero_poster.jpg"
+        preload="metadata"
         playsInline
         autoPlay
         muted

@@ -100,12 +100,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        {/* Preload hero video — browser starts fetching before any JS runs */}
+        {/* Preload hero poster image — instant LCP paint before video loads */}
         <link
           rel="preload"
-          href="/images/home/slides/videos/hero_new.mp4"
-          as="video"
-          type="video/mp4"
+          href="/images/home/hero_poster.jpg"
+          as="image"
+          type="image/jpeg"
         />
         {/* Google Analytics (GA4) */}
         {process.env.NEXT_PUBLIC_GA_ID && (
