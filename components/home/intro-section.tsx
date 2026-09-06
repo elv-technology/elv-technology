@@ -66,6 +66,7 @@ export default function IntroSection() {
                             <Link
                                 href="/about"
                                 className="group inline-flex items-center gap-3 rounded-none border border-white/20 bg-transparent px-6 py-3 text-sm font-medium text-white transition-all hover:bg-white/5 hover:border-white/40"
+                                aria-label="Learn More About ELV Technology Solutions company story"
                             >
                                 Learn More About Us
                                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -83,10 +84,10 @@ export default function IntroSection() {
                                 <h3 className="text-xl sm:text-2xl lg:text-2xl font-bold mb-4 text-white leading-snug">
                                     Transform complexity into a competitive advantage.
                                 </h3>
-                                <p className="text-neutral-300 text-lg sm:text-lg leading-relaxed mb-4 font-normal">
+                                <p className="text-slate-200 text-lg sm:text-lg leading-relaxed mb-4 font-normal">
                                     Don't let outdated technology bottleneck your growth. We design, deploy, and manage intelligent networks, robust security, and seamless AV environments tailored to your organization's unique workflows.
                                 </p>
-                                <p className="text-neutral-400 text-lg sm:text-lg leading-relaxed mb-8">
+                                <p className="text-slate-200 text-lg sm:text-lg leading-relaxed mb-8">
                                     Experience zero-downtime integrations and intuitive systems that empower your team to work faster, safer, and smarter from day one.
                                 </p>
 
@@ -103,7 +104,7 @@ export default function IntroSection() {
                                         <div className="text-2xl lg:text-3xl font-bold text-white tracking-tight">
                                             <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                                         </div>
-                                        <div className="text-xs font-medium text-neutral-400 whitespace-pre-wrap">{stat.label}</div>
+                                        <div className="text-xs font-medium text-slate-300 whitespace-pre-wrap">{stat.label}</div>
                                     </motion.div>
                                 ))}
                             </div>

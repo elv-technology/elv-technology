@@ -329,6 +329,7 @@ export default function Chatbot() {
             setShowTooltip(false);
           }}
           className="pointer-events-auto group relative flex items-center justify-center transition-all text-red-600 hover:text-red-700 drop-shadow-[0_10px_20px_rgba(220,38,38,0.4)]"
+          aria-label="Open AI ETS Assistant Chatbot"
         >
           {isOpen ? (
             <div className="flex h-[60px] w-[60px] items-center justify-center rounded-2xl bg-red-600 shadow-lg border border-red-500">

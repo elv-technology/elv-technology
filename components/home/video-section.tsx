@@ -71,6 +71,7 @@ export default function VideoSection({ onVideoLoad }: { onVideoLoad?: () => void
               <Link
                 href={heroSectionData.buttons.secondary.link}
                 className="group inline-flex items-center gap-2 text-white font-bold font-space-grotesk uppercase tracking-wider text-base hover:text-[#D61F26] transition-colors"
+                aria-label="Learn more about ELV Technology Solutions"
               >
                 {heroSectionData.buttons.secondary.text} <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
