@@ -5,6 +5,8 @@ import Script from "next/script";
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import OrganizationSchema from "@/components/seo/OrganizationSchema";
+import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
@@ -30,10 +32,63 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ELV Technology Solutions",
-  description: "Leading provider of integrated technology solutions in the UAE.",
+  metadataBase: new URL("https://www.etssmart.com"),
+  title: {
+    default: "ELV Companies in Abu Dhabi | MCC Approved – ETS Smart",
+    template: "%s | ETS Smart",
+  },
+  description: "ETS Smart is an MCC-approved ELV company in Abu Dhabi offering CCTV, Access Control, AV Systems & Home Automation across the UAE.",
+  keywords: [
+    "ELV Companies in Abu Dhabi",
+    "CCTV Installation Abu Dhabi",
+    "Access Control System Abu Dhabi",
+    "ELV Solutions Abu Dhabi",
+    "Gate Barrier System UAE",
+    "Audio Visual Company Abu Dhabi",
+    "Home Automation Abu Dhabi",
+    "Structured Cabling Abu Dhabi",
+    "MCC Approved ELV Company",
+  ],
+  authors: [{ name: "ELV Technology Solutions", url: "https://www.etssmart.com" }],
+  creator: "ELV Technology Solutions",
+  publisher: "ELV Technology Solutions",
   icons: {
     icon: "/images/logo.svg",
+    apple: "/images/logo.svg",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.etssmart.com",
+    siteName: "ELV Technology Solutions (ETS Smart)",
+    title: "ELV Companies in Abu Dhabi | MCC Approved – ETS Smart",
+    description: "ETS Smart is an MCC-approved ELV company in Abu Dhabi offering CCTV, Access Control, AV Systems & Home Automation across the UAE.",
+    images: [
+      {
+        url: "/images/logo.svg",
+        width: 1200,
+        height: 630,
+        alt: "ELV Technology Solutions Abu Dhabi",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ELV Companies in Abu Dhabi | MCC Approved – ETS Smart",
+    description: "ETS Smart is an MCC-approved ELV company in Abu Dhabi offering CCTV, Access Control, AV Systems & Home Automation across the UAE.",
+    images: ["/images/logo.svg"],
+    creator: "@elv_technology",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -72,6 +127,8 @@ export default function RootLayout({
       </head>
       <body className={`${sourceSans.variable} ${montserrat.variable} ${spaceGrotesk.variable} ${inter.variable} font-sans antialiased`}>
         {children}
+        <OrganizationSchema />
+        <LocalBusinessSchema />
         <BreadcrumbSchema />
         <SpeedInsights />
         <Toaster richColors position="top-right" />
@@ -79,3 +136,4 @@ export default function RootLayout({
     </html>
   );
 }
+
