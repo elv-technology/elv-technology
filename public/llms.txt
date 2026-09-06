@@ -2,21 +2,26 @@
 > Leading Audio-Visual, IT, Security, Home Automation & ELV Integrator in Abu Dhabi & UAE.
 
 ## About ETS Smart
-ELV Technology Solutions (ETS Smart) is an ISO 9001 certified and MCC Approved (ADMCC) ELV systems integrator based in Abu Dhabi, United Arab Emirates. We design, supply, install, program, commission, and maintain intelligent technology and security solutions for commercial, enterprise, residential, healthcare, hospitality, and industrial projects across Abu Dhabi, Dubai, and the wider UAE.
+[ELV Technology Solutions (ETS Smart)](https://www.etssmart.com/about) is an ISO 9001 certified and MCC Approved (ADMCC) ELV systems integrator based in Abu Dhabi, United Arab Emirates. We design, supply, install, program, commission, and maintain intelligent technology and security solutions for commercial, enterprise, residential, healthcare, hospitality, and industrial projects across Abu Dhabi, Dubai, and the wider UAE.
 
-## Core Specializations
-- **Security & Surveillance Systems**: AI-powered CCTV camera installation, ADMCC-approved video surveillance, access control & time attendance, gate barrier systems, biometrics, turnstiles, and 24/7 smart monitoring.
-- **Audio Visual (AV) Solutions**: Background Music (BGM) systems, Public Address (PA) & Voice Alarm, commercial audio, video walls, digital signage, LED display screens, conference room AV, and interactive displays.
-- **Network & Communications**: Structured cabling (Fiber/Copper), enterprise Wi-Fi networks, SMATV/IPTV systems, IP telephony (VoIP), data center racks, and network switching infrastructure.
-- **Home & Building Automation**: Smart lighting control, motorized shade controls, smart thermostats, KNX/Zigbee home automation systems, villa audio, and integrated smart control panels.
-- **Services & Support**: Annual Maintenance Contracts (AMC), 24/7 technical support, system programming, compliance certification, and system commissioning.
+## Core Specializations & Services
+- [Security & Surveillance Systems](https://www.etssmart.com/solutions/security-surveillance): AI-powered CCTV camera installation, ADMCC-approved video surveillance, access control & time attendance, gate barrier systems, biometrics, turnstiles, and 24/7 smart monitoring.
+- [Audio Visual (AV) Solutions](https://www.etssmart.com/solutions/audio-visual): Background Music (BGM) systems, Public Address (PA) & Voice Alarm, commercial audio, video walls, digital signage, LED display screens, conference room AV, and interactive displays.
+- [Network & Communications](https://www.etssmart.com/solutions/network-communications): Structured cabling (Fiber/Copper), enterprise Wi-Fi networks, SMATV/IPTV systems, IP telephony (VoIP), data center racks, and network switching infrastructure.
+- [Home & Building Automation](https://www.etssmart.com/solutions/home-automation): Smart lighting control, motorized shade controls, smart thermostats, KNX/Zigbee home automation systems, villa audio, and integrated smart control panels.
+- [Services & Technical AMC Support](https://www.etssmart.com/services): Annual Maintenance Contracts (AMC), 24/7 technical support, system programming, compliance certification, and system commissioning.
+- [Partners & Clients](https://www.etssmart.com/partners-clients): Global technology partners and enterprise clients in the UAE.
+- [Case Studies](https://www.etssmart.com/case-studies): Explore real project implementations.
+- [Blog & Industry Insights](https://www.etssmart.com/blog): Read expert articles and guides.
+- [Careers](https://www.etssmart.com/careers): Career opportunities at ETS Smart.
 
 ## Key Geographical Markets
 - Primary Focus: Abu Dhabi, UAE
 - Secondary Coverage: Dubai, Sharjah, Al Ain, and northern Emirates across the UAE.
 
 ## Contact Information
-- **Website**: https://www.etssmart.com
+- **Website**: [https://www.etssmart.com](https://www.etssmart.com)
+- **Contact Page**: [https://www.etssmart.com/contact](https://www.etssmart.com/contact)
 - **Phone**: +971 2 441 8186
 - **Email**: info@etssmart.com / sales@etssmart.com
 - **Location**: Abu Dhabi, United Arab Emirates

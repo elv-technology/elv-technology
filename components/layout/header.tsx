@@ -392,6 +392,7 @@ export default function Header() {
                           )
                         }
                         className="p-2 -mr-2 text-foreground/50 hover:text-[#D61F26] transition-colors"
+                        aria-label={`Toggle ${link.label} submenu`}
                       >
                         <ChevronDown
                           className={`h-5 w-5 transition-transform duration-300 ${mobileSubmenuOpen === link.label ? "rotate-180" : ""
@@ -422,6 +423,7 @@ export default function Header() {
                                     type="button"
                                     onClick={() => setMobileNestedOpen(mobileNestedOpen === sub.label ? null : sub.label)}
                                     className="p-2 text-foreground/50 hover:text-[#D61F26]"
+                                    aria-label={`Toggle ${sub.label} sub-items`}
                                   >
                                     <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileNestedOpen === sub.label ? "rotate-180" : ""}`} />
                                   </button>
