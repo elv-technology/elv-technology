@@ -4,13 +4,15 @@ import Hero from '@/components/contact/hero';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Contact ETS Smart | MCC Approved ELV Company Abu Dhabi",
+  title: {
+    absolute: "Contact Us | ELV Solutions Abu Dhabi | ETS Smart"
+  },
   description: "Get in touch with ELV Technology Solutions (ETS Smart) in Abu Dhabi. Contact us for CCTV installation, access control, AV systems & ELV solutions in UAE.",
   alternates: {
     canonical: "https://www.etssmart.com/contact",
   },
   openGraph: {
-    title: "Contact ETS Smart | MCC Approved ELV Company Abu Dhabi",
+    title: "Contact Us | ELV Solutions Abu Dhabi | ETS Smart",
     description: "Get in touch with ELV Technology Solutions (ETS Smart) in Abu Dhabi. Contact us for CCTV installation, access control, AV systems & ELV solutions in UAE.",
     url: "https://www.etssmart.com/contact",
   },

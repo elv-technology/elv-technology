@@ -129,7 +129,7 @@ className="object-cover transition-transform duration-700 group-hover:scale-110"
                                 </p>
 
                                 <div className="mt-auto pt-5 border-t border-slate-700/50">
-                                    <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Key Features</h4>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 block">Key Features</span>
                                     <ul className="space-y-2 mb-6">
                                         {/* @ts-ignore - Content structure varies between solution types */}
                                         {((solution.content as any)?.subsections?.[0]?.points || (solution.content as any)?.keyFeatures?.points || []).slice(0, 3).map((pt: any, i: number) => (

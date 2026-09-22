@@ -4,7 +4,9 @@ import CaseStudiesList from '@/components/case-studies/case-studies-list';
 import { getCollection } from '@/lib/db';
 
 export const metadata: Metadata = {
-  title: "ELV & AV Project Case Studies in Abu Dhabi | ETS Smart",
+  title: {
+    absolute: "ELV Projects & Case Studies Abu Dhabi | ETS Smart"
+  },
   description: "Explore ETS Smart's real ELV & AV project case studies in Abu Dhabi Ritz Carlton, Hyatt, Sheraton & Abu Dhabi Ports. Proven results across UAE sectors.",
   alternates: {
     canonical: "https://www.etssmart.com/case-studies",

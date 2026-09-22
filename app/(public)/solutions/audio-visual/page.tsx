@@ -6,13 +6,15 @@ import SolutionDetailSection from "@/components/solutions/solution-detail-sectio
 import { CTASection } from "@/components/partners-clients/cta-section";
 
 export const metadata: Metadata = {
-  title: "Audio Visual Solutions in Abu Dhabi | BGM & PA – ETS Smart",
+  title: {
+    absolute: "Audio Visual AV Systems Abu Dhabi | ETS Smart"
+  },
   description: "ETS Smart is a top audio visual company in Abu Dhabi offering BGM systems, PA systems, digital signage, LED screens & AV integration for homes & businesses.",
   alternates: {
     canonical: "https://www.etssmart.com/solutions/audio-visual",
   },
   openGraph: {
-    title: "Audio Visual Solutions in Abu Dhabi | BGM & PA – ETS Smart",
+    title: "Audio Visual AV Systems Abu Dhabi | ETS Smart",
     description: "ETS Smart is a top audio visual company in Abu Dhabi offering BGM systems, PA systems, digital signage, LED screens & AV integration for homes & businesses.",
     url: "https://www.etssmart.com/solutions/audio-visual",
   },

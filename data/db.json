@@ -1,13 +1,16 @@
 {
     "blogs": [
         {
+            "id": "blog-1",
             "slug": "fiber-cabling-in-abu-dhabi",
             "title": "Fiber Cabling in Abu Dhabi: The Backbone of Digital Transformation",
+            "excerpt": "Explore how Fiber-optic solutions are powering the future of connectivity in Abu Dhabi's rapidly growing smart city landscape.",
             "description": "Explore how Fiber-optic solutions are powering the future of connectivity in Abu Dhabi's rapidly growing smart city landscape.",
             "date": "February 13, 2026",
             "author": "ELV Technology Solutions",
             "category": "Network Infrastructure",
             "image": "/images/blogs/blog1/fiber-cabling.jpg",
+            "published": true,
             "content": {
                 "sections": [
                     {
@@ -31,102 +34,254 @@
                             "High resistance to electromagnetic interference",
                             "Improved security and reliability"
                         ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": "blog-2",
+            "slug": "7-best-practices-of-information-technology-procurement",
+            "title": "7 Best Practices of Information Technology Procurement in UAE",
+            "excerpt": "Streamline IT procurement in Abu Dhabi and UAE with these 7 strategic best practices for cost optimization, vendor selection, and risk management.",
+            "description": "Streamline IT procurement in Abu Dhabi and UAE with these 7 strategic best practices for cost optimization, vendor selection, and risk management.",
+            "date": "February 18, 2026",
+            "author": "ETS Smart Engineering Team",
+            "category": "IT Infrastructure",
+            "image": "/images/services/network/1.jpg",
+            "published": true,
+            "content": {
+                "sections": [
+                    {
+                        "type": "paragraph",
+                        "content": "Information Technology (IT) procurement in the UAE requires balancing compliance, budget optimization, scalability, and security. Enterprise organizations and government entities in Abu Dhabi must align IT acquisitions with long-term digital strategies."
                     },
                     {
                         "type": "heading",
-                        "title": "Why Fiber Optic Solutions Matter in Abu Dhabi"
-                    },
-                    {
-                        "type": "paragraph",
-                        "content": "Abu Dhabi’s rapid growth across sectors such as real estate, healthcare, education, oil & gas, and smart city development demands robust, future-ready network infrastructure. Fiber optic cabling supports:"
+                        "title": "Core IT Procurement Best Practices"
                     },
                     {
                         "type": "list",
+                        "title": "7 Strategic Best Practices:",
                         "items": [
-                            "Smart buildings and automation systems",
-                            "High-definition video surveillance (CCTV)",
-                            "Access control and security systems",
-                            "Data centers and enterprise IT networks",
-                            "Video conferencing and unified communications"
+                            "Define clear technical specifications and SLA expectations before vendor sourcing.",
+                            "Evaluate Total Cost of Ownership (TCO) including maintenance and lifecycle replacement.",
+                            "Partner with certified local integrators in Abu Dhabi with proven UAE track records.",
+                            "Prioritize vendor compliance with ADHCC and UAE cybersecurity frameworks.",
+                            "Leverage bulk licensing and long-term hardware support contracts.",
+                            "Implement transparent vendor evaluation matrices and strict RFP processes.",
+                            "Ensure seamless interoperability with existing ELV and active network infrastructure."
                         ]
-                    },
+                    }
+                ]
+            }
+        },
+        {
+            "id": "blog-3",
+            "slug": "effective-video-surveillance-tips-for-business",
+            "title": "Effective Video Surveillance Tips for Modern Businesses in Abu Dhabi",
+            "excerpt": "Discover practical tips to optimize CCTV security, compliance with MCC/ADHCC regulations, and AI analytics integration for UAE commercial properties.",
+            "description": "Discover practical tips to optimize CCTV security, compliance with MCC/ADHCC regulations, and AI analytics integration for UAE commercial properties.",
+            "date": "February 22, 2026",
+            "author": "Security Engineering Specialist",
+            "category": "Security & Surveillance",
+            "image": "/images/services/security/1.jpg",
+            "published": true,
+            "content": {
+                "sections": [
                     {
                         "type": "paragraph",
-                        "content": "As businesses scale, fiber optic networks ensure seamless connectivity without bottlenecks."
+                        "content": "Deploying an effective video surveillance system is essential for protecting commercial assets, staff, and operations in Abu Dhabi. With regulatory oversight from the Monitoring and Control Center (MCC), UAE businesses must adhere to strict guidelines while optimizing coverage."
                     },
                     {
                         "type": "heading",
-                        "title": "ELV Technology Solutions—Your Trusted Fiber Optic Partner"
-                    },
-                    {
-                        "type": "paragraph",
-                        "content": "ELV Technology Solutions provides end-to-end fiber optic cable and networking solutions in Abu Dhabi, designed to meet international standards and local project requirements. Our expertise covers everything from planning and design to installation, testing, and maintenance."
+                        "title": "Best Practices for Commercial CCTV Systems"
                     },
                     {
                         "type": "list",
-                        "title": "Our Fiber Optic Services Include:",
+                        "title": "Key Recommendations:",
                         "items": [
-                            "Fiber optic network design & consultation",
-                            "Single-mode and multi-mode Fiber installation",
-                            "Backbone and horizontal cabling",
-                            "Fiber splicing, termination & testing",
-                            "Fiber integration with ELV & IT systems",
-                            "Network upgrades and expansions"
+                            "Ensure full compliance with MCC standards for storage retention and camera resolutions.",
+                            "Eliminate blind spots across entrance barriers, loading docks, and perimeter fences.",
+                            "Deploy IP-based cameras with low-light/thermal capabilities for 24/7 visibility.",
+                            "Integrate AI video analytics for motion detection, license plate recognition, and facial recognition.",
+                            "Maintain redundant NVR storage with RAID configurations and secure off-site backups."
                         ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": "blog-4",
+            "slug": "7-key-points-to-consider-when-installing-video-walls-display-system",
+            "title": "7 Key Points to Consider When Installing Video Wall Display Systems",
+            "excerpt": "A guide to selecting and installing high-performance video walls for control rooms, corporate boardrooms, and digital signage in Abu Dhabi.",
+            "description": "A guide to selecting and installing high-performance video walls for control rooms, corporate boardrooms, and digital signage in Abu Dhabi.",
+            "date": "March 01, 2026",
+            "author": "AV Solutions Consultant",
+            "category": "Audio Visual",
+            "image": "/images/services/av/1.jpg",
+            "published": true,
+            "content": {
+                "sections": [
+                    {
+                        "type": "paragraph",
+                        "content": "Video walls are central to command & control centers, executive boardrooms, and luxury retail hubs across Abu Dhabi. Selecting the right display technology (Direct-View LED vs Seamless LCD) requires careful evaluation of environment and content needs."
                     },
                     {
                         "type": "heading",
-                        "title": "Fiber Optic Solutions for ELV Systems"
-                    },
-                    {
-                        "type": "paragraph",
-                        "content": "Fiber optics plays a crucial role in supporting advanced ELV systems, especially in large-scale projects. ELV Technology Solutions ensures seamless integration of Fiber networks with:"
+                        "title": "Critical Considerations for Video Wall Installation"
                     },
                     {
                         "type": "list",
+                        "title": "7 Key Points:",
                         "items": [
-                            "CCTV & video surveillance systems",
-                            "Access control & biometric systems",
-                            "Structured cabling systems",
-                            "Audio-visual & meeting room solutions",
-                            "Data centres and server rooms"
+                            "Pixel pitch selection based on viewing distance and resolution requirements.",
+                            "Bezel width consideration for uninterrupted visual continuity.",
+                            "Thermal management and power distribution for 24/7 continuous operation.",
+                            "Video wall processor capabilities for multi-source windowing and scaling.",
+                            "Structural mounting integrity and front-service access mechanisms.",
+                            "Color calibration and brightness uniformity across display arrays.",
+                            "Integration with AV control systems like Crestron, Extron, or Q-SYS."
                         ]
-                    },
+                    }
+                ]
+            }
+        },
+        {
+            "id": "blog-5",
+            "slug": "top-advantages-of-two-way-radio-solutions",
+            "title": "Top Advantages of Professional Two-Way Radio Solutions for Enterprises",
+            "excerpt": "Explore why instantaneous Push-to-Talk (PTT) radio communication remains essential for hospitality, construction, and security teams in UAE.",
+            "description": "Explore why instantaneous Push-to-Talk (PTT) radio communication remains essential for hospitality, construction, and security teams in UAE.",
+            "date": "March 05, 2026",
+            "author": "Communications Infrastructure Specialist",
+            "category": "Communications",
+            "image": "/images/services/network/2.jpg",
+            "published": true,
+            "content": {
+                "sections": [
                     {
                         "type": "paragraph",
-                        "content": "This integration ensures high bandwidth, stable connections, and uninterrupted system performance."
+                        "content": "In high-stakes environments like mega-construction sites, luxury resorts, and event management in Abu Dhabi, instant communications save critical time. Two-way radios provide reliable instant voice connectivity independent of cellular networks."
                     },
                     {
                         "type": "heading",
-                        "title": "Benefits of Choosing ELV Technology Solutions"
+                        "title": "Why Modern Enterprise Two-Way Radios Stand Out"
                     },
                     {
                         "type": "list",
+                        "title": "Key Enterprise Benefits:",
                         "items": [
-                            "Experienced engineers and certified technicians",
-                            "Compliance with UAE and international cabling standards",
-                            "High-quality materials and proven installation practices",
-                            "Scalable solutions for future expansion",
-                            "On-time project delivery across Abu Dhabi"
+                            "Instantaneous Push-To-Talk (PTT) latency under 100 milliseconds.",
+                            "ATEX-certified intrinsically safe models for oil & gas and hazardous industrial areas.",
+                            "Digital mobile radio (DMR) encryption ensuring secure operational privacy.",
+                            "Integration with IP networks and emergency dispatch management consoles.",
+                            "Rugged IP67/IP68 weatherproofing built to withstand UAE ambient conditions."
                         ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": "blog-6",
+            "slug": "advantages-of-installing-cctv-system-at-home",
+            "title": "Advantages of Installing Smart CCTV Systems for Residential Villas in UAE",
+            "excerpt": "Learn how smart CCTV and perimeter protection systems safeguard luxury villas and smart homes across Abu Dhabi and Dubai.",
+            "description": "Learn how smart CCTV and perimeter protection systems safeguard luxury villas and smart homes across Abu Dhabi and Dubai.",
+            "date": "March 10, 2026",
+            "author": "Smart Home & Security Specialist",
+            "category": "Home Automation",
+            "image": "/images/services/home/1.jpg",
+            "published": true,
+            "content": {
+                "sections": [
+                    {
+                        "type": "paragraph",
+                        "content": "Home security is paramount for villa owners in Abu Dhabi and Dubai. Modern smart CCTV systems offer remote mobile monitoring, AI-based human detection, and seamless integration with home automation platforms."
                     },
                     {
                         "type": "heading",
-                        "title": "Industries We Serve in Abu Dhabi"
+                        "title": "Key Advantages of Smart Villa Surveillance"
                     },
                     {
                         "type": "list",
+                        "title": "Benefits for Homeowners:",
                         "items": [
-                            "Corporate offices & commercial buildings",
-                            "Data centres & IT facilities",
-                            "Healthcare & educational institutions",
-                            "Industrial & oil and gas facilities",
-                            "Residential towers & smart communities"
+                            "Real-time mobile alerts and high-definition video live feeds from anywhere worldwide.",
+                            "AI person and vehicle filtering to prevent false alerts caused by wind or animals.",
+                            "Integration with smart video doorbells, electronic locks, and automated lighting.",
+                            "High-definition night vision and active deterrence sirens/flashing lights.",
+                            "Peace of mind for families, children, and property management."
                         ]
-                    },
+                    }
+                ]
+            }
+        },
+        {
+            "id": "blog-7",
+            "slug": "access-control-systems-intelligent-security-for-modern-businesses",
+            "title": "Access Control Systems: Intelligent Security for Modern UAE Businesses",
+            "excerpt": "Comprehensive overview of touchless biometrics, mobile credentials, and barrier controls for commercial facility security in Abu Dhabi.",
+            "description": "Comprehensive overview of touchless biometrics, mobile credentials, and barrier controls for commercial facility security in Abu Dhabi.",
+            "date": "March 15, 2026",
+            "author": "Security Engineering Team",
+            "category": "Security & Access Control",
+            "image": "/images/services/security/2.jpg",
+            "published": true,
+            "content": {
+                "sections": [
                     {
                         "type": "paragraph",
-                        "content": "As Abu Dhabi continues its journey toward digital transformation and smart infrastructure, Fiber optic networks remain the backbone of innovation. Partnering with ELV Technology Solutions ensures your business stays connected, secure, and ready for the future."
+                        "content": "Modern commercial facilities in Abu Dhabi require sophisticated access management. From facial recognition turnstiles to NFC smartphone access cards, intelligent access control enhances building security while maintaining smooth occupant throughput."
+                    },
+                    {
+                        "type": "heading",
+                        "title": "Key Capabilities of Next-Gen Access Control"
+                    },
+                    {
+                        "type": "list",
+                        "title": "Core System Highlights:",
+                        "items": [
+                            "Touchless biometric credentials including facial recognition and palm vein readers.",
+                            "Centralized role-based permissions and instant visitor badge management.",
+                            "Integration with elevator control systems and automated turnstiles/gate barriers.",
+                            "Real-time attendance logging and integration with HR payroll platforms.",
+                            "Automated lockdown protocols and emergency muster reporting."
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": "blog-8",
+            "slug": "audio-visual-av-systems-transforming-communication-collaboration-and-customer-experiences",
+            "title": "Audio Visual (AV) Systems: Transforming Communication and Collaboration",
+            "excerpt": "How modern AV solutions, hybrid meeting room setups, and interactive LED displays drive productivity in Abu Dhabi corporate and educational spaces.",
+            "description": "How modern AV solutions, hybrid meeting room setups, and interactive LED displays drive productivity in Abu Dhabi corporate and educational spaces.",
+            "date": "March 20, 2026",
+            "author": "AV Solutions Team",
+            "category": "Audio Visual",
+            "image": "/images/services/av/2.jpg",
+            "published": true,
+            "content": {
+                "sections": [
+                    {
+                        "type": "paragraph",
+                        "content": "Professional Audio Visual (AV) integration is the cornerstone of modern corporate communication, hybrid workplaces, higher education, and luxury hospitality in Abu Dhabi."
+                    },
+                    {
+                        "type": "heading",
+                        "title": "Transforming Spaces with Smart AV Systems"
+                    },
+                    {
+                        "type": "list",
+                        "title": "Key AV Solutions:",
+                        "items": [
+                            "Microsoft Teams & Zoom Rooms with intelligent auto-framing cameras and beamforming mic arrays.",
+                            "High-definition background music (BGM) systems for hotels, dining venues, and malls.",
+                            "Centralized AV-over-IP matrix switching for uncompressed 4K video distribution.",
+                            "Intuitive touch-panel controllers for simplified room automation and lighting scenes."
+                        ]
                     }
                 ]
             }
@@ -134,6 +289,7 @@
     ],
     "caseStudies": [
         {
+            "id": "cs-1",
             "slug": "guest-house-building-at-zones-corp",
             "client": "Abu Dhabi Ports Company (PJSC)",
             "project": "Refurbishment of Guest House Building",
@@ -143,50 +299,29 @@
                 "Converged multi-system integration without disrupting day-to-day operations.",
                 "High-definition presentation and video-conferencing requirements across boardroom and auditorium spaces.",
                 "Secure yet frictionless access for staff and visitors, with centralized oversight.",
-                "Future-ready structured cabling to support current and anticipated bandwidth needs.",
-                "Efficient student management through automated barriers tied to access control.",
-                "Optimized, continuously monitored network performance."
+                "Future-ready structured cabling to support current and anticipated bandwidth needs."
             ],
             "solution": {
                 "title": "Engineered and Implemented Solution",
                 "components": [
                     {
                         "name": "Audio-Visual Systems",
-                        "details": "Board Room: Interactive presentation, conferencing microphones, premium loudspeakers, and smart displays for executive meetings. Auditorium: High-definition projection, distributed audio, and video-conferencing capability to support events, seminars, and briefings."
-                    },
-                    {
-                        "name": "Access Control",
-                        "details": "Biometric readers and RFID credentials for secure, role-based entry. Turnstiles at controlled points with centralized monitoring for staff and visitor movements."
-                    },
-                    {
-                        "name": "Structured Cabling",
-                        "details": "End-to-end Cat6A and fiber-optic backbone for high-speed data and voice. Centralized data hub and patching architecture enabling scalability and simplified management."
-                    },
-                    {
-                        "name": "Student Entry/Exit Barrier System",
-                        "details": "RFID-enabled barriers and automated turnstiles to streamline movement while maintaining security. Real-time activity tracking integrated with access control."
-                    },
-                    {
-                        "name": "Network Active Components",
-                        "details": "Enterprise-grade routers, switches, and firewalls for secure, resilient connectivity. Network monitoring and management tools for proactive performance optimization."
+                        "details": "Board Room: Interactive presentation, conferencing microphones, premium loudspeakers, and smart displays for executive meetings."
                     }
                 ]
             },
             "outcomes": [
                 "Enhanced communication and collaboration across executive and public spaces.",
-                "Elevated safety and compliance through centralized access management.",
-                "A future-ready, standards-based cabling and network foundation.",
-                "Seamless student and visitor flow with full auditability.",
-                "High-performance, secure networking with real-time observability."
+                "Elevated safety and compliance through centralized access management."
             ],
             "image": "/images/case-studies/case-1/1.jpg",
             "gallery": [
                 "/images/case-studies/case-1/1.jpg",
-                "/images/case-studies/case-1/2.jpg",
-                "/images/case-studies/case-1/3.jpg"
+                "/images/case-studies/case-1/2.jpg"
             ]
         },
         {
+            "id": "cs-2",
             "slug": "cctv-system-for-bus-shelters-abu-dhabi",
             "client": "Abu Dhabi Department of Transport (DoT)",
             "project": "CCTV System Installation for 200+ Shelters",
@@ -194,27 +329,21 @@
             "overview": "In line with the DoT’s public-transport enhancement programme, ETS deployed a robust CCTV platform across more than 200 air-conditioned bus shelters. The system strengthens passenger safety, deters vandalism, and enables real-time incident response via centralized oversight.",
             "challenges": [
                 "Harsh-weather durability across distributed outdoor sites.",
-                "End-to-end coverage with reliable image quality day and night.",
-                "Secure remote monitoring and streamlined incident management."
+                "End-to-end coverage with reliable image quality day and night."
             ],
             "solution": {
                 "title": "Solution Highlights",
                 "points": [
                     "High-definition fixed and specialty cameras to ensure comprehensive visual coverage.",
-                    "Weather-resistant housings and components engineered for Abu Dhabi’s climate.",
-                    "Centralized remote monitoring for real-time visibility and rapid response.",
-                    "Scalable architecture to accommodate future shelter expansions."
+                    "Weather-resistant housings and components engineered for Abu Dhabi’s climate."
                 ]
             },
             "outcomes": [
-                "24/7 surveillance across 200+ shelters with consistent image fidelity.",
-                "Improved public-space safety and asset protection.",
-                "On-time delivery and full client satisfaction."
+                "24/7 surveillance across 200+ shelters with consistent image fidelity."
             ],
             "image": "/images/case-studies/case-2/1.jpg",
             "gallery": [
-                "/images/case-studies/case-2/1.jpg",
-                "/images/case-studies/case-2/2.jpg"
+                "/images/case-studies/case-2/1.jpg"
             ]
         }
     ],

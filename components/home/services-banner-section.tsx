@@ -84,9 +84,9 @@ export default function ServicesBannerSection() {
                                     <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-3 text-white group-hover/card:bg-white group-hover/card:text-accent transition-all duration-300 shadow-sm">
                                         <service.icon className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2} />
                                     </div>
-                                    <h4 className="font-semibold text-white text-sm sm:text-base leading-snug text-balance">
+                                    <h3 className="font-semibold text-white text-sm sm:text-base leading-snug text-balance">
                                         {service.title}
-                                    </h4>
+                                    </h3>
                                 </motion.div>
                             ))}
                         </div>

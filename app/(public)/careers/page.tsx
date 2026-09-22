@@ -5,16 +5,18 @@ import { getCollection } from '@/lib/db';
 import { Career } from '@prisma/client';
 import { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Careers at ETS Smart | ELV & AV Jobs in Abu Dhabi",
+  title: {
+    absolute: "Careers at ETS Smart | ELV Jobs Abu Dhabi"
+  },
   description: "Explore career opportunities at ELV Technology Solutions (ETS Smart) in Abu Dhabi. Join our team of ELV engineers, technicians, and project managers in UAE.",
   alternates: {
     canonical: "https://www.etssmart.com/careers",
   },
   openGraph: {
-    title: "Careers at ETS Smart | ELV & AV Jobs in Abu Dhabi",
+    title: "Careers at ETS Smart | ELV Jobs Abu Dhabi",
     description: "Explore career opportunities at ELV Technology Solutions (ETS Smart) in Abu Dhabi. Join our team of ELV engineers, technicians, and project managers in UAE.",
     url: "https://www.etssmart.com/careers",
   },

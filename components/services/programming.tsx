@@ -90,7 +90,7 @@ export default function Programming() {
                     <feature.icon className="h-5 w-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-white text-base mb-1 group-hover/feature:text-red-400 transition-colors break-words">{feature.title}</h4>
+                    <h3 className="font-semibold text-white text-base mb-1 group-hover/feature:text-red-400 transition-colors break-words">{feature.title}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed font-medium break-words">{feature.desc}</p>
                   </div>
                 </motion.div>

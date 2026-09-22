@@ -6,13 +6,15 @@ import SolutionDetailSection from "@/components/solutions/solution-detail-sectio
 import { CTASection } from "@/components/partners-clients/cta-section";
 
 export const metadata: Metadata = {
-  title: "CCTV Installation Company in Abu Dhabi | ETS Smart",
+  title: {
+    absolute: "CCTV Installation & Security Abu Dhabi | ETS Smart"
+  },
   description: "ETS Smart is an ADMCC-approved CCTV company in Abu Dhabi offering CCTV installation, access control & security system solutions for homes & businesses in UAE.",
   alternates: {
     canonical: "https://www.etssmart.com/solutions/security-surveillance",
   },
   openGraph: {
-    title: "CCTV Installation Company in Abu Dhabi | ETS Smart",
+    title: "CCTV Installation & Security Abu Dhabi | ETS Smart",
     description: "ETS Smart is an ADMCC-approved CCTV company in Abu Dhabi offering CCTV installation, access control & security system solutions for homes & businesses in UAE.",
     url: "https://www.etssmart.com/solutions/security-surveillance",
   },

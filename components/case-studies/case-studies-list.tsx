@@ -27,6 +27,9 @@ export default function CaseStudiesList({ initialData }: { initialData: any[] })
   return (
     <div className="bg-slate-50 dark:bg-slate-950 py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-8 hidden sm:block">
+          Explore Our Projects
+        </h2>
 
         {/* Search Control */}
         <div className="flex flex-col mb-12 items-end justify-end w-full max-w-md ml-auto">
