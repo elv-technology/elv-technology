@@ -8,29 +8,49 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import DOMPurify from "isomorphic-dompurify";
 import { useLoading } from "@/hooks/use-loading";
 
 interface BlogSlugPageProps {
     post: any;
 }
 
-const formatContent = (content: string) => {
+const formatContent = (content: any) => {
     if (!content) return '';
 
+    // Handle structured JSON sections from db.json or database
+    if (typeof content === 'object' && content.sections) {
+        let html = '';
+        for (const sec of content.sections) {
+            if (sec.type === 'paragraph') {
+                html += `<p>${sec.content}</p>`;
+            } else if (sec.type === 'heading') {
+                html += `<h2><strong>${sec.title}</strong></h2>`;
+            } else if (sec.type === 'list') {
+                if (sec.title) html += `<h3><strong>${sec.title}</strong></h3>`;
+                html += '<ul>';
+                for (const item of (sec.items || [])) {
+                    html += `<li>${item}</li>`;
+                }
+                html += '</ul>';
+            }
+        }
+        return html;
+    }
+
+    const strContent = typeof content === 'string' ? content : String(content);
+
     // If it already strongly looks like HTML, return as-is
-    if (/<[a-z][\s\S]*>/i.test(content)) {
-        return content;
+    if (/<[a-z][\s\S]*>/i.test(strContent)) {
+        return strContent;
     }
 
     // Otherwise, parse plain text into HTML
-    const lines = content.split('\n');
+    const lines = strContent.split('\n');
     let html = '';
     let inList = false;
 
     const isHeading = (text: string) => {
         if (text.endsWith('?')) return true;
-        // Short lines that aren't sentences or list items
         if (text.length < 100 && !text.endsWith('.') && !text.endsWith(',') && text.split(' ').length < 12) {
             return true;
         }
@@ -170,7 +190,7 @@ export default function BlogSlugPage({ post }: BlogSlugPageProps) {
                                     [&>ul>li::before]:absolute [&>ul>li::before]:left-0 [&>ul>li::before]:top-1.5 [&>ul>li::before]:w-6 [&>ul>li::before]:h-6 [&>ul>li::before]:content-['']
                                     [&>ul>li::before]:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNkYzI2MjYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjIgMTEuMDhWMTJhMTAgMTAgMCAxIDEtNS45My05LjE0Ii8+PHBhdGggZD0ibTkgMTEgMyAzTDIyIDQiLz48L3N2Zz4=')] [&>ul>li::before]:bg-no-repeat [&>ul>li::before]:bg-center [&>ul>li::before]:bg-contain
                                 "
-                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formatContent(post.content)) }}
+                                dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
                             />
                         </motion.div>
                     </div>

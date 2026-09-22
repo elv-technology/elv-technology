@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import DOMPurify from "isomorphic-dompurify";
 import { useLoading } from "@/hooks/use-loading";
 
 interface CaseStudySolution {
@@ -63,7 +62,6 @@ export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPa
     { loop: true },
     [Autoplay({ delay: 4000 })]
   );
-
 
   return (
     <div className="bg-white dark:bg-slate-950 min-h-screen">
@@ -161,8 +159,7 @@ export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPa
                 <div className="space-y-6">
                   {study.solution && <p className="font-medium text-slate-900 dark:text-white text-xl">{study.solution.title}</p>}
 
-                  {/* Render Quill HTML dynamically styled to look strictly identical to legacy boxes */}
-                  {study.solution.html ? (
+                  {study.solution?.html ? (
                     <div
                       className="prose prose-slate dark:prose-invert max-w-none 
                         [&>ul]:list-none [&>ul]:space-y-3 [&>ul]:bg-slate-50 [&>ul]:dark:bg-slate-900/50 [&>ul]:py-6 [&>ul]:px-8 md:[&>ul]:px-10 [&>ul]:rounded-2xl [&>ul]:border [&>ul]:border-slate-100 [&>ul]:dark:border-slate-800
@@ -174,7 +171,7 @@ export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPa
                         prose-strong:text-slate-900 prose-strong:dark:text-white prose-strong:text-base prose-strong:font-bold prose-strong:block prose-strong:mb-0.5
                         prose-p:m-0
                       "
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(study.solution.html) }}
+                      dangerouslySetInnerHTML={{ __html: study.solution.html }}
                     />
                   ) : (
                     <div className="text-slate-500 italic">Solution details are being updated...</div>
@@ -274,7 +271,7 @@ export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPa
                   <ArrowLeft className="mr-2 h-4 w-4" /> Previous Success
                 </button>
               ) : (
-                <div className="h-6 mb-2" /> // Spacer to keep layout steady when button is hidden
+                <div className="h-6 mb-2" />
               )}
               <Link href={`/case-studies/${currentPrevStudy.slug}`} className="text-lg font-bold text-slate-900 dark:text-white hover:text-red-600 dark:hover:text-red-500 transition-colors w-full text-left">
                 {currentPrevStudy.client}
@@ -292,7 +289,7 @@ export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPa
                   Next Success <ArrowRight className="ml-2 h-4 w-4" />
                 </button>
               ) : (
-                <div className="h-6 mb-2" /> // Spacer
+                <div className="h-6 mb-2" />
               )}
               <Link href={`/case-studies/${currentNextStudy.slug}`} className="text-lg font-bold text-slate-900 dark:text-white hover:text-red-600 dark:hover:text-red-500 transition-colors w-full text-right">
                 {currentNextStudy.client}
