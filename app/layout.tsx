@@ -10,24 +10,28 @@ import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "600", "700"],
+  display: "swap",
   variable: "--font-source-sans",
 });
 
 const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "600", "700"],
+  display: "swap",
   variable: "--font-montserrat",
 });
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
+  display: "swap",
   variable: "--font-space-grotesk",
 });
 
 const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
   variable: "--font-inter",
 });
 

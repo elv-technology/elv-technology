@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { prisma } from "@/lib/prisma";
+import { getCollection } from "@/lib/db";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.etssmart.com";
@@ -29,13 +29,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic Blog routes
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
-    const blogs = await prisma.blog.findMany({
-      where: { published: true },
-      select: { slug: true, updatedAt: true },
-    });
-    blogRoutes = blogs.map((blog) => ({
+    const blogs = (await getCollection("blogs", { take: 500 })) as any[];
+    blogRoutes = (blogs || []).map((blog: any) => ({
       url: `${baseUrl}/blog/${blog.slug}`,
-      lastModified: blog.updatedAt || new Date(),
+      lastModified: blog.updatedAt ? new Date(blog.updatedAt) : new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
@@ -46,12 +43,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamic Case Studies routes
   let caseStudyRoutes: MetadataRoute.Sitemap = [];
   try {
-    const caseStudies = await prisma.caseStudy.findMany({
-      select: { slug: true, updatedAt: true },
-    });
-    caseStudyRoutes = caseStudies.map((study) => ({
+    const caseStudies = (await getCollection("case-studies", { take: 500 })) as any[];
+    caseStudyRoutes = (caseStudies || []).map((study: any) => ({
       url: `${baseUrl}/case-studies/${study.slug}`,
-      lastModified: study.updatedAt || new Date(),
+      lastModified: study.updatedAt ? new Date(study.updatedAt) : new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
@@ -61,3 +56,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [...staticRoutes, ...blogRoutes, ...caseStudyRoutes];
 }
+

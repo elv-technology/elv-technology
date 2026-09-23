@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from "next/dynamic";
 import VideoSection from "@/components/home/video-section";
 import IntroSection from "@/components/home/intro-section";
 import CaseStudiesSection from "@/components/home/case-studies-section";
@@ -7,12 +8,13 @@ import ServicesBannerSection from "@/components/home/services-banner-section";
 import ServicesSection from "@/components/home/services-section";
 import CertificationsSection from "@/components/home/certifications-section";
 import ClientsSection from "@/components/home/clients-section";
-import ReviewsSection from "@/components/home/reviews-section";
-import PartnersSection from "@/components/home/partners-section";
-import IndustriesSection from "@/components/home/industries-section";
-import CTASection from "@/components/home/cta-section";
-import FAQSection from "@/components/home/faq-section";
 import { useLoading } from "@/hooks/use-loading";
+
+const ReviewsSection = dynamic(() => import("@/components/home/reviews-section"));
+const PartnersSection = dynamic(() => import("@/components/home/partners-section"));
+const IndustriesSection = dynamic(() => import("@/components/home/industries-section"));
+const FAQSection = dynamic(() => import("@/components/home/faq-section"));
+const CTASection = dynamic(() => import("@/components/home/cta-section"));
 
 export default function HomeLayout({ initialData }: { initialData: any }) {
   const { stopLoading } = useLoading();
