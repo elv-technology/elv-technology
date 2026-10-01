@@ -3,11 +3,17 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { deleteFilesFromUploadThing } from "@/lib/uploadthing-server";
+import { requireAdmin } from '@/lib/auth';
+import { sanitizeHtml } from '@/lib/sanitize';
+import { optionalText } from '@/lib/content-input';
 
 export async function GET(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const blog = await prisma.blog.findUnique({
             where: { id: params.id } // Note: Assuming find by ID first, can add fallback to slug if needed
@@ -27,9 +33,12 @@ export async function PATCH(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const body = await req.json();
-        const { title, slug, excerpt, content, image, category, author, date } = body;
+        const { title, slug, excerpt, content, image, category, author, date, seoTitle, seoDescription } = body;
 
         // 1. Fetch existing blog to check for image changes
         const existingBlog = await prisma.blog.findUnique({
@@ -47,16 +56,20 @@ export async function PATCH(
                 title,
                 slug,
                 excerpt,
-                content,
+                content: typeof content === 'string' ? sanitizeHtml(content) : undefined,
                 image,
                 category,
                 author,
-                date: date ? new Date(date) : undefined
+                date: date ? new Date(date) : undefined,
+                ...(seoTitle !== undefined ? { seoTitle: optionalText(seoTitle) } : {}),
+                ...(seoDescription !== undefined ? { seoDescription: optionalText(seoDescription) } : {}),
             }
         });
 
         revalidatePath('/');
         revalidatePath('/blog');
+        revalidatePath('/blog/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
+        revalidatePath('/sitemap.xml');
         revalidatePath(`/blog/${blog.slug}`);
         
         // If slug changed, revalidate the old path as well
@@ -75,6 +88,9 @@ export async function DELETE(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         // Find the blog first to get the slug for revalidation and image URL for deletion
         const blog = await prisma.blog.findUnique({
@@ -93,6 +109,8 @@ export async function DELETE(
 
         revalidatePath('/');
         revalidatePath('/blog');
+        revalidatePath('/blog/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
+        revalidatePath('/sitemap.xml');
         if (blog?.slug) {
             revalidatePath(`/blog/${blog.slug}`);
         }

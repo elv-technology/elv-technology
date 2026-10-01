@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,6 +24,7 @@ const formSchema = z.object({
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const honeypotRef = useRef<HTMLInputElement>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,7 +51,7 @@ export default function ContactForm() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...values, source: 'website' }),
+        body: JSON.stringify({ ...values, source: 'website', website: honeypotRef.current?.value || '' }),
       });
 
       const result = await res.json();
@@ -106,6 +107,8 @@ export default function ContactForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-12 space-y-6">
+          {/* Honeypot: hidden from people; bots that fill it in are rejected by the server. */}
+          <input ref={honeypotRef} type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
           <FormField
             control={form.control}
             name="name"

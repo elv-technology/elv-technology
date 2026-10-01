@@ -1,6 +1,11 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin/layout/admin-sidebar";
 import { AdminHeader } from "@/components/admin/layout/admin-header";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    robots: { index: false, follow: false },
+};
 
 export default function AdminLayout({
     children,

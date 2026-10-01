@@ -1,11 +1,16 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+import { requireAdmin } from '@/lib/auth';
 
 export async function GET(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const career = await prisma.career.findUnique({
             where: { id: params.id }
@@ -25,6 +30,9 @@ export async function PATCH(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const body = await req.json();
         const { title, department, location, type, description, requirements } = body;
@@ -41,6 +49,8 @@ export async function PATCH(
             }
         });
 
+        revalidatePath('/careers');
+
         return NextResponse.json(career);
     } catch (error) {
         console.error('Failed to update career:', error);
@@ -52,10 +62,15 @@ export async function DELETE(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         await prisma.career.delete({
             where: { id: params.id }
         });
+
+        revalidatePath('/careers');
 
         return NextResponse.json({ message: 'Career deleted successfully' });
     } catch (error) {

@@ -1,8 +1,32 @@
+// Content-Security-Policy starts in Report-Only mode: violations are logged in the browser console
+// but nothing is blocked. Once a week of normal use shows no violations, rename the header key to
+// 'Content-Security-Policy' to enforce it.
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://va.vercel-scripts.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://utfs.io https://*.ufs.sh https://placehold.co https://images.unsplash.com https://www.googletagmanager.com https://*.google-analytics.com https://maps.gstatic.com https://*.googleapis.com",
+  "font-src 'self' data:",
+  "media-src 'self' blob: https://utfs.io https://*.ufs.sh",
+  "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://vitals.vercel-insights.com https://*.uploadthing.com https://utfs.io https://*.ufs.sh",
+  "frame-src 'self' https://www.google.com https://maps.google.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+].join('; ');
+
+const securityHeaders = [
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=()' },
+  { key: 'Content-Security-Policy-Report-Only', value: contentSecurityPolicy },
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -17,10 +41,27 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'utfs.io',
       },
+      {
+        protocol: 'https',
+        hostname: '*.ufs.sh',
+      },
     ],
   },
   async headers() {
     return [
+      {
+        source: '/:path*',
+        headers: securityHeaders,
+      },
+      {
+        // Keep the admin area and APIs out of search results
+        source: '/admin/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
+      {
+        source: '/api/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
       {
         // Cache all static media files aggressively
         source: '/images/:path*',
@@ -118,6 +159,33 @@ const nextConfig = {
       {
         source: '/access-control-installation-abu-dhabi.html',
         destination: '/solutions/security-surveillance#access-control',
+        permanent: true,
+      },
+      // Old-site URLs still linked from blog content (found by the September 2026 SEO audit)
+      {
+        source: '/services.html',
+        destination: '/services',
+        permanent: true,
+      },
+      {
+        source: '/networking-communication-solutions.html',
+        destination: '/solutions/network-communications',
+        permanent: true,
+      },
+      {
+        source: '/iptv-solutions.html',
+        destination: '/solutions/network-communications#iptv-smatv',
+        permanent: true,
+      },
+      {
+        source: '/cctv-supplier-installation-service-abu-dhabi.html',
+        destination: '/solutions/security-surveillance',
+        permanent: true,
+      },
+      {
+        // A link written as "www.etssmart.com" without https:// resolves relative to the post
+        source: '/blog/www.etssmart.com',
+        destination: '/',
         permanent: true,
       }
     ];

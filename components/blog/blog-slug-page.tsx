@@ -9,99 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import { useLoading } from "@/hooks/use-loading";
+import { formatContent } from "@/lib/format-content";
 
 interface BlogSlugPageProps {
     post: any;
 }
-
-const formatContent = (content: any) => {
-    if (!content) return '';
-
-    // Handle structured JSON sections from db.json or database
-    if (typeof content === 'object' && content.sections) {
-        let html = '';
-        for (const sec of content.sections) {
-            if (sec.type === 'paragraph') {
-                html += `<p>${sec.content}</p>`;
-            } else if (sec.type === 'heading') {
-                html += `<h2><strong>${sec.title}</strong></h2>`;
-            } else if (sec.type === 'list') {
-                if (sec.title) html += `<h3><strong>${sec.title}</strong></h3>`;
-                html += '<ul>';
-                for (const item of (sec.items || [])) {
-                    html += `<li>${item}</li>`;
-                }
-                html += '</ul>';
-            }
-        }
-        return html;
-    }
-
-    const strContent = typeof content === 'string' ? content : String(content);
-
-    // If it already strongly looks like HTML, return as-is
-    if (/<[a-z][\s\S]*>/i.test(strContent)) {
-        return strContent;
-    }
-
-    // Otherwise, parse plain text into HTML
-    const lines = strContent.split('\n');
-    let html = '';
-    let inList = false;
-
-    const isHeading = (text: string) => {
-        if (text.endsWith('?')) return true;
-        if (text.length < 100 && !text.endsWith('.') && !text.endsWith(',') && text.split(' ').length < 12) {
-            return true;
-        }
-        return false;
-    };
-
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-
-        if (!line) {
-            if (inList) {
-                html += '</ul>';
-                inList = false;
-            }
-            html += '<br />';
-            continue;
-        }
-
-        if (inList) {
-            if (isHeading(line) || line.length > 150) {
-                html += '</ul>';
-                inList = false;
-            } else {
-                html += `<li>${line}</li>`;
-                continue;
-            }
-        }
-
-        const prevLine = i > 0 ? lines[i - 1].trim() : '';
-        if (prevLine.endsWith(':') && line.length < 150 && !line.endsWith(':')) {
-            html += '<ul>';
-            html += `<li>${line}</li>`;
-            inList = true;
-            continue;
-        }
-
-        if (line.endsWith(':')) {
-            html += `<h3><strong>${line}</strong></h3>`;
-        } else if (line.endsWith('?') || isHeading(line)) {
-            html += `<h2><strong>${line}</strong></h2>`;
-        } else {
-            html += `<p>${line}</p>`;
-        }
-    }
-
-    if (inList) {
-        html += '</ul>';
-    }
-
-    return html;
-};
 
 export default function BlogSlugPage({ post }: BlogSlugPageProps) {
     const { stopLoading } = useLoading();
@@ -183,13 +95,7 @@ export default function BlogSlugPage({ post }: BlogSlugPageProps) {
                             </div>
 
                             <article
-                                className="prose prose-lg prose-slate dark:prose-invert max-w-none prose-img:rounded-2xl
-                                    prose-ul:list-none prose-ul:pl-0
-                                    prose-li:text-slate-700 prose-li:dark:text-slate-300
-                                    [&>ul>li]:relative [&>ul>li]:pl-8 [&>ul>li]:mb-4 last:[&>ul>li]:mb-0
-                                    [&>ul>li::before]:absolute [&>ul>li::before]:left-0 [&>ul>li::before]:top-1.5 [&>ul>li::before]:w-6 [&>ul>li::before]:h-6 [&>ul>li::before]:content-['']
-                                    [&>ul>li::before]:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNkYzI2MjYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjIgMTEuMDhWMTJhMTAgMTAgMCAxIDEtNS45My05LjE0Ii8+PHBhdGggZD0ibTkgMTEgMyAzTDIyIDQiLz48L3N2Zz4=')] [&>ul>li::before]:bg-no-repeat [&>ul>li::before]:bg-center [&>ul>li::before]:bg-contain
-                                "
+                                className="blog-content"
                                 dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
                             />
                         </motion.div>

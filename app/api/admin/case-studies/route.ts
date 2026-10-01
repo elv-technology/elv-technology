@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 export const dynamic = "force-dynamic";
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth';
+import { pickCaseStudyData } from '@/lib/content-input';
 
-const prisma = new PrismaClient();
+export async function GET(req: Request) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
 
-export async function GET() {
     try {
         const caseStudies = await prisma.caseStudy.findMany({
             orderBy: { createdAt: 'desc' }
@@ -18,21 +21,26 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
+
     try {
-        const body = await request.json();
+        const data: any = pickCaseStudyData(await request.json());
 
         // Ensure slug is unique if generating one or use provided
-        let slug = body.slug || body.project.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        const slug = data.slug || String(data.project || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
         const newCaseStudy = await prisma.caseStudy.create({
             data: {
-                ...body,
+                ...data,
                 slug,
             }
         });
 
         revalidatePath('/');
         revalidatePath('/case-studies');
+        revalidatePath('/case-studies/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
+        revalidatePath('/sitemap.xml');
 
         return NextResponse.json(newCaseStudy);
     } catch (error) {

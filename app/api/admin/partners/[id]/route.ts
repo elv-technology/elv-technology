@@ -2,11 +2,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { deleteFilesFromUploadThing } from "@/lib/uploadthing-server";
+import { requireAdmin } from '@/lib/auth';
 
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
   try {
     const body = await req.json();
     
@@ -44,6 +48,9 @@ export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
   try {
     // 1. Fetch partner to get logo URL before deletion
     const partner = await prisma.partner.findUnique({

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,6 +40,7 @@ interface ApplicationFormProps {
 }
 
 export default function ApplicationForm({ jobRoles }: ApplicationFormProps) {
+    const honeypotRef = useRef<HTMLInputElement>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -94,6 +95,7 @@ export default function ApplicationForm({ jobRoles }: ApplicationFormProps) {
             if (data.otherPosition) formData.append('otherPosition', data.otherPosition);
             if (data.message) formData.append('message', data.message);
             formData.append('isNotRobot', 'true');
+            formData.append('website', honeypotRef.current?.value || '');
             formData.append('file', selectedFile);
 
             const res = await fetch('/api/careers', {
@@ -147,6 +149,8 @@ export default function ApplicationForm({ jobRoles }: ApplicationFormProps) {
             </CardHeader>
             <CardContent className="p-8">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    {/* Honeypot: hidden from people; bots that fill it in are rejected by the server. */}
+                    <input ref={honeypotRef} type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
                     <div className="grid sm:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label htmlFor="fullName">Full Name</Label>

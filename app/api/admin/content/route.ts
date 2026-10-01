@@ -1,8 +1,12 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth';
 
-export async function GET() {
+export async function GET(req: Request) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const [blogs, caseStudies, testimonials, careers] = await Promise.all([
             prisma.blog.findMany(),

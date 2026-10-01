@@ -6,7 +6,7 @@ import SolutionDetailSection from "@/components/solutions/solution-detail-sectio
 import { CTASection } from "@/components/partners-clients/cta-section";
 
 export const metadata: Metadata = {
-  title: "Network & SMATV Solutions in Abu Dhabi | ETS Smart",
+  title: { absolute: "Network & SMATV Solutions in Abu Dhabi | ETS Smart" },
   description: "ETS Smart provides structured cabling, wireless network, SMATV, IPTV & IP phone solutions in Abu Dhabi. Trusted network & communications company in UAE.",
   alternates: {
     canonical: "https://www.etssmart.com/solutions/network-communications",

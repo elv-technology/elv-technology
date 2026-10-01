@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Source_Sans_3, Montserrat, Space_Grotesk, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Script from "next/script";
 import { Toaster } from "sonner";
@@ -8,29 +8,33 @@ import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
 import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 
-const sourceSans = Source_Sans_3({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
+// Fonts are bundled with the site (Latin variable fonts from Google Fonts, SIL Open Font License)
+// instead of next/font/google, which downloads them during every build and fails the build
+// whenever Google's font servers don't respond.
+const sourceSans = localFont({
+  src: "./fonts/source-sans-3-latin.woff2",
+  weight: "400 700",
   display: "swap",
   variable: "--font-source-sans",
 });
 
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
+const montserrat = localFont({
+  src: "./fonts/montserrat-latin.woff2",
+  weight: "400 700",
   display: "swap",
   variable: "--font-montserrat",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
+const spaceGrotesk = localFont({
+  src: "./fonts/space-grotesk-latin.woff2",
+  weight: "400 700",
   display: "swap",
   variable: "--font-space-grotesk",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: "./fonts/inter-latin.woff2",
+  weight: "100 900",
   display: "swap",
   variable: "--font-inter",
 });
@@ -69,7 +73,7 @@ export const metadata: Metadata = {
     description: "ETS Smart is an MCC-approved ELV company in Abu Dhabi offering CCTV, Access Control, AV Systems & Home Automation across the UAE.",
     images: [
       {
-        url: "/images/logo.svg",
+        url: "/images/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "ELV Technology Solutions Abu Dhabi",
@@ -80,7 +84,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ELV Companies in Abu Dhabi | MCC Approved – ETS Smart",
     description: "ETS Smart is an MCC-approved ELV company in Abu Dhabi offering CCTV, Access Control, AV Systems & Home Automation across the UAE.",
-    images: ["/images/logo.svg"],
+    images: ["/images/og-image.jpg"],
     creator: "@elv_technology",
   },
   robots: {

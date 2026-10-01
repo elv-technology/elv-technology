@@ -47,7 +47,7 @@ export function PartnersTabs({ initialData }: PartnersTabsProps) {
 
         async function fetchPartners() {
             try {
-                const res = await fetch('/api/admin/partners');
+                const res = await fetch('/api/public/partners');
                 const partners = await res.json();
                 const categories = buildCategories(partners);
                 setPartnerCategories(categories);

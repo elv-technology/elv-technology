@@ -8,97 +8,102 @@ datasource db {
 }
 
 model Blog {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  excerpt     String
-  content     String   @db.Text
-  image       String
-  category    String
-  author      String
-  date        DateTime @default(now())
-  published   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  title          String
+  excerpt        String
+  content        String   @db.Text
+  image          String
+  category       String
+  author         String
+  date           DateTime @default(now())
+  published      Boolean  @default(false)
+  seoTitle       String? // optional search-engine title (admin "SEO Title")
+  seoDescription String? // optional meta description
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model CaseStudy {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  project     String
-  client      String
-  image       String
-  overview    String   @db.Text
-  challenges  String[]
-  solution    Json
-  gallery     String[]
-  outcomes    String[]
-  location    String
-  isFeatured  Boolean  @default(false)
-  priority    Int      @default(100)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  project        String
+  client         String
+  image          String
+  overview       String   @db.Text
+  challenges     String[]
+  solution       Json
+  gallery        String[]
+  outcomes       String[]
+  location       String
+  isFeatured     Boolean  @default(false)
+  priority       Int      @default(100)
+  seoTitle       String? // optional search-engine title (admin "SEO Title")
+  seoDescription String? // optional meta description
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Career {
-  id          String   @id @default(cuid())
-  title       String
-  department  String
-  location    String
-  type        String
-  description String   @db.Text
+  id           String   @id @default(cuid())
+  title        String
+  department   String
+  location     String
+  type         String
+  description  String   @db.Text
   requirements String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Testimonial {
-  id          String   @id @default(cuid())
-  content     String   @db.Text
-  rating      Int      @default(5)
-  date        String
-  isNew       Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  rating    Int      @default(5)
+  date      String
+  isNew     Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model FAQ {
-  id          String   @id @default(cuid())
-  question    String
-  answer      String   @db.Text
-  category    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  category  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Partner {
-  id          String   @id @default(cuid())
-  name        String
-  logo        String
-  website     String?
-  category    String?
-  priority    Int      @default(100)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  logo      String
+  website   String?
+  category  String?
+  priority  Int      @default(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Client {
-  id          String   @id @default(cuid())
-  name        String
-  logo        String
-  category    String?
-  priority    Int      @default(100)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  logo      String
+  category  String?
+  priority  Int      @default(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model KnowledgeBase {
-  id        String                 @id @default(cuid())
-  content   String                 @db.Text
-  // embedding Unsupported("vector(768)")?
+  id        String                      @id @default(cuid())
+  content   String                      @db.Text
+  // pgvector column (created in the add_knowledge_base migration); read/written with raw SQL only.
+  embedding Unsupported("vector(768)")?
   category  String?
-  createdAt DateTime               @default(now())
-  updatedAt DateTime               @updatedAt
+  createdAt DateTime                    @default(now())
+  updatedAt DateTime                    @updatedAt
 }
 
 model Inquiry {
@@ -115,14 +120,14 @@ model Inquiry {
 }
 
 model Application {
-  id          String   @id @default(cuid())
-  fullName    String
-  email       String
-  phone       String
-  position    String
-  message     String?  @db.Text
-  resumeUrl   String?
-  status      String   @default("applied")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  fullName  String
+  email     String
+  phone     String
+  position  String
+  message   String?  @db.Text
+  resumeUrl String?
+  status    String   @default("applied")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
