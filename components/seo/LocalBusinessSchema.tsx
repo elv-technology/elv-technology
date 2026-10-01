@@ -1,11 +1,9 @@
-import Script from "next/script";
-
 export default function LocalBusinessSchema() {
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "ELV Technology Solutions (ETS Smart)",
-    "image": "https://www.etssmart.com/images/logo.svg",
+    "image": "https://www.etssmart.com/images/og-image.jpg",
     "@id": "https://www.etssmart.com/#localbusiness",
     "url": "https://www.etssmart.com",
     "telephone": "+97124418186",
@@ -59,10 +57,10 @@ export default function LocalBusinessSchema() {
   };
 
   return (
-    <Script
+    <script
       id="local-business-schema"
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData).replace(/</g, "\\u003c") }}
     />
   );
 }

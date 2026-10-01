@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from '@/lib/auth';
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
   try {
     const partners = await prisma.partner.findMany({
       orderBy: { priority: "asc" },
@@ -15,6 +19,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
   try {
     const body = await req.json();
     const partner = await prisma.partner.create({

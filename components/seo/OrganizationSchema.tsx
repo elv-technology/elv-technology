@@ -1,5 +1,3 @@
-import Script from "next/script";
-
 export default function OrganizationSchema() {
   const schemaData = {
     "@context": "https://schema.org",
@@ -25,10 +23,10 @@ export default function OrganizationSchema() {
   };
 
   return (
-    <Script
+    <script
       id="organization-schema"
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData).replace(/</g, "\\u003c") }}
     />
   );
 }

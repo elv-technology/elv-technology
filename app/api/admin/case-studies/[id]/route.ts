@@ -2,11 +2,16 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { deleteFilesFromUploadThing } from "@/lib/uploadthing-server";
+import { requireAdmin } from '@/lib/auth';
+import { pickCaseStudyData } from '@/lib/content-input';
 
 export async function GET(
     request: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
+
     try {
         const caseStudy = await prisma.caseStudy.findUnique({
             where: { id: params.id }
@@ -26,6 +31,9 @@ export async function PATCH(
     request: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
+
     try {
         const body = await request.json();
 
@@ -52,7 +60,7 @@ export async function PATCH(
 
         const updatedCaseStudy = await prisma.caseStudy.update({
             where: { id: params.id },
-            data: body
+            data: pickCaseStudyData(body)
         });
 
         revalidatePath('/');
@@ -74,6 +82,9 @@ export async function DELETE(
     request: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
+
     try {
         const caseStudy = await prisma.caseStudy.findUnique({
             where: { id: params.id },

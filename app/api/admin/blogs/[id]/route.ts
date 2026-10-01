@@ -3,11 +3,16 @@ import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { deleteFilesFromUploadThing } from "@/lib/uploadthing-server";
+import { requireAdmin } from '@/lib/auth';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 export async function GET(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const blog = await prisma.blog.findUnique({
             where: { id: params.id } // Note: Assuming find by ID first, can add fallback to slug if needed
@@ -27,6 +32,9 @@ export async function PATCH(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const body = await req.json();
         const { title, slug, excerpt, content, image, category, author, date } = body;
@@ -47,7 +55,7 @@ export async function PATCH(
                 title,
                 slug,
                 excerpt,
-                content,
+                content: typeof content === 'string' ? sanitizeHtml(content) : undefined,
                 image,
                 category,
                 author,
@@ -75,6 +83,9 @@ export async function DELETE(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         // Find the blog first to get the slug for revalidation and image URL for deletion
         const blog = await prisma.blog.findUnique({

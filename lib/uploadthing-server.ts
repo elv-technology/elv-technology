@@ -4,14 +4,17 @@ export const utapi = new UTApi();
 
 /**
  * Extracts the file key from an UploadThing URL.
- * Standard format: https://utfs.io/f/FILE_KEY
+ * Supports https://utfs.io/f/FILE_KEY and https://<appId>.ufs.sh/f/FILE_KEY
  */
 export function extractFileKey(url: string | null | undefined): string | null {
-    if (!url || !url.includes("utfs.io")) return null;
+    if (!url) return null;
     try {
-        const parts = url.split("/");
-        return parts[parts.length - 1];
-    } catch (e) {
+        const { hostname, pathname } = new URL(url);
+        // Old format: https://utfs.io/f/KEY   New format: https://<appId>.ufs.sh/f/KEY
+        if (hostname !== "utfs.io" && !hostname.endsWith(".ufs.sh")) return null;
+        const match = pathname.match(/^\/f\/([^/]+)$/);
+        return match ? match[1] : null;
+    } catch {
         return null;
     }
 }

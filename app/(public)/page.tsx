@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const caseStudies = await getCollection('case-studies', { take: 3 });
   const blogs = await getCollection('blogs', { take: 3 });
-  const testimonials = await getCollection('testimonials');
-  const faqs = await getCollection('faqs');
+  const testimonials = await getCollection('testimonials', { take: 100 });
+  const faqs = await getCollection('faqs', { take: 100 });
 
   const initialData = {
     caseStudies,

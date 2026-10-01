@@ -2,11 +2,15 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth';
 
 export async function GET(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const faq = await prisma.fAQ.findUnique({
             where: { id: params.id }
@@ -26,6 +30,9 @@ export async function PATCH(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const body = await req.json();
         const { question, answer } = body;
@@ -51,6 +58,9 @@ export async function DELETE(
     req: Request,
     { params }: { params: { id: string } }
 ) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         await prisma.fAQ.delete({
             where: { id: params.id }

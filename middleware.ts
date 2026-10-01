@@ -1,43 +1,41 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
 
-export function middleware(request: NextRequest) {
+const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
+function withNoIndex(response: NextResponse) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return response;
+}
+
+export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
-
-    // Protected admin routes (UI and API)
-    const isAdminRoute = path.startsWith('/admin');
     const isAdminApiRoute = path.startsWith('/api/admin');
-    const isAuthRoute = path.startsWith('/admin/login') || 
-                        path.startsWith('/api/admin/login') || 
-                        path.startsWith('/api/admin/logout');
 
-    if ((isAdminRoute || isAdminApiRoute) && !isAuthRoute) {
-        // Allow GET requests for specific public-facing admin API routes
-        const isPublicGetApi = request.method === 'GET' && (
-            path.startsWith('/api/admin/blogs') ||
-            path.startsWith('/api/admin/case-studies') ||
-            path.startsWith('/api/admin/careers') ||
-            path.startsWith('/api/admin/faq') ||
-            path.startsWith('/api/admin/partners') ||
-            path.startsWith('/api/admin/clients') ||
-            path.startsWith('/api/admin/testimonials') ||
-            path.startsWith('/api/admin/content')
-        );
-
-        if (isPublicGetApi) {
-            return NextResponse.next();
-        }
-
-        const isAdmin = request.cookies.get('admin_session')?.value;
-
-        if (!isAdmin) {
-            if (isAdminApiRoute) {
-                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-            }
-            return NextResponse.redirect(new URL('/admin/login', request.url));
+    // Block cross-site requests that change data (CSRF protection).
+    if (isAdminApiRoute && MUTATING_METHODS.has(request.method)) {
+        const origin = request.headers.get('origin');
+        if (!origin || origin !== request.nextUrl.origin) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
     }
 
-    return NextResponse.next();
+    const isAuthRoute = path === '/admin/login' ||
+                        path.startsWith('/api/admin/login') ||
+                        path.startsWith('/api/admin/logout');
+
+    if (!isAuthRoute) {
+        const session = await verifySessionToken(request.cookies.get(SESSION_COOKIE)?.value);
+
+        if (!session) {
+            if (isAdminApiRoute) {
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            }
+            return withNoIndex(NextResponse.redirect(new URL('/admin/login', request.url)));
+        }
+    }
+
+    return withNoIndex(NextResponse.next());
 }
 
 export const config = {

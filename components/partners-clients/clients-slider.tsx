@@ -37,7 +37,7 @@ export function ClientsSlider({ initialData }: ClientsSliderProps) {
 
         async function fetchClients() {
             try {
-                const res = await fetch('/api/admin/clients');
+                const res = await fetch('/api/public/clients');
                 const data = await res.json();
                 setClientsList(data);
             } catch (error) {

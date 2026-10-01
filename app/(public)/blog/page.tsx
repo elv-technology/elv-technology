@@ -18,7 +18,8 @@ export const metadata: Metadata = {
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function BlogPage() {
-    const posts = await getCollection('blogs', { take: 10 }) as Blog[];
+    // All published posts (without full content) so every article is linked from /blog and searchable.
+    const posts = await getCollection('blogs', { take: 500 }) as Blog[];
 
     return (
         <main>

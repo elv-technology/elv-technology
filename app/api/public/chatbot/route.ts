@@ -2,6 +2,19 @@ import { NextResponse } from 'next/server';
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { findRelevantContext } from '@/lib/chatbot/vector-store';
+import { z } from 'zod';
+import { rateLimit, getIp } from '@/lib/rate-limit';
+
+const CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || 'gemini-flash-latest';
+
+// Only plain user/assistant turns are accepted from the browser — never system prompts.
+const chatSchema = z.object({
+    message: z.string().trim().min(1).max(1000),
+    history: z.array(z.object({
+        role: z.enum(['user', 'assistant']),
+        content: z.string().transform(s => s.slice(0, 2000)),
+    })).transform(h => h.slice(-10)).optional().default([]),
+});
 
 const INTENTS = {
     OUT_OF_SCOPE: [
@@ -99,14 +112,12 @@ function shouldCaptureLead(input: string): boolean {
     return triggers.some(t => input.toLowerCase().includes(t));
 }
 
-import { rateLimit, getIp } from '@/lib/rate-limit';
-
 export async function POST(req: Request) {
     try {
         const ip = getIp(req);
         
         // Rate limit: 10 requests per minute per IP
-        if (!rateLimit(ip, { limit: 10, windowMs: 60 * 1000 })) {
+        if (!(await rateLimit(`chatbot:${ip}`, { limit: 10, windowMs: 60 * 1000 }))) {
             return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
         }
 
@@ -116,7 +127,11 @@ export async function POST(req: Request) {
             // We will proceed to try intents first, then fail gracefully at LLM step.
         }
 
-        const { message, history = [] } = await req.json();
+        const parsed = chatSchema.safeParse(await req.json());
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Invalid message' }, { status: 400 });
+        }
+        const { message, history } = parsed.data;
         const lowerMessage = message.toLowerCase();
 
         // 1. FAST PATH: Out of Scope
@@ -182,7 +197,7 @@ export async function POST(req: Request) {
 
         // 4. LLM GENERATION: Grounded by Context
         const { text } = await generateText({
-            model: google('gemini-1.5-flash'),
+            model: google(CHAT_MODEL),
             system: `${SYSTEM_PROMPT}\n\nCONTEXT FROM KNOWLEDGE BASE:\n${context}`,
             messages: [...history, { role: 'user', content: message }],
             temperature: 0.2, // Lower temperature for higher factuality
@@ -191,7 +206,7 @@ export async function POST(req: Request) {
         const captureLead = shouldCaptureLead(message) || shouldCaptureLead(text);
 
         // Logging
-        console.log(`[RAG-Chatbot] msg: "${message}" | context: ${context ? 'found' : 'none'} | capture: ${captureLead}`);
+        console.log(`[RAG-Chatbot] context: ${context ? 'found' : 'none'} | capture: ${captureLead}`);
 
         return NextResponse.json({ 
             text, 

@@ -95,7 +95,8 @@ model Client {
 model KnowledgeBase {
   id        String                 @id @default(cuid())
   content   String                 @db.Text
-  // embedding Unsupported("vector(768)")?
+  // pgvector column (created in the add_knowledge_base migration); read/written with raw SQL only.
+  embedding Unsupported("vector(768)")?
   category  String?
   createdAt DateTime               @default(now())
   updatedAt DateTime               @updatedAt

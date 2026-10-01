@@ -1,6 +1,9 @@
 import { MetadataRoute } from "next";
 import { getCollection } from "@/lib/db";
 
+// Regenerate at most once an hour so new posts appear without a redeploy.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.etssmart.com";
 

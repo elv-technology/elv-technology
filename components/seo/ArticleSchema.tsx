@@ -1,5 +1,3 @@
-import Script from "next/script";
-
 interface ArticleSchemaProps {
   title: string;
   description: string;
@@ -25,7 +23,7 @@ export default function ArticleSchema({
     "headline": title,
     "description": description,
     "url": url,
-    "image": image || "https://www.etssmart.com/images/logo.svg",
+    "image": image || "https://www.etssmart.com/images/og-image.jpg",
     "datePublished": datePublished || new Date().toISOString(),
     "dateModified": dateModified || datePublished || new Date().toISOString(),
     "author": {
@@ -48,10 +46,10 @@ export default function ArticleSchema({
   };
 
   return (
-    <Script
+    <script
       id={`article-schema-${title.toLowerCase().replace(/[^a-z0-9]/g, "-").slice(0, 30)}`}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData).replace(/</g, "\\u003c") }}
     />
   );
 }

@@ -2,8 +2,13 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth';
+import { sanitizeHtml } from '@/lib/sanitize';
 
-export async function GET() {
+export async function GET(req: Request) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const blogs = await prisma.blog.findMany({
             orderBy: { createdAt: 'desc' }
@@ -15,6 +20,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
+
     try {
         const body = await req.json();
         const { title, slug, excerpt, content, image, category, author, date } = body;
@@ -24,7 +32,7 @@ export async function POST(req: Request) {
                 title,
                 slug,
                 excerpt,
-                content, // Expecting stringified JSON based on BlogForm
+                content: sanitizeHtml(content), // HTML from the rich-text editor, stripped of unsafe markup
                 image,
                 category,
                 author,

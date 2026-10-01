@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "prisma generate && prisma db push && next build",
+    "build": "prisma generate && next build",
+    "db:migrate": "prisma migrate deploy",
+    "db:status": "prisma migrate status",
     "postinstall": "prisma generate",
     "start": "next start",
-    "seed:knowledge": "tsx scripts/seed-knowledge.ts",
+    "seed:knowledge": "npx --yes tsx scripts/seed-knowledge.ts",
+    "hash-password": "node scripts/hash-password.mjs",
     "lint": "next lint"
   },
   "dependencies": {
