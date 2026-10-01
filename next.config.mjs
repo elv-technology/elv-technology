@@ -160,6 +160,33 @@ const nextConfig = {
         source: '/access-control-installation-abu-dhabi.html',
         destination: '/solutions/security-surveillance#access-control',
         permanent: true,
+      },
+      // Old-site URLs still linked from blog content (found by the September 2026 SEO audit)
+      {
+        source: '/services.html',
+        destination: '/services',
+        permanent: true,
+      },
+      {
+        source: '/networking-communication-solutions.html',
+        destination: '/solutions/network-communications',
+        permanent: true,
+      },
+      {
+        source: '/iptv-solutions.html',
+        destination: '/solutions/network-communications#iptv-smatv',
+        permanent: true,
+      },
+      {
+        source: '/cctv-supplier-installation-service-abu-dhabi.html',
+        destination: '/solutions/security-surveillance',
+        permanent: true,
+      },
+      {
+        // A link written as "www.etssmart.com" without https:// resolves relative to the post
+        source: '/blog/www.etssmart.com',
+        destination: '/',
+        permanent: true,
       }
     ];
   },

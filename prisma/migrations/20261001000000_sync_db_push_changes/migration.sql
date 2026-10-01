@@ -5,6 +5,12 @@
 CREATE EXTENSION IF NOT EXISTS vector;
 ALTER TABLE "KnowledgeBase" ADD COLUMN IF NOT EXISTS "embedding" vector(768);
 
+-- Optional SEO title / meta description editable in the admin
+ALTER TABLE "Blog" ADD COLUMN IF NOT EXISTS "seoTitle" TEXT;
+ALTER TABLE "Blog" ADD COLUMN IF NOT EXISTS "seoDescription" TEXT;
+ALTER TABLE "CaseStudy" ADD COLUMN IF NOT EXISTS "seoTitle" TEXT;
+ALTER TABLE "CaseStudy" ADD COLUMN IF NOT EXISTS "seoDescription" TEXT;
+
 -- AlterTable
 ALTER TABLE "Partner" ADD COLUMN IF NOT EXISTS "priority" INTEGER NOT NULL DEFAULT 100;
 

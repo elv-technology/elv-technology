@@ -3,8 +3,17 @@ import { getCollection, getCaseStudyBySlug } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { caseStudyMetaTitle, metaDescription } from "@/lib/seo";
 
-export const dynamic = 'force-dynamic';
+// Cached for an hour like blog posts (the admin refreshes it immediately on every change),
+// instead of querying the database on every visit.
+export const revalidate = 3600;
+
+// Pre-builds every case study at deploy time and makes the route cacheable (see blog/[slug]/page.tsx).
+export async function generateStaticParams() {
+  const studies = (await getCollection('case-studies', { take: 500 })) as { slug: string }[];
+  return studies.map((study) => ({ slug: study.slug }));
+}
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const study = await getCaseStudyBySlug(params.slug);
@@ -16,8 +25,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   return {
-    title: { absolute: `${study.project} | Case Study – ETS Smart` },
-    description: study.overview || `${study.project} - Case study details and results by ETS Smart in Abu Dhabi, UAE.`,
+    title: { absolute: caseStudyMetaTitle(study.project, study.seoTitle) },
+    description: metaDescription(study.seoDescription, study.overview || `${study.project} - Case study details and results by ETS Smart in Abu Dhabi, UAE.`),
     alternates: {
       canonical: `https://www.etssmart.com/case-studies/${params.slug}`,
     },

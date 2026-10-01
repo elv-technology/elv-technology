@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import dbJson from "@/data/db.json";
 
@@ -22,6 +23,8 @@ const blogSelect = (includeContent: boolean) => ({
     date: true,
     createdAt: true,
     updatedAt: true,
+    seoTitle: true,
+    seoDescription: true,
     content: includeContent,
 });
 
@@ -36,6 +39,8 @@ const caseStudySelect = (includeContent: boolean) => ({
     priority: true,
     createdAt: true,
     updatedAt: true,
+    seoTitle: true,
+    seoDescription: true,
     overview: includeContent,
     challenges: includeContent,
     solution: includeContent,
@@ -49,8 +54,19 @@ const caseStudyOrder = [
     { createdAt: 'desc' as const },
 ];
 
-// The local JSON dataset is only used when the database cannot be reached.
+// The local JSON dataset is only used when the database cannot be reached, and only outside production
+// (or when USE_LOCAL_DATA_FALLBACK=true, e.g. for an offline test build).
+// In production a database error is re-thrown instead: pages are cached (ISR), and when a background
+// regeneration fails Next.js keeps serving the last good version. Falling back would instead cache sample
+// content, or a 404 for real case studies, for up to an hour.
 // An empty table is a valid state (e.g. all FAQs deleted) and must not bring back sample content.
+const allowJsonFallback = process.env.NODE_ENV !== "production" || process.env.USE_LOCAL_DATA_FALLBACK === "true";
+
+function handleDbError(what: string, error: unknown) {
+    if (!allowJsonFallback) throw error;
+    console.warn(`Prisma error for ${what}, falling back to local JSON dataset:`, error);
+}
+
 function jsonFallback(collection: string, skip: number, take: number): any[] {
     switch (collection) {
         case "blogs":
@@ -102,33 +118,33 @@ export const getCollection = async (collection: string, options: FetchOptions = 
                 return [];
         }
     } catch (error) {
-        console.warn(`Prisma error for collection '${collection}', falling back to local JSON dataset:`, error);
+        handleDbError(`collection '${collection}'`, error);
         return jsonFallback(collection, skip, take);
     }
 };
 
-/** Fetches one published blog post by slug (with content). */
-export const getBlogBySlug = async (slug: string): Promise<any | null> => {
+/** Fetches one published blog post by slug (with content). Cached per request, so metadata and page share one query. */
+export const getBlogBySlug = cache(async (slug: string): Promise<any | null> => {
     try {
         return await prisma.blog.findFirst({
             where: { slug, published: true },
             select: blogSelect(true),
         });
     } catch (error) {
-        console.warn(`Prisma error loading blog '${slug}', falling back to local JSON dataset:`, error);
+        handleDbError(`blog '${slug}'`, error);
         return (dbJson.blogs || []).find((b: any) => b.slug === slug && b.published !== false) ?? null;
     }
-};
+});
 
-/** Fetches one case study by slug (with content). */
-export const getCaseStudyBySlug = async (slug: string): Promise<any | null> => {
+/** Fetches one case study by slug (with content). Cached per request, so metadata and page share one query. */
+export const getCaseStudyBySlug = cache(async (slug: string): Promise<any | null> => {
     try {
         return await prisma.caseStudy.findUnique({
             where: { slug },
             select: caseStudySelect(true),
         });
     } catch (error) {
-        console.warn(`Prisma error loading case study '${slug}', falling back to local JSON dataset:`, error);
+        handleDbError(`case study '${slug}'`, error);
         return (dbJson.caseStudies || []).find((c: any) => c.slug === slug) ?? null;
     }
-};
+});

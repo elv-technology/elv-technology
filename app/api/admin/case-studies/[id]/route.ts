@@ -65,6 +65,8 @@ export async function PATCH(
 
         revalidatePath('/');
         revalidatePath('/case-studies');
+        revalidatePath('/case-studies/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
+        revalidatePath('/sitemap.xml');
         revalidatePath(`/case-studies/${updatedCaseStudy.slug}`);
 
         // If slug changed, revalidate the old path as well
@@ -105,6 +107,8 @@ export async function DELETE(
 
         revalidatePath('/');
         revalidatePath('/case-studies');
+        revalidatePath('/case-studies/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
+        revalidatePath('/sitemap.xml');
         if (caseStudy?.slug) {
             revalidatePath(`/case-studies/${caseStudy.slug}`);
         }

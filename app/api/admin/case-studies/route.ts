@@ -39,6 +39,8 @@ export async function POST(request: Request) {
 
         revalidatePath('/');
         revalidatePath('/case-studies');
+        revalidatePath('/case-studies/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
+        revalidatePath('/sitemap.xml');
 
         return NextResponse.json(newCaseStudy);
     } catch (error) {

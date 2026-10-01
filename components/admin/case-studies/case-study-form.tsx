@@ -13,6 +13,8 @@ import { ImageUpload } from '@/components/admin/image-upload';
 import { SuccessDialog } from '@/components/admin/success-dialog';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
+import { SeoFields } from '@/components/admin/seo-fields';
+import { caseStudyMetaTitle } from '@/lib/seo';
 
 const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -281,6 +283,19 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                     <CardHeader><CardTitle>Project Overview</CardTitle></CardHeader>
                     <CardContent>
                         <Textarea value={formData.overview} onChange={e => setFormData({ ...formData, overview: e.target.value })} rows={4} required />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader><CardTitle className="text-lg">Search Engine (SEO)</CardTitle></CardHeader>
+                    <CardContent>
+                        <SeoFields
+                            seoTitle={formData.seoTitle || ''}
+                            seoDescription={formData.seoDescription || ''}
+                            onChange={(field, value) => setFormData({ ...formData, [field]: value })}
+                            defaultTitle={caseStudyMetaTitle(formData.project || '')}
+                            defaultDescription={formData.overview || ''}
+                        />
                     </CardContent>
                 </Card>
 

@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth';
 import { sanitizeHtml } from '@/lib/sanitize';
+import { optionalText } from '@/lib/content-input';
 
 export async function GET(req: Request) {
     const denied = await requireAdmin(req);
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        const { title, slug, excerpt, content, image, category, author, date } = body;
+        const { title, slug, excerpt, content, image, category, author, date, seoTitle, seoDescription } = body;
 
         const blog = await prisma.blog.create({
             data: {
@@ -37,12 +38,16 @@ export async function POST(req: Request) {
                 category,
                 author,
                 date: date ? new Date(date) : undefined,
+                seoTitle: optionalText(seoTitle),
+                seoDescription: optionalText(seoDescription),
                 published: true
             }
         });
 
         revalidatePath('/');
         revalidatePath('/blog');
+        revalidatePath('/blog/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
+        revalidatePath('/sitemap.xml');
 
         return NextResponse.json(blog);
     } catch (error) {

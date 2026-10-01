@@ -35,10 +35,17 @@ Optional, recommended: add **Upstash Redis** from the Vercel Marketplace (Storag
 `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`, so rate limits are shared across all server instances.
 Without it, the limits still work, but only per instance.
 
-## 4. Sync the database migration history (one time)
+## 4. Sync the database migration history (one time) — before testing the Preview
 The build no longer runs `prisma db push`, which could drop data. Schema changes are now applied deliberately.
 The production tables already exist, so the migration history only needs to be marked as applied.
-Run these locally with `DATABASE_URL` set to the production `POSTGRES_URL` value:
+
+**Do this before step 5.** The new code reads new columns (SEO title / description), and Preview
+deployments use the production database, so the columns must exist first. The migration only *adds*
+things, so the old live site keeps working. After running it, do not redeploy the old code: its build
+runs `prisma db push`, which would remove the new columns again.
+
+Run these from the `elv-technology-main` folder (it reads the production database URL from `.env`).
+In PowerShell, use `npx.cmd` / `npm.cmd` instead of `npx` / `npm`:
 
 ```bash
 npx prisma migrate status
@@ -58,7 +65,8 @@ npx prisma migrate resolve --applied 20260412230452_add_knowledge_base
 npx prisma migrate deploy
 ```
 
-  The last command applies `20261001000000_sync_db_push_changes`. It only adds what is missing and is safe to run.
+  The last command applies `20261001000000_sync_db_push_changes`. It only adds what is missing
+  (the `vector` extension, the chatbot `embedding` column, the SEO title/description columns) and is safe to run.
 - Run `npx prisma migrate status` again. It should say the database schema is up to date.
 
 ## 5. Deploy to a Preview first, then test
@@ -76,11 +84,23 @@ Upload or push the code so that Vercel creates a **Preview** deployment, and che
 - [ ] `/sitemap.xml` lists the same URLs as before, plus any newer blog posts.
 - [ ] `/robots.txt` now also has `Disallow: /admin` and `Disallow: /api/`.
 - [ ] The old `.html` URLs (e.g. `/about-us.html`) still redirect to the same pages.
-- [ ] Page titles and descriptions are unchanged (view the page source of the home page, a blog post and a solution page).
+- [ ] Page titles are no longer doubled ("| ETS Smart | ETS Smart") and blog/case-study titles are 60 characters or less,
+      unless no automatic shortening was possible (see the SEO title field below).
+- [ ] The old broken links now redirect: `/services.html`, `/networking-communication-solutions.html`,
+      `/iptv-solutions.html`, `/cctv-supplier-installation-service-abu-dhabi.html`.
+- [ ] Editing a blog post or case study in the admin shows the new **SEO Title / Meta Description** fields
+      with a Google preview, and saving updates the live page title.
 - [ ] Google Rich Results Test passes for the home page and a blog post.
 - [ ] Sharing a page link on WhatsApp or LinkedIn shows the new preview image.
 
 Then promote the deployment to Production.
+
+**Right after promoting:** Google Search Console → URL Inspection → `https://www.etssmart.com/` → **Request indexing**
+(replaces the old "Something went wrong" snippet), then Sitemaps → resubmit `sitemap.xml`.
+
+**Database connections:** in Vercel → Storage → your database, if a **pooled** connection string is offered,
+use it for `DATABASE_URL`. Otherwise add `&connection_limit=1` to the end of `DATABASE_URL`. This stops traffic
+spikes (such as Google crawling many pages at once) from using up the database's connections.
 
 ## 6. Rotate all keys (they have been stored in local files and in Credentials.xlsx)
 Do this right after the production deploy. After each step, redeploy so the new value is used.

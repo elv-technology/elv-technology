@@ -15,6 +15,8 @@ import dynamic from 'next/dynamic';
 
 const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
+import { SeoFields } from '@/components/admin/seo-fields';
+import { blogMetaTitle } from '@/lib/seo';
 
 interface BlogFormProps {
     initialData?: any;
@@ -226,6 +228,13 @@ export function BlogForm({ initialData, isEditing }: BlogFormProps) {
                                     required
                                 />
                             </div>
+                            <SeoFields
+                                seoTitle={formData.seoTitle || ''}
+                                seoDescription={formData.seoDescription || ''}
+                                onChange={(field, value) => setFormData({ ...formData, [field]: value })}
+                                defaultTitle={blogMetaTitle(formData.title || '')}
+                                defaultDescription={formData.excerpt || ''}
+                            />
                             <div className="space-y-2">
                                 <Label htmlFor="author">Author</Label>
                                 <Input

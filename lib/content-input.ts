@@ -6,6 +6,10 @@ const toStringArray = (value: unknown): string[] | undefined =>
 const toOptionalString = (value: unknown): string | undefined =>
     typeof value === "string" ? value : undefined;
 
+/** Optional plain-text field: trimmed, empty becomes null (cleared), capped in length. */
+export const optionalText = (value: unknown, maxLength = 300): string | null =>
+    typeof value === "string" && value.trim() ? value.trim().slice(0, maxLength) : null;
+
 /** Only the editable case-study fields, with rich text sanitized. Unknown keys (id, createdAt, ...) are dropped. */
 export function pickCaseStudyData(body: any) {
     const solution = body?.solution && typeof body.solution === "object" && !Array.isArray(body.solution)
@@ -30,6 +34,8 @@ export function pickCaseStudyData(body: any) {
         solution,
         isFeatured: typeof body?.isFeatured === "boolean" ? body.isFeatured : undefined,
         priority: Number.isFinite(priority) ? priority : undefined,
+        seoTitle: body?.seoTitle === undefined ? undefined : optionalText(body.seoTitle),
+        seoDescription: body?.seoDescription === undefined ? undefined : optionalText(body.seoDescription),
     };
 
     // Drop undefined keys so PATCH only updates what was sent.
