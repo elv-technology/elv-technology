@@ -27,10 +27,6 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    // jsdom (used by isomorphic-dompurify on the server) breaks when bundled; load it from node_modules instead.
-    serverComponentsExternalPackages: ['isomorphic-dompurify', 'jsdom'],
-  },
   images: {
     remotePatterns: [
       {
