@@ -95,13 +95,7 @@ export default function BlogSlugPage({ post }: BlogSlugPageProps) {
                             </div>
 
                             <article
-                                className="prose prose-lg prose-slate dark:prose-invert max-w-none prose-img:rounded-2xl
-                                    prose-ul:list-none prose-ul:pl-0
-                                    prose-li:text-slate-700 prose-li:dark:text-slate-300
-                                    [&>ul>li]:relative [&>ul>li]:pl-8 [&>ul>li]:mb-4 last:[&>ul>li]:mb-0
-                                    [&>ul>li::before]:absolute [&>ul>li::before]:left-0 [&>ul>li::before]:top-1.5 [&>ul>li::before]:w-6 [&>ul>li::before]:h-6 [&>ul>li::before]:content-['']
-                                    [&>ul>li::before]:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNkYzI2MjYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjIgMTEuMDhWMTJhMTAgMTAgMCAxIDEtNS45My05LjE0Ii8+PHBhdGggZD0ibTkgMTEgMyAzTDIyIDQiLz48L3N2Zz4=')] [&>ul>li::before]:bg-no-repeat [&>ul>li::before]:bg-center [&>ul>li::before]:bg-contain
-                                "
+                                className="blog-content"
                                 dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
                             />
                         </motion.div>

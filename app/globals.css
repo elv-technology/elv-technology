@@ -69,6 +69,80 @@
   }
 }
 
+/*
+ * Blog article body. The HTML comes from the admin rich-text editor (often pasted from Google Docs),
+ * so the elements are styled directly: plain <p>, <h2>, <ul>/<ol>, <a>, <img> with no classes.
+ */
+@layer components {
+  .blog-content {
+    @apply text-lg leading-8 text-slate-700;
+    overflow-wrap: break-word;
+  }
+
+  .blog-content > :first-child { margin-top: 0; }
+  .blog-content > :last-child { margin-bottom: 0; }
+
+  .blog-content p { @apply mb-5; }
+
+  /* Empty lines from the editor (<p><br></p>) become a small gap instead of a full paragraph */
+  .blog-content p:has(> br:only-child) { @apply mb-0 h-3; }
+
+  .blog-content h1,
+  .blog-content h2,
+  .blog-content h3,
+  .blog-content h4 {
+    @apply text-slate-900;
+    line-height: 1.25;
+  }
+  .blog-content h1 { @apply mt-12 mb-5 text-3xl md:text-4xl; }
+  .blog-content h2 { @apply mt-12 mb-4 text-2xl md:text-3xl; }
+  .blog-content h3 { @apply mt-10 mb-3 text-xl md:text-2xl; }
+  .blog-content h4 { @apply mt-8 mb-3 text-lg md:text-xl; }
+
+  /* Headings directly after another heading don't need the large top gap */
+  .blog-content :is(h1, h2, h3, h4) + :is(h1, h2, h3, h4) { @apply mt-4; }
+
+  .blog-content strong,
+  .blog-content b { @apply font-semibold text-slate-900; }
+
+  .blog-content a { @apply font-medium underline decoration-red-600/40 underline-offset-4 transition-colors hover:text-red-600 hover:decoration-red-600; }
+
+  /* Bulleted lists use the red check icon */
+  .blog-content ul { @apply mb-6 space-y-3; }
+  .blog-content ul > li {
+    @apply relative pl-9;
+  }
+  .blog-content ul > li::before {
+    content: "";
+    @apply absolute left-0 top-1 h-6 w-6 bg-contain bg-center bg-no-repeat;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNkYzI2MjYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjIgMTEuMDhWMTJhMTAgMTAgMCAxIDEtNS45My05LjE0Ii8+PHBhdGggZD0ibTkgMTEgMyAzTDIyIDQiLz48L3N2Zz4=");
+  }
+
+  /* Numbered lists keep their numbers */
+  .blog-content ol { @apply mb-6 list-decimal space-y-3 pl-7 marker:font-semibold marker:text-red-600; }
+  .blog-content ol > li { @apply pl-2; }
+
+  /* Paragraphs inside list items shouldn't add extra space */
+  .blog-content li > p { @apply mb-0; }
+  .blog-content li > :is(ul, ol) { @apply mb-0 mt-3; }
+
+  .blog-content img { @apply my-8 h-auto max-w-full rounded-2xl; }
+
+  .blog-content blockquote { @apply my-8 border-l-4 border-red-600 bg-slate-50 py-4 pl-6 pr-4 italic text-slate-800; }
+
+  .blog-content hr { @apply my-10 border-slate-200; }
+
+  .blog-content table { @apply my-8 block w-full overflow-x-auto border-collapse text-base; }
+  .blog-content th,
+  .blog-content td { @apply border border-slate-200 px-4 py-2 text-left; }
+  .blog-content th { @apply bg-slate-50 font-semibold text-slate-900; }
+
+  /* Rich-text editor alignment classes */
+  .blog-content .ql-align-center { text-align: center; }
+  .blog-content .ql-align-right { text-align: right; }
+  .blog-content .ql-align-justify { text-align: justify; }
+}
+
 @keyframes fade-in-up {
   from {
     transform: translateY(20px);
