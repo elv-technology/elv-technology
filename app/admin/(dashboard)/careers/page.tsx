@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
     Table,
@@ -13,53 +12,17 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
+import type { Career } from '@prisma/client';
+import { useAdminCollection } from '@/hooks/admin/use-admin-collection';
+import type { Serialized } from '@/lib/admin/types';
 
 export default function CareersAdminPage() {
-    const [careers, setCareers] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchCareers();
-    }, []);
-
-    async function fetchCareers() {
-        try {
-            const res = await fetch('/api/admin/careers', { cache: 'no-store' });
-            const data = await res.json();
-
-            if (res.ok && Array.isArray(data)) {
-                setCareers(data);
-            } else {
-                setCareers([]);
-                // Only show error if it's not just "no data"
-                if (!res.ok) toast.error('Failed to load careers');
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Failed to load careers');
-            setCareers([]);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    async function deleteJob(id: string) {
-        if (!confirm('Delete this job opening?')) return;
-        try {
-            const res = await fetch(`/api/admin/careers/${id}`, {
-                method: 'DELETE',
-            });
-            if (res.ok) {
-                setCareers(careers.filter(c => c.id !== id));
-                toast.success('Job deleted');
-            } else {
-                throw new Error('Failed to delete');
-            }
-        } catch (error) {
-            toast.error('Failed to delete job');
-        }
-    }
+    const { items: careers, loading, remove } = useAdminCollection<Serialized<Career>>('/api/admin/careers', {
+        loadError: 'Failed to load careers',
+        deleteConfirm: 'Delete this job opening?',
+        deleteSuccess: 'Job deleted',
+        deleteError: 'Failed to delete job',
+    });
 
     return (
         <div className="space-y-6">
@@ -104,7 +67,7 @@ export default function CareersAdminPage() {
                                                         <Pencil className="h-4 w-4" />
                                                     </Link>
                                                 </Button>
-                                                <Button variant="outline" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => deleteJob(job.id)}>
+                                                <Button variant="outline" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => remove(job.id)}>
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </TableCell>

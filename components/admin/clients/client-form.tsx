@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/admin/fetch-json";
+import { resolveImage, saveEntity } from "@/lib/admin/save-entity";
+import type { ImageValue } from "@/lib/admin/types";
 import { Client } from "@prisma/client";
 
 interface ClientFormProps {
@@ -18,8 +21,8 @@ export function ClientForm({ initialData }: ClientFormProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
-    logo: (initialData?.logo as any) || null,
-    priority: initialData?.priority || 100,
+    logo: (initialData?.logo || null) as ImageValue,
+    priority: (initialData?.priority ?? 100) as number | "",
   });
 
   const handleSave = async () => {
@@ -30,37 +33,16 @@ export function ClientForm({ initialData }: ClientFormProps) {
 
     setLoading(true);
     try {
-      let logoUrl = formData.logo;
+      if (formData.logo instanceof File) toast.info("Uploading logo...");
+      const logo = await resolveImage(formData.logo);
+      await saveEntity("clients", initialData?.id, { ...formData, logo, priority: formData.priority === "" ? 100 : formData.priority });
 
-      // Handle deferred image upload
-      if (formData.logo instanceof File) {
-        toast.info("Uploading logo...");
-        const { uploadFiles } = await import("@/lib/uploadthing");
-        const res = await uploadFiles("imageUploader", {
-          files: [formData.logo],
-        });
-        logoUrl = res[0].url;
-      }
-
-      const url = initialData 
-        ? `/api/admin/clients/${initialData.id}` 
-        : "/api/admin/clients";
-      
-      const res = await fetch(url, {
-        method: initialData ? "PATCH" : "POST",
-        body: JSON.stringify({ ...formData, logo: logoUrl }),
-      });
-
-      if (res.ok) {
-        toast.success(initialData ? "Client updated" : "Client created");
-        router.push("/admin/clients");
-        router.refresh();
-      } else {
-        toast.error("Failed to save client");
-      }
+      toast.success(initialData ? "Client updated" : "Client created");
+      router.push("/admin/clients");
+      router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred");
+      toast.error(getErrorMessage(error, "Failed to save client"));
     } finally {
       setLoading(false);
     }
@@ -86,7 +68,7 @@ export function ClientForm({ initialData }: ClientFormProps) {
               id="priority"
               type="number"
               value={formData.priority}
-              onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
+              onChange={(e) => setFormData({ ...formData, priority: e.target.value === "" ? "" : Number(e.target.value) })}
             />
           </div>
         </div>
@@ -97,7 +79,6 @@ export function ClientForm({ initialData }: ClientFormProps) {
             value={formData.logo}
             onChange={(file) => setFormData({ ...formData, logo: file })}
             onRemove={() => setFormData({ ...formData, logo: null })}
-            endpoint="imageUploader"
           />
           <p className="text-xs text-slate-500 mt-2">
             Recommended: PNG or JPEG with high resolution

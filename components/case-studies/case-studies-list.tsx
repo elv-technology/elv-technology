@@ -22,7 +22,7 @@ export default function CaseStudiesList({ initialData }: { initialData: any[] })
 
       return matchesSearch;
     });
-  }, [searchQuery]);
+  }, [initialData, searchQuery]);
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950 py-24 sm:py-32">

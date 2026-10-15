@@ -2,11 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Image from "next/image";
-import { useLoading } from '@/hooks/use-loading';
 
 export default function SolutionsHero() {
-    const { stopLoading } = useLoading();
-
     return (
         <div className="relative">
             {/* Hero Image Banner - this merges with transparent header */}
@@ -16,7 +13,7 @@ export default function SolutionsHero() {
                     alt="ELV Solutions Engineering"
                     fill
                     priority
-                    onLoad={stopLoading}
+                    sizes="100vw"
                     className="object-cover opacity-60"
                 />
 

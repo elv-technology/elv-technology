@@ -1,10 +1,5 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
-import dbJson from "@/data/db.json";
-
-export const getDb = async () => {
-    return prisma;
-};
 
 export interface FetchOptions {
     skip?: number;
@@ -67,18 +62,31 @@ function handleDbError(what: string, error: unknown) {
     console.warn(`Prisma error for ${what}, falling back to local JSON dataset:`, error);
 }
 
-function jsonFallback(collection: string, skip: number, take: number): any[] {
+type JsonRow = Record<string, unknown>;
+type JsonDataset = Partial<Record<"blogs" | "caseStudies" | "careers" | "testimonials" | "faqs", JsonRow[]>>;
+
+/** Loaded on demand so the sample dataset is never bundled into the normal (database) path. */
+async function loadJsonDataset(): Promise<JsonDataset> {
+    return (await import("@/data/db.json")).default as JsonDataset;
+}
+
+const isPublished = (row: JsonRow) => row.published !== false;
+
+// Rows are loosely typed sample data; callers treat them like the Prisma results.
+async function jsonFallback(collection: string, skip: number, take: number): Promise<any[]> {
+    const data = await loadJsonDataset();
+    const page = (rows: JsonRow[] = []) => rows.slice(skip, skip + take);
     switch (collection) {
         case "blogs":
-            return (dbJson.blogs || []).filter((b: any) => b.published !== false).slice(skip, skip + take);
+            return page(data.blogs?.filter(isPublished));
         case "case-studies":
-            return (dbJson.caseStudies || []).slice(skip, skip + take);
+            return page(data.caseStudies);
         case "careers":
-            return (dbJson.careers || []).slice(skip, skip + take);
+            return page(data.careers);
         case "testimonials":
-            return (dbJson.testimonials || []).slice(skip, skip + take);
+            return page(data.testimonials);
         case "faqs":
-            return (dbJson.faqs || []).slice(skip, skip + take);
+            return page(data.faqs);
         default:
             return [];
     }
@@ -119,7 +127,7 @@ export const getCollection = async (collection: string, options: FetchOptions = 
         }
     } catch (error) {
         handleDbError(`collection '${collection}'`, error);
-        return jsonFallback(collection, skip, take);
+        return await jsonFallback(collection, skip, take);
     }
 };
 
@@ -132,7 +140,8 @@ export const getBlogBySlug = cache(async (slug: string): Promise<any | null> => 
         });
     } catch (error) {
         handleDbError(`blog '${slug}'`, error);
-        return (dbJson.blogs || []).find((b: any) => b.slug === slug && b.published !== false) ?? null;
+        const { blogs = [] } = await loadJsonDataset();
+        return blogs.find((b) => b.slug === slug && isPublished(b)) ?? null;
     }
 });
 
@@ -145,6 +154,7 @@ export const getCaseStudyBySlug = cache(async (slug: string): Promise<any | null
         });
     } catch (error) {
         handleDbError(`case study '${slug}'`, error);
-        return (dbJson.caseStudies || []).find((c: any) => c.slug === slug) ?? null;
+        const { caseStudies = [] } = await loadJsonDataset();
+        return caseStudies.find((c) => c.slug === slug) ?? null;
     }
 });

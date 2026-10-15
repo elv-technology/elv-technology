@@ -1,24 +1,13 @@
 export const dynamic = 'force-dynamic';
-import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { adminRoute, deleted } from '@/lib/api';
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+type Params = { id: string };
 
-  try {
-    const { id } = params;
-    await prisma.application.delete({
-      where: { id },
-    });
+export const DELETE = adminRoute<Params>('delete application', async (_req, { params }) => {
+  await prisma.application.delete({
+    where: { id: params.id },
+  });
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Failed to delete application:', error);
-    return NextResponse.json({ error: 'Failed to delete application' }, { status: 500 });
-  }
-}
+  return deleted();
+});

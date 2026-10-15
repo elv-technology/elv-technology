@@ -1,50 +1,29 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
-export const dynamic = "force-dynamic";
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
-import { pickCaseStudyData } from '@/lib/content-input';
+import { adminRoute, jsonError, parseBody } from '@/lib/api';
+import { caseStudySchema } from '@/lib/content-input';
+import { revalidateCaseStudy } from '@/lib/revalidate';
+import { slugify } from '@/lib/utils';
 
-export async function GET(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const GET = adminRoute('fetch case studies', async () => {
+    const caseStudies = await prisma.caseStudy.findMany({
+        orderBy: { createdAt: 'desc' }
+    });
+    return NextResponse.json(caseStudies);
+});
 
-    try {
-        const caseStudies = await prisma.caseStudy.findMany({
-            orderBy: { createdAt: 'desc' }
-        });
-        return NextResponse.json(caseStudies);
-    } catch (error) {
-        console.error('Failed to fetch case studies:', error);
-        return NextResponse.json({ error: 'Failed to fetch case studies' }, { status: 500 });
-    }
-}
+export const POST = adminRoute('create case study', async (request) => {
+    const data = await parseBody(request, caseStudySchema);
 
-export async function POST(request: Request) {
-    const denied = await requireAdmin(request);
-    if (denied) return denied;
+    const slug = slugify(data.slug || data.project);
+    if (!slug) return jsonError('Slug is required', 400);
 
-    try {
-        const data: any = pickCaseStudyData(await request.json());
+    const newCaseStudy = await prisma.caseStudy.create({
+        data: { ...data, slug }
+    });
 
-        // Ensure slug is unique if generating one or use provided
-        const slug = data.slug || String(data.project || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    revalidateCaseStudy(newCaseStudy.slug);
 
-        const newCaseStudy = await prisma.caseStudy.create({
-            data: {
-                ...data,
-                slug,
-            }
-        });
-
-        revalidatePath('/');
-        revalidatePath('/case-studies');
-        revalidatePath('/case-studies/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
-        revalidatePath('/sitemap.xml');
-
-        return NextResponse.json(newCaseStudy);
-    } catch (error) {
-        console.error('Failed to create case study:', error);
-        return NextResponse.json({ error: 'Failed to create case study' }, { status: 500 });
-    }
-}
+    return NextResponse.json(newCaseStudy);
+});

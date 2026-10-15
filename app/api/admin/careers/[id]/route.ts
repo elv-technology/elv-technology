@@ -1,80 +1,41 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth';
+import { adminRoute, deleted, jsonError, parseBody } from '@/lib/api';
+import { careerSchema } from '@/lib/content-input';
+import { revalidateCareers } from '@/lib/revalidate';
 
-export async function GET(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+type Params = { id: string };
 
-    try {
-        const career = await prisma.career.findUnique({
-            where: { id: params.id }
-        });
+export const GET = adminRoute<Params>('fetch career', async (_req, { params }) => {
+    const item = await prisma.career.findUnique({
+        where: { id: params.id }
+    });
 
-        if (!career) {
-            return NextResponse.json({ error: 'Career not found' }, { status: 404 });
-        }
+    if (!item) return jsonError('Career not found', 404);
 
-        return NextResponse.json(career);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch career' }, { status: 500 });
-    }
-}
+    return NextResponse.json(item);
+});
 
-export async function PATCH(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const PATCH = adminRoute<Params>('update career', async (req, { params }) => {
+    const data = await parseBody(req, careerSchema.partial());
 
-    try {
-        const body = await req.json();
-        const { title, department, location, type, description, requirements } = body;
+    const item = await prisma.career.update({
+        where: { id: params.id },
+        data,
+    });
 
-        const career = await prisma.career.update({
-            where: { id: params.id },
-            data: {
-                title,
-                department,
-                location,
-                type,
-                description,
-                requirements
-            }
-        });
+    revalidateCareers();
 
-        revalidatePath('/careers');
+    return NextResponse.json(item);
+});
 
-        return NextResponse.json(career);
-    } catch (error) {
-        console.error('Failed to update career:', error);
-        return NextResponse.json({ error: 'Failed to update career' }, { status: 500 });
-    }
-}
+export const DELETE = adminRoute<Params>('delete career', async (_req, { params }) => {
+    await prisma.career.delete({
+        where: { id: params.id }
+    });
 
-export async function DELETE(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+    revalidateCareers();
 
-    try {
-        await prisma.career.delete({
-            where: { id: params.id }
-        });
-
-        revalidatePath('/careers');
-
-        return NextResponse.json({ message: 'Career deleted successfully' });
-    } catch (error) {
-        console.error('Failed to delete career:', error);
-        return NextResponse.json({ error: 'Failed to delete career' }, { status: 500 });
-    }
-}
+    return deleted();
+});

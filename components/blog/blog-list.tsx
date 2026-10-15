@@ -14,7 +14,7 @@ export default function BlogList({ initialPosts }: { initialPosts: any[] }) {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
 
-    const blogPosts = initialPosts || [];
+    const blogPosts = useMemo(() => initialPosts || [], [initialPosts]);
     
     const categories = useMemo(() => {
         const cats = new Set(blogPosts.map(post => post.category));
@@ -90,6 +90,7 @@ export default function BlogList({ initialPosts }: { initialPosts: any[] }) {
                                                 src={featuredPost.image}
                                                 alt={featuredPost.title}
                                                 fill
+                                                sizes="(max-width: 1024px) 100vw, 600px"
                                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                                 priority
                                             />
@@ -169,6 +170,7 @@ export default function BlogList({ initialPosts }: { initialPosts: any[] }) {
                                                 src={post.image}
                                                 alt={post.title}
                                                 fill
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
                                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                             />
                                         </div>

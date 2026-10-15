@@ -33,7 +33,6 @@ export async function deleteFilesFromUploadThing(urls: string | string[] | null 
 
         if (keys.length > 0) {
             await utapi.deleteFiles(keys);
-            console.log(`[UploadThing] Automatically deleted ${keys.length} files:`, keys);
         }
     } catch (error) {
         console.error("[UploadThing] Error during automatic deletion:", error);

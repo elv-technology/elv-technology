@@ -1,32 +1,16 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Phone, Mail } from "lucide-react";
+import FadeIn from "@/components/fade-in";
 
 export default function CTASection() {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="py-24 lg:py-32 bg-white border-t border-slate-100">
+    <section className="py-24 lg:py-32 bg-white border-t border-slate-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div
-          className={`relative rounded-3xl bg-accent overflow-hidden transition-all duration-1000 ${isVisible
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-12"
-            }`}
+        <FadeIn
+          className="relative rounded-3xl bg-accent overflow-hidden transition-all duration-1000"
+          visibleClassName="opacity-100 translate-y-0"
+          hiddenClassName="opacity-0 translate-y-12"
+          threshold={0.2}
         >
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-[0.04]">
@@ -96,7 +80,7 @@ export default function CTASection() {
               </div>
             </div>
           </div>
-        </div>
+        </FadeIn>
       </div>
     </section>
   );

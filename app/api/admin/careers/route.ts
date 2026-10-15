@@ -1,47 +1,22 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { adminRoute, parseBody } from '@/lib/api';
+import { careerSchema } from '@/lib/content-input';
+import { revalidateCareers } from '@/lib/revalidate';
 
-export async function GET(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const GET = adminRoute('fetch careers', async () => {
+    const items = await prisma.career.findMany({
+        orderBy: { createdAt: 'desc' }
+    });
+    return NextResponse.json(items);
+});
 
-    try {
-        const careers = await prisma.career.findMany({
-            orderBy: { createdAt: 'desc' }
-        });
-        return NextResponse.json(careers);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch careers' }, { status: 500 });
-    }
-}
+export const POST = adminRoute('create career', async (req) => {
+    const data = await parseBody(req, careerSchema);
+    const item = await prisma.career.create({ data });
 
-export async function POST(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+    revalidateCareers();
 
-    try {
-        const body = await req.json();
-        const { title, location, type, description, department, requirements } = body;
-
-        const career = await prisma.career.create({
-            data: {
-                title,
-                location,
-                type,
-                description,
-                requirements: requirements || [],
-                department: department || 'General'
-            }
-        });
-
-        revalidatePath('/careers');
-
-        return NextResponse.json(career);
-    } catch (error) {
-        console.error('Failed to create career:', error);
-        return NextResponse.json({ error: 'Failed to create career' }, { status: 500 });
-    }
-}
+    return NextResponse.json(item);
+});

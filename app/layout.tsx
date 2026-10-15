@@ -4,7 +4,6 @@ import "./globals.css";
 import Script from "next/script";
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
 import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema";
 
@@ -108,13 +107,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        {/* Preload hero poster image — instant LCP paint before video loads */}
-        <link
-          rel="preload"
-          href="/images/home/hero_poster.jpg"
-          as="image"
-          type="image/jpeg"
-        />
         {/* Google Analytics (GA4) */}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
@@ -137,7 +129,6 @@ export default function RootLayout({
         {children}
         <OrganizationSchema />
         <LocalBusinessSchema />
-        <BreadcrumbSchema />
         <SpeedInsights />
         <Toaster richColors position="top-right" />
       </body>

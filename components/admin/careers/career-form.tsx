@@ -10,9 +10,13 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Save, X } from 'lucide-react';
 import { SuccessDialog } from '@/components/admin/success-dialog';
+import { getErrorMessage } from '@/lib/admin/fetch-json';
+import { saveEntity } from '@/lib/admin/save-entity';
+import type { ClientRecord } from '@/lib/admin/types';
+import type { Career } from '@prisma/client';
 
 interface CareerFormProps {
-    initialData?: any;
+    initialData?: ClientRecord<Career>;
     isEditing?: boolean;
 }
 
@@ -41,30 +45,13 @@ export function CareerForm({ initialData, isEditing }: CareerFormProps) {
         setLoading(true);
 
         try {
-            const url = isEditing
-                ? `/api/admin/careers/${initialData.id}`
-                : '/api/admin/careers';
-
-            const method = isEditing ? 'PATCH' : 'POST';
-
-            const payload = {
+            await saveEntity('careers', isEditing ? initialData?.id : undefined, {
                 ...formData,
                 requirements: formData.requirements.split('\n').map((req: string) => req.trim()).filter(Boolean)
-            };
-
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
             });
-
-            if (res.ok) {
-                setShowSuccessDialog(true);
-            } else {
-                throw new Error('Failed to save');
-            }
+            setShowSuccessDialog(true);
         } catch (error) {
-            toast.error('Error saving career opening');
+            toast.error(getErrorMessage(error, 'Error saving career opening'));
         } finally {
             setLoading(false);
         }

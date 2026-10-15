@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -10,10 +10,14 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Trash2, Search, Eye, Filter } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Trash2, Search, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import type { Inquiry } from '@prisma/client';
+import { useAdminCollection } from '@/hooks/admin/use-admin-collection';
+import { fetchJson, getErrorMessage } from '@/lib/admin/fetch-json';
+import type { Serialized } from '@/lib/admin/types';
 import {
   Dialog,
   DialogContent,
@@ -23,69 +27,26 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+type InquiryStatus = 'new' | 'read' | 'replied';
+
 export default function InquiriesAdminPage() {
-  const [inquiries, setInquiries] = useState<any[]>([]);
+  const { items: inquiries, setItems: setInquiries, loading, remove } = useAdminCollection<Serialized<Inquiry>>('/api/admin/inquiries', {
+    loadError: 'Failed to load inquiries',
+    deleteConfirm: 'Are you sure you want to delete this inquiry?',
+    deleteSuccess: 'Inquiry deleted successfully',
+    deleteError: 'Failed to delete inquiry',
+  });
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [selectedInquiry, setSelectedInquiry] = useState<any>(null);
 
-  useEffect(() => {
-    fetchInquiries();
-  }, []);
-
-  async function fetchInquiries() {
+  async function updateStatus(id: string, newStatus: InquiryStatus) {
     try {
-      const res = await fetch('/api/admin/inquiries', { cache: 'no-store' });
-      const data = await res.json();
-
-      if (res.ok && Array.isArray(data)) {
-        setInquiries(data);
-      } else {
-        setInquiries([]);
-        if (!res.ok) toast.error('Failed to load inquiries');
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to load inquiries');
-      setInquiries([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function deleteInquiry(id: string) {
-    if (!confirm('Are you sure you want to delete this inquiry?')) return;
-
-    try {
-      const res = await fetch(`/api/admin/inquiries/${id}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        setInquiries(inquiries.filter(i => i.id !== id));
-        toast.success('Inquiry deleted successfully');
-      } else {
-        throw new Error('Failed to delete');
-      }
-    } catch (error) {
-      toast.error('Failed to delete inquiry');
-    }
-  }
-
-  async function updateStatus(id: string, newStatus: string) {
-    try {
-      const res = await fetch(`/api/admin/inquiries/${id}`, {
+      await fetchJson(`/api/admin/inquiries/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       });
-      if (res.ok) {
-        setInquiries(inquiries.map(i => i.id === id ? { ...i, status: newStatus } : i));
-        if (selectedInquiry?.id === id) {
-          setSelectedInquiry({ ...selectedInquiry, status: newStatus });
-        }
-      }
+      setInquiries(prev => prev.map(i => i.id === id ? { ...i, status: newStatus } : i));
     } catch (error) {
-      console.error('Failed to update status');
+      toast.error(getErrorMessage(error, 'Failed to update status'));
     }
   }
 
@@ -168,7 +129,6 @@ export default function InquiriesAdminPage() {
                               variant="outline" 
                               size="icon" 
                               onClick={() => {
-                                setSelectedInquiry(item);
                                 if (item.status === 'new') updateStatus(item.id, 'read');
                               }}
                             >
@@ -217,7 +177,7 @@ export default function InquiriesAdminPage() {
                                   variant="destructive"
                                   size="sm"
                                   onClick={() => {
-                                    deleteInquiry(item.id);
+                                    remove(item.id);
                                   }}
                                 >
                                   Delete Inquiry
@@ -230,7 +190,7 @@ export default function InquiriesAdminPage() {
                           variant="outline"
                           size="icon"
                           className="text-red-500 hover:text-red-600 border-red-100 hover:bg-red-50"
-                          onClick={() => deleteInquiry(item.id)}
+                          onClick={() => remove(item.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

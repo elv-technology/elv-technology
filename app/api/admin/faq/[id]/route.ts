@@ -1,76 +1,41 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { adminRoute, deleted, jsonError, parseBody } from '@/lib/api';
+import { faqSchema } from '@/lib/content-input';
+import { revalidateHome } from '@/lib/revalidate';
 
-export async function GET(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+type Params = { id: string };
 
-    try {
-        const faq = await prisma.fAQ.findUnique({
-            where: { id: params.id }
-        });
+export const GET = adminRoute<Params>('fetch FAQ', async (_req, { params }) => {
+    const item = await prisma.fAQ.findUnique({
+        where: { id: params.id }
+    });
 
-        if (!faq) {
-            return NextResponse.json({ error: 'FAQ not found' }, { status: 404 });
-        }
+    if (!item) return jsonError('FAQ not found', 404);
 
-        return NextResponse.json(faq);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch FAQ' }, { status: 500 });
-    }
-}
+    return NextResponse.json(item);
+});
 
-export async function PATCH(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const PATCH = adminRoute<Params>('update FAQ', async (req, { params }) => {
+    const data = await parseBody(req, faqSchema.partial());
 
-    try {
-        const body = await req.json();
-        const { question, answer } = body;
+    const item = await prisma.fAQ.update({
+        where: { id: params.id },
+        data,
+    });
 
-        const faq = await prisma.fAQ.update({
-            where: { id: params.id },
-            data: {
-                question,
-                answer
-            }
-        });
+    revalidateHome();
 
-        revalidatePath('/');
+    return NextResponse.json(item);
+});
 
-        return NextResponse.json(faq);
-    } catch (error) {
-        console.error('Failed to update FAQ:', error);
-        return NextResponse.json({ error: 'Failed to update FAQ' }, { status: 500 });
-    }
-}
+export const DELETE = adminRoute<Params>('delete FAQ', async (_req, { params }) => {
+    await prisma.fAQ.delete({
+        where: { id: params.id }
+    });
 
-export async function DELETE(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+    revalidateHome();
 
-    try {
-        await prisma.fAQ.delete({
-            where: { id: params.id }
-        });
-
-        revalidatePath('/');
-
-        return NextResponse.json({ message: 'FAQ deleted successfully' });
-    } catch (error) {
-        console.error('Failed to delete FAQ:', error);
-        return NextResponse.json({ error: 'Failed to delete FAQ' }, { status: 500 });
-    }
-}
+    return deleted();
+});

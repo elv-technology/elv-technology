@@ -1,26 +1,17 @@
 import ContactDetails from '@/components/contact/contact-details';
 import ContactForm from '@/components/contact/contact-form';
 import Hero from '@/components/contact/hero';
-import { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: {
-    absolute: "Contact Us | ELV Solutions Abu Dhabi | ETS Smart"
-  },
+export const metadata = pageMetadata({
+  title: "Contact Us | ELV Solutions Abu Dhabi | ETS Smart",
   description: "Get in touch with ELV Technology Solutions (ETS Smart) in Abu Dhabi. Contact us for CCTV installation, access control, AV systems & ELV solutions in UAE.",
-  alternates: {
-    canonical: "https://www.etssmart.com/contact",
-  },
-  openGraph: {
-    title: "Contact Us | ELV Solutions Abu Dhabi | ETS Smart",
-    description: "Get in touch with ELV Technology Solutions (ETS Smart) in Abu Dhabi. Contact us for CCTV installation, access control, AV systems & ELV solutions in UAE.",
-    url: "https://www.etssmart.com/contact",
-  },
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (
-    <main>
+    <div>
       <Hero />
       <section className="py-24 sm:py-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,7 +21,7 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
 

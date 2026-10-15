@@ -1,12 +1,9 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
-import { CONTACT_CONFIG } from '@/lib/contact-config';
 import { prisma } from '@/lib/prisma';
 import { rateLimit, getIp } from '@/lib/rate-limit';
-import { escapeHtml, toHeaderSafe } from '@/lib/escape-html';
+import { escapeHtml } from '@/lib/escape-html';
+import { sendSiteEmail } from '@/lib/mail';
 import { z } from 'zod';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const contactSchema = z.object({
   name: z.string().trim().min(2).max(100),
@@ -34,7 +31,7 @@ export async function POST(req: Request) {
     // Server-side validation
     const validation = contactSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json({ error: 'Invalid input data', details: validation.error.format() }, { status: 400 });
+      return NextResponse.json({ error: 'Please check the form and try again.' }, { status: 400 });
     }
 
     const { name, email, phone, subject, message, source } = validation.data;
@@ -57,12 +54,8 @@ export async function POST(req: Request) {
       console.error('Failed to save inquiry to database:', dbError);
     }
 
-    const senderAddress = process.env.CONTACT_FROM_EMAIL || 'info@etssmart.com';
-    const fromEmail = `${toHeaderSafe(name)} (${toHeaderSafe(email)}) <${senderAddress}>`;
-
     const sourceName = source === 'chatbot' ? 'ETS Chatbot' : 'Contact Form';
     const emailSubject = `New Lead from ${sourceName}`;
-    const toEmail = process.env.CONTACT_TO_EMAIL || CONTACT_CONFIG.toEmail;
 
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
@@ -70,10 +63,9 @@ export async function POST(req: Request) {
     const safeSubject = escapeHtml(subject);
     const safeMessage = escapeHtml(message).replace(/\n/g, '<br />');
 
-    const { error: sendError } = await resend.emails.send({
-      from: fromEmail,
-      to: [toEmail],
-      replyTo: email,
+    const sent = await sendSiteEmail({
+      senderName: name,
+      senderEmail: email,
       subject: emailSubject,
       html: `
         <div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
@@ -106,10 +98,9 @@ export async function POST(req: Request) {
           </p>
         </div>
       `,
-    });
+    }, 'contact');
 
-    if (sendError) {
-      console.error('Resend error (contact):', sendError);
+    if (!sent) {
       // The inquiry is still visible in the admin dashboard, so only fail if it was lost entirely.
       if (savedToDb) return NextResponse.json({ success: true });
       return NextResponse.json({ error: 'Failed to send message. Please try again later.' }, { status: 502 });

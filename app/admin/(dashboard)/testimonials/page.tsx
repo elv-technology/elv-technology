@@ -18,24 +18,29 @@ import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Pencil, Trash2, Star } from 'lucide-react';
 import { toast } from 'sonner';
-import { ImageUpload } from '@/components/admin/image-upload';
+import type { Testimonial } from '@prisma/client';
+import { useAdminCollection } from '@/hooks/admin/use-admin-collection';
+import { getErrorMessage } from '@/lib/admin/fetch-json';
+import { saveEntity } from '@/lib/admin/save-entity';
+import type { Serialized } from '@/lib/admin/types';
 
 export default function TestimonialsAdminPage() {
-    const [testimonials, setTestimonials] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [editing, setEditing] = useState<any>(null);
+    const { items: testimonials, setItems: setTestimonials, loading, remove } = useAdminCollection<Serialized<Testimonial>>('/api/admin/testimonials', {
+        loadError: 'Failed to load testimonials',
+        deleteConfirm: 'Delete this testimonial?',
+        deleteSuccess: 'Testimonial deleted',
+        deleteError: 'Failed to delete testimonial',
+    });
+    const [editing, setEditing] = useState<Serialized<Testimonial> | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
-    // Form state
     const [formData, setFormData] = useState({
         content: '',
         rating: 5,
         date: '',
         isNew: false
     });
-
-    useEffect(() => { fetchContent(); }, []);
 
     useEffect(() => {
         if (editing) {
@@ -55,69 +60,28 @@ export default function TestimonialsAdminPage() {
         }
     }, [editing, isDialogOpen]);
 
-    async function fetchContent() {
-        try {
-            const res = await fetch('/api/admin/content');
-            const data = await res.json();
-            setTestimonials(data.testimonials || []);
-        } catch (error) { toast.error('Failed to load testimonials'); }
-        finally { setLoading(false); }
-    }
-
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
 
         try {
-            const url = editing
-                ? `/api/admin/testimonials/${editing.id}`
-                : '/api/admin/testimonials';
-
-            const method = editing ? 'PATCH' : 'POST';
-
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            const responseData = await res.json();
-
-            if (res.ok) {
-                if (editing) {
-                    setTestimonials(testimonials.map(t => t.id === editing.id ? responseData : t));
-                    toast.success('Testimonial updated successfully!');
-                } else {
-                    setTestimonials([responseData, ...testimonials]);
-                    toast.success('Testimonial added successfully!');
-                }
-                setIsDialogOpen(false);
-                setEditing(null);
+            const saved = await saveEntity<Serialized<Testimonial>>('testimonials', editing?.id, formData);
+            if (editing) {
+                setTestimonials(prev => prev.map(t => t.id === editing.id ? saved : t));
+                toast.success('Testimonial updated successfully!');
             } else {
-                throw new Error(responseData.error || 'Failed to save testimonial');
+                setTestimonials(prev => [saved, ...prev]);
+                toast.success('Testimonial added successfully!');
             }
-        } catch (error: any) {
-            toast.error(error.message || 'An unexpected error occurred while saving.');
+            setIsDialogOpen(false);
+            setEditing(null);
+        } catch (error) {
+            toast.error(getErrorMessage(error, 'An unexpected error occurred while saving.'));
             console.error('Save error:', error);
         } finally {
             setIsSaving(false);
         }
     };
-
-    async function deleteItem(id: string) {
-        if (!confirm('Delete this testimonial?')) return;
-        try {
-            const res = await fetch(`/api/admin/testimonials/${id}`, {
-                method: 'DELETE',
-            });
-            if (res.ok) {
-                setTestimonials(testimonials.filter(t => t.id !== id));
-                toast.success('Testimonial deleted');
-            } else {
-                throw new Error('Failed to delete');
-            }
-        } catch (error) { toast.error('Error'); }
-    }
 
     return (
         <div className="space-y-6">
@@ -151,7 +115,7 @@ export default function TestimonialsAdminPage() {
                                         <Slider
                                             min={1}
                                             max={5}
-                                            step={0.5}
+                                            step={1}
                                             value={[formData.rating]}
                                             onValueChange={([val]) => setFormData({ ...formData, rating: val })}
                                         />
@@ -214,7 +178,7 @@ export default function TestimonialsAdminPage() {
                                                 <Button variant="outline" size="icon" onClick={() => { setEditing(t); setIsDialogOpen(true); }}>
                                                     <Pencil className="h-4 w-4" />
                                                 </Button>
-                                                <Button variant="outline" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => deleteItem(t.id)}>
+                                                <Button variant="outline" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => remove(t.id)}>
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </TableCell>

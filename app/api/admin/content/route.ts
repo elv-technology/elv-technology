@@ -1,28 +1,15 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { adminRoute } from '@/lib/api';
 
-export async function GET(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const GET = adminRoute('fetch content counts', async () => {
+    const [blogs, caseStudies, testimonials, careers] = await Promise.all([
+        prisma.blog.count(),
+        prisma.caseStudy.count(),
+        prisma.testimonial.count(),
+        prisma.career.count(),
+    ]);
 
-    try {
-        const [blogs, caseStudies, testimonials, careers] = await Promise.all([
-            prisma.blog.findMany(),
-            prisma.caseStudy.findMany(),
-            prisma.testimonial.findMany(),
-            prisma.career.findMany(),
-        ]);
-
-        return NextResponse.json({
-            blogs,
-            caseStudies,
-            testimonials,
-            careers
-        });
-    } catch (error) {
-        console.error('Failed to fetch content:', error);
-        return NextResponse.json({ error: 'Failed to fetch content' }, { status: 500 });
-    }
-}
+    return NextResponse.json({ blogs, caseStudies, testimonials, careers });
+});

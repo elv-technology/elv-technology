@@ -2,11 +2,8 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useLoading } from '@/hooks/use-loading';
 
 export default function AboutHero() {
-  const { stopLoading } = useLoading();
-
   return (
     <section className="relative flex min-h-[95vh] items-center justify-center overflow-hidden bg-slate-50 px-6 py-24">
       {/* Background Image with Premium Overlay */}
@@ -15,14 +12,12 @@ export default function AboutHero() {
           src="/images/aboutUS/hero.jpeg"
           alt="ELV Technologies Background"
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="100vw"
           className="object-cover opacity-100"
           priority
-          onLoad={stopLoading}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/60" />
       </div>
-
 
       {/* Dynamic Background Effects */}
       <div className="absolute inset-0 z-0 pointer-events-none">

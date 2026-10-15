@@ -1,16 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useLoading } from '@/hooks/use-loading';
-import { useEffect } from 'react';
 
 export default function Hero() {
-    const { stopLoading } = useLoading();
-
-    useEffect(() => {
-        stopLoading();
-    }, [stopLoading]);
-
     return (
         <section className="relative h-[400px] flex items-center justify-center bg-gray-900 text-white">
 
@@ -52,7 +44,7 @@ export default function Hero() {
             className="flex flex-col gap-8"
           >
             <p className="text-lg md:text-xl text-slate-200 leading-relaxed font-normal font-inter">
-              We'd love to hear from you. Reach out to us for any inquiries or to discuss your next project.
+              We&apos;d love to hear from you. Reach out to us for any inquiries or to discuss your next project.
             </p>
           </motion.div>
         </div>

@@ -1,45 +1,22 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { adminRoute, parseBody } from '@/lib/api';
+import { testimonialSchema } from '@/lib/content-input';
+import { revalidateHome } from '@/lib/revalidate';
 
-export async function POST(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const GET = adminRoute('fetch testimonials', async () => {
+    const items = await prisma.testimonial.findMany({
+        orderBy: { createdAt: 'desc' }
+    });
+    return NextResponse.json(items);
+});
 
-    try {
-        const body = await req.json();
-        const { content, rating, date, isNew } = body;
+export const POST = adminRoute('create testimonial', async (req) => {
+    const data = await parseBody(req, testimonialSchema);
+    const item = await prisma.testimonial.create({ data });
 
-        const testimonial = await prisma.testimonial.create({
-            data: {
-                content,
-                rating: Number(rating),
-                date,
-                isNew: Boolean(isNew)
-            }
-        });
+    revalidateHome();
 
-        revalidatePath('/');
-
-        return NextResponse.json(testimonial);
-    } catch (error) {
-        console.error('Failed to create testimonial:', error);
-        return NextResponse.json({ error: 'Failed to create testimonial' }, { status: 500 });
-    }
-}
-
-export async function GET(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
-
-    try {
-        const testimonials = await prisma.testimonial.findMany({
-            orderBy: { createdAt: 'desc' }
-        });
-        return NextResponse.json(testimonials);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch testimonials' }, { status: 500 });
-    }
-}
+    return NextResponse.json(item);
+});

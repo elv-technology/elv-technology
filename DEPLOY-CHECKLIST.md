@@ -69,6 +69,12 @@ npx prisma migrate deploy
   (the `vector` extension, the chatbot `embedding` column, the SEO title/description columns) and is safe to run.
 - Run `npx prisma migrate status` again. It should say the database schema is up to date.
 
+**After this one-time sync, migrations run automatically.** The build runs `scripts/vercel-migrate.mjs`,
+which applies pending migrations (`prisma migrate deploy`) on **Production** builds only. Preview builds
+skip it because they share the production database. If a future migration adds columns that new code
+reads, the Preview will error on those pages until the change reaches Production. For such changes, run
+`npx prisma migrate deploy` by hand before testing the Preview.
+
 ## 5. Deploy to a Preview first, then test
 Upload or push the code so that Vercel creates a **Preview** deployment, and check:
 

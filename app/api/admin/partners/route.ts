@@ -1,44 +1,22 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { requireAdmin } from '@/lib/auth';
-export const dynamic = "force-dynamic";
+import { adminRoute, parseBody } from "@/lib/api";
+import { partnerSchema } from "@/lib/content-input";
+import { revalidateLogos } from "@/lib/revalidate";
 
-export async function GET(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const GET = adminRoute("fetch partners", async () => {
+  const partners = await prisma.partner.findMany({
+    orderBy: { priority: "asc" },
+  });
+  return NextResponse.json(partners);
+});
 
-  try {
-    const partners = await prisma.partner.findMany({
-      orderBy: { priority: "asc" },
-    });
-    return NextResponse.json(partners);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch partners" }, { status: 500 });
-  }
-}
+export const POST = adminRoute("create partner", async (req) => {
+  const data = await parseBody(req, partnerSchema);
+  const partner = await prisma.partner.create({ data });
 
-export async function POST(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+  revalidateLogos();
 
-  try {
-    const body = await req.json();
-    const partner = await prisma.partner.create({
-      data: {
-        name: body.name,
-        logo: body.logo,
-        category: body.category,
-        website: body.website,
-        priority: body.priority || 100,
-      },
-    });
-
-    revalidatePath("/");
-    revalidatePath("/partners-clients");
-
-    return NextResponse.json(partner);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to create partner" }, { status: 500 });
-  }
-}
+  return NextResponse.json(partner);
+});

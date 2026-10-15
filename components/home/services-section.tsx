@@ -1,7 +1,5 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import Link from "next/link";
+import FadeIn from "@/components/fade-in";
 import { MonitorPlay, Shield, Network, Home } from "lucide-react";
 import { solutionsData } from "@/lib/solutions-data";
 
@@ -34,29 +32,8 @@ const serviceCategories = [
 ];
 
 export default function ServicesSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate-fade-in-up");
-            observer.unobserve(entry.target);
-          }
-        }
-      },
-      { threshold: 0.05 }
-    );
-
-    const elements = sectionRef.current?.querySelectorAll("[data-animate]");
-    elements?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="py-24 lg:py-32 bg-[#0a0a0a] relative overflow-hidden group/section border-y border-white/5">
+    <section className="py-24 lg:py-32 bg-[#0a0a0a] relative overflow-hidden group/section border-y border-white/5">
       {/* Dynamic Animated Grid Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_70%,transparent_100%)] z-0" />
 
@@ -71,7 +48,7 @@ export default function ServicesSection() {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section header */}
-        <div className="max-w-3xl mx-auto text-center mb-24 relative" data-animate>
+        <FadeIn className="max-w-3xl mx-auto text-center mb-24 relative" threshold={0.05}>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-accent text-sm font-medium mb-6">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
@@ -86,15 +63,15 @@ export default function ServicesSection() {
           <p className="text-lg text-neutral-400 leading-relaxed max-w-2xl mx-auto font-medium">
             Discover our comprehensive suite of advanced technology systems designed to secure, connect, and empower your organization.
           </p>
-        </div>
+        </FadeIn>
 
         {/* Service cards grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {serviceCategories.map((category, i) => (
-            <div
+            <FadeIn
               key={category.title}
-              data-animate
               className="opacity-0 group/container perspective-1000"
+              threshold={0.05}
               style={{ animationDelay: `${(i + 1) * 0.15}s` }}
             >
               <Link href={category.href} className="block h-full outline-none">
@@ -133,7 +110,7 @@ export default function ServicesSection() {
 
                 </div>
               </Link>
-            </div>
+            </FadeIn>
           ))}
         </div>
       </div>

@@ -25,17 +25,27 @@ function base64UrlDecode(value: string): Uint8Array {
     return bytes;
 }
 
+// Cached per secret so the key is imported once per instance rather than on every request.
+let cachedKey: { secret: string; key: Promise<CryptoKey> } | null = null;
+
 async function getKey(): Promise<CryptoKey | null> {
     const secret = process.env.SESSION_SECRET;
     // Fail closed: without a strong secret no session is ever valid.
     if (!secret || secret.length < 32) return null;
-    return crypto.subtle.importKey(
-        "raw",
-        encoder.encode(secret),
-        { name: "HMAC", hash: "SHA-256" },
-        false,
-        ["sign", "verify"]
-    );
+    if (cachedKey?.secret !== secret) {
+        const key = crypto.subtle.importKey(
+            "raw",
+            encoder.encode(secret),
+            { name: "HMAC", hash: "SHA-256" },
+            false,
+            ["sign", "verify"]
+        );
+        cachedKey = { secret, key };
+        key.catch(() => {
+            if (cachedKey?.key === key) cachedKey = null;
+        });
+    }
+    return cachedKey.key;
 }
 
 export async function createSessionToken(subject: string): Promise<string> {

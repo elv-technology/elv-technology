@@ -1,7 +1,6 @@
 'use client';
 
-
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
     Table,
     TableBody,
@@ -11,58 +10,22 @@ import {
     TableRow
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Plus, Pencil, Trash2, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
-import { toast } from 'sonner';
+import type { Blog } from '@prisma/client';
+import { useAdminCollection } from '@/hooks/admin/use-admin-collection';
+import type { Serialized } from '@/lib/admin/types';
 
 export default function BlogsAdminPage() {
-    const [blogs, setBlogs] = useState<any[]>([]);
+    const { items: blogs, loading, remove } = useAdminCollection<Serialized<Blog>>('/api/admin/blogs', {
+        loadError: 'Failed to load blogs',
+        deleteConfirm: 'Are you sure you want to delete this blog?',
+        deleteSuccess: 'Blog deleted successfully',
+        deleteError: 'Failed to delete blog',
+    });
     const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchBlogs();
-    }, []);
-
-    async function fetchBlogs() {
-        try {
-            const res = await fetch('/api/admin/blogs', { cache: 'no-store' });
-            const data = await res.json();
-
-            if (res.ok && Array.isArray(data)) {
-                setBlogs(data);
-            } else {
-                setBlogs([]);
-                if (!res.ok) toast.error('Failed to load blogs');
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Failed to load blogs');
-            setBlogs([]);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    async function deleteBlog(id: string) {
-        if (!confirm('Are you sure you want to delete this blog?')) return;
-
-        try {
-            const res = await fetch(`/api/admin/blogs/${id}`, {
-                method: 'DELETE',
-            });
-            if (res.ok) {
-                setBlogs(blogs.filter(b => b.id !== id));
-                toast.success('Blog deleted successfully');
-            } else {
-                throw new Error('Failed to delete');
-            }
-        } catch (error) {
-            toast.error('Failed to delete blog');
-        }
-    }
 
     const filteredBlogs = blogs.filter(blog =>
         blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -131,7 +94,7 @@ export default function BlogsAdminPage() {
                                                     variant="outline"
                                                     size="icon"
                                                     className="text-red-500 hover:text-red-600 border-red-100 hover:bg-red-50"
-                                                    onClick={() => deleteBlog(blog.id)}
+                                                    onClick={() => remove(blog.id)}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>

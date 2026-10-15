@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import LogoImage from '@/components/logo-image';
 
 interface Partner {
     id: string;
@@ -16,7 +15,7 @@ interface Partner {
 }
 
 interface PartnersTabsProps {
-    initialData?: Partner[];
+    initialData: Partner[];
 }
 
 function buildCategories(partners: Partner[]) {
@@ -37,46 +36,8 @@ function buildCategories(partners: Partner[]) {
 }
 
 export function PartnersTabs({ initialData }: PartnersTabsProps) {
-    const initialCategories = initialData ? buildCategories(initialData) : [];
-    const [partnerCategories, setPartnerCategories] = useState<any[]>(initialCategories);
-    const [activeTab, setActiveTab] = useState(initialCategories.length > 0 ? String(initialCategories[0].title) : "");
-    const [loading, setLoading] = useState(!initialData);
-
-    useEffect(() => {
-        if (initialData) return; // already initialized synchronously
-
-        async function fetchPartners() {
-            try {
-                const res = await fetch('/api/public/partners');
-                const partners = await res.json();
-                const categories = buildCategories(partners);
-                setPartnerCategories(categories);
-                if (categories.length > 0) setActiveTab(String(categories[0].title));
-            } catch (error) {
-                console.error("Failed to fetch partners:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchPartners();
-    }, [initialData]);
-
-
-
-    if (loading) {
-        return (
-            <section className="py-12 bg-slate-50 dark:bg-slate-950">
-                <div className="w-full px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-center mb-8 gap-4">
-                        {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-10 w-24 rounded-full" />)}
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-4">
-                        {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-24 w-44" />)}
-                    </div>
-                </div>
-            </section>
-        );
-    }
+    const partnerCategories = buildCategories(initialData);
+    const [activeTab, setActiveTab] = useState(partnerCategories.length > 0 ? String(partnerCategories[0].title) : "");
 
     if (partnerCategories.length === 0) return null;
 
@@ -124,14 +85,12 @@ export function PartnersTabs({ initialData }: PartnersTabsProps) {
                                                 className="flex items-center justify-center p-2 w-32 sm:w-40 md:w-44 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:shadow-lg transition-shadow duration-300 group rounded-[3px]"
                                             >
                                                 <div className="relative h-20 w-full transition-all duration-300 transform group-hover:scale-110">
-                                                    <Image
+                                                    <LogoImage
                                                         src={logo.logo}
                                                         alt={logo.name}
                                                         fill
-                                                        quality={100}
-                                                        unoptimized
                                                         className="object-contain"
-                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                        sizes="(max-width: 640px) 128px, (max-width: 768px) 160px, 176px"
                                                     />
                                                 </div>
                                             </Card>

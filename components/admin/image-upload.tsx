@@ -1,31 +1,35 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, UploadCloud } from "lucide-react";
-import { OurFileRouter } from "@/app/api/uploadthing/core";
 
 interface ImageUploadProps {
     value: string | File | null;
     onChange: (file: File | string | null) => void;
     onRemove: () => void;
-    endpoint: keyof OurFileRouter;
 }
 
 export const ImageUpload = ({
     value,
     onChange,
     onRemove,
-    endpoint,
 }: ImageUploadProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    let displayUrl = "";
-    if (typeof value === "string" && value !== "") {
-        displayUrl = value;
-    } else if (value instanceof File) {
-        displayUrl = URL.createObjectURL(value);
-    }
+    const [objectUrl, setObjectUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!(value instanceof File)) {
+            setObjectUrl(null);
+            return;
+        }
+        const url = URL.createObjectURL(value);
+        setObjectUrl(url);
+        return () => URL.revokeObjectURL(url);
+    }, [value]);
+
+    const displayUrl = value instanceof File ? objectUrl : value;
 
     if (displayUrl) {
         return (
@@ -39,12 +43,7 @@ export const ImageUpload = ({
                     />
                 </div>
                 <button
-                    onClick={() => {
-                        if (value instanceof File) {
-                            URL.revokeObjectURL(displayUrl);
-                        }
-                        onRemove();
-                    }}
+                    onClick={onRemove}
                     className="absolute -top-1 -right-1 bg-red-600 text-white p-2 rounded-full shadow-xl transition-all hover:bg-red-700 active:scale-90 border-2 border-white dark:border-slate-900 z-10"
                     type="button"
                     title="Remove image"

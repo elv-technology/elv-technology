@@ -1,8 +1,6 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { LogoIcon } from "@/components/ui/logo";
+import FadeIn from "@/components/fade-in";
 import {
   Instagram,
   Facebook,
@@ -123,35 +121,15 @@ function FooterLinkGroup({
 }
 
 export default function Footer() {
-  const footerRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate-fade-in-up");
-          }
-        }
-      },
-      { threshold: 0.05 }
-    );
-
-    const elements = footerRef.current?.querySelectorAll("[data-footer-animate]");
-    elements?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <footer ref={footerRef} className="bg-slate-500 text-slate-300">
+    <footer className="bg-slate-500 text-slate-300">
       {/* Main footer */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-10 lg:gap-6">
           {/* Company Info */}
-          <div
+          <FadeIn
             className="lg:col-span-2"
-            data-footer-animate
+            threshold={0.05}
             style={{ animationDelay: "0.1s" }}
           >
             <Link href="/" className="inline-flex flex-col items-center gap-1 mb-5 group shrink-0">
@@ -213,30 +191,30 @@ export default function Footer() {
                 </a>
               ))}
             </div>
-          </div>
+          </FadeIn>
 
           {/* Quick Links */}
-          <div data-footer-animate style={{ animationDelay: "0.2s" }}>
+          <FadeIn threshold={0.05} style={{ animationDelay: "0.2s" }}>
             <FooterLinkGroup title="Quick Links" links={quickLinks} />
-          </div>
+          </FadeIn>
 
           {/* ELV Systems */}
-          <div data-footer-animate style={{ animationDelay: "0.3s" }}>
+          <FadeIn threshold={0.05} style={{ animationDelay: "0.3s" }}>
             <FooterLinkGroup title="ELV Systems" links={elvSystems} />
-          </div>
+          </FadeIn>
 
           {/* AV Solutions */}
-          <div data-footer-animate style={{ animationDelay: "0.4s" }}>
+          <FadeIn threshold={0.05} style={{ animationDelay: "0.4s" }}>
             <FooterLinkGroup title="AV Solutions" links={avSolutions} />
-          </div>
+          </FadeIn>
 
           {/* Network & Communications */}
-          <div data-footer-animate style={{ animationDelay: "0.5s" }}>
+          <FadeIn threshold={0.05} style={{ animationDelay: "0.5s" }}>
             <FooterLinkGroup title="Network & Communications" links={networkComms} />
-          </div>
+          </FadeIn>
 
           {/* Home Automation */}
-          <div data-footer-animate style={{ animationDelay: "0.6s" }}>
+          <FadeIn threshold={0.05} style={{ animationDelay: "0.6s" }}>
             <h3 className="text-[11px] font-black font-montserrat text-white mb-5 uppercase tracking-[0.2em]">
               Home Automation
             </h3>
@@ -250,13 +228,13 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </FadeIn>
         </div>
 
         {/* Google Map */}
-        <div
+        <FadeIn
           className="mt-16 rounded-2xl overflow-hidden border border-[#1a1a1a]"
-          data-footer-animate
+          threshold={0.05}
           style={{ animationDelay: "0.6s" }}
         >
           <a
@@ -283,12 +261,12 @@ export default function Footer() {
               className="pointer-events-none"
             />
           </a>
-        </div>
+        </FadeIn>
 
         {/* Careers */}
-        <div
+        <FadeIn
           className="mt-12 rounded-2xl bg-white/10 border border-white/20 p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors hover:border-white/40"
-          data-footer-animate
+          threshold={0.05}
           style={{ animationDelay: "0.7s" }}
         >
           <div>
@@ -315,7 +293,7 @@ export default function Footer() {
             Apply Now
             <ArrowUpRight className="h-4 w-4" />
           </Link>
-        </div>
+        </FadeIn>
       </div>
 
       {/* Bottom bar */}

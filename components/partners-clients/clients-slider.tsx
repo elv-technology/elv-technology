@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
     Carousel,
@@ -11,8 +10,8 @@ import {
     CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import Autoplay from 'embla-carousel-autoplay';
+import LogoImage from '@/components/logo-image';
 
 interface Client {
     id: string;
@@ -22,54 +21,20 @@ interface Client {
 }
 
 interface ClientsSliderProps {
-    initialData?: Client[];
+    initialData: Client[];
 }
 
 export function ClientsSlider({ initialData }: ClientsSliderProps) {
-    const [clientsList, setClientsList] = React.useState<Client[]>(initialData || []);
-    const [loading, setLoading] = React.useState(!initialData);
+    const clientsList = initialData;
     const plugin = React.useRef(
         Autoplay({ delay: 3000, stopOnInteraction: false })
     );
-
-    React.useEffect(() => {
-        if (initialData) return;
-
-        async function fetchClients() {
-            try {
-                const res = await fetch('/api/public/clients');
-                const data = await res.json();
-                setClientsList(data);
-            } catch (error) {
-                console.error("Failed to fetch clients:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchClients();
-    }, [initialData]);
 
     // Group clients into sets of 3 for the rows
     const rows = 3;
     const groupedClients = [];
     for (let i = 0; i < clientsList.length; i += rows) {
         groupedClients.push(clientsList.slice(i, i + rows));
-    }
-
-    if (loading) {
-        return (
-            <section className="py-12 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
-                <div className="w-full px-4">
-                    <div className="flex gap-4 overflow-hidden">
-                        {[1, 2, 3, 4, 5, 6].map(i => (
-                            <div key={i} className="flex flex-col gap-2 min-w-[150px]">
-                                {[1, 2, 3].map(j => <Skeleton key={j} className="aspect-[4/3] w-full" />)}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-        );
     }
 
     if (clientsList.length === 0) return null;
@@ -108,14 +73,12 @@ export function ClientsSlider({ initialData }: ClientsSliderProps) {
                                                 <Card className="border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-800 hover:shadow-lg transition-all duration-300 rounded-[3px] overflow-hidden">
                                                     <CardContent className="flex aspect-[4/3] items-center justify-center p-1">
                                                         <div className="relative h-20 w-full">
-                                                            <Image
+                                                            <LogoImage
                                                                 src={client.logo}
                                                                 alt={client.name}
                                                                 fill
-                                                                quality={100}
-                                                                unoptimized
                                                                 className="object-contain"
-                                                                sizes="(max-width: 768px) 50vw, 25vw"
+                                                                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 13vw"
                                                             />
                                                         </div>
                                                     </CardContent>

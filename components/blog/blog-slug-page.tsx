@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import { useLoading } from "@/hooks/use-loading";
 import { formatContent } from "@/lib/format-content";
 
 interface BlogSlugPageProps {
@@ -16,8 +15,6 @@ interface BlogSlugPageProps {
 }
 
 export default function BlogSlugPage({ post }: BlogSlugPageProps) {
-    const { stopLoading } = useLoading();
-
     if (!post) {
         notFound();
     }
@@ -33,7 +30,6 @@ export default function BlogSlugPage({ post }: BlogSlugPageProps) {
                     sizes="100vw"
                     className="object-cover"
                     priority
-                    onLoad={stopLoading}
                 />
                 <div className="absolute inset-0 bg-stone-900/40 dark:bg-slate-950/60" />
 
@@ -109,7 +105,7 @@ export default function BlogSlugPage({ post }: BlogSlugPageProps) {
                                 <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-red-600/20 blur-3xl rounded-full" />
                                 <h3 className="text-2xl font-bold mb-4">Transform your connectivity</h3>
                                 <p className="text-slate-400 mb-8 leading-relaxed">
-                                    ELV Technology Solutions delivers future-ready infrastructure for modern businesses. Let's build your network together.
+                                    ELV Technology Solutions delivers future-ready infrastructure for modern businesses. Let&apos;s build your network together.
                                 </p>
                                 <Link href="/contact" className="block">
                                     <Button className="w-full bg-accent hover:bg-red-700 text-white font-bold h-14 rounded-xl shadow-lg shadow-red-500/20 transition-all">

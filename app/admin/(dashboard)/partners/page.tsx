@@ -2,14 +2,14 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2, Users } from "lucide-react";
+import { Plus, Pencil, Users } from "lucide-react";
 import Image from "next/image";
-import { DeletePartnerButton } from "@/app/admin/(dashboard)/partners/delete-partner-button";
+import { DeleteButton } from "@/components/admin/delete-button";
 
 export default async function PartnersPage() {
   const partners = await prisma.partner.findMany({
     orderBy: { priority: "asc" },
-  }) as any[];
+  });
 
   // Group partners by category
   const CATEGORY_ORDER = ["Security", "AV", "Network & communication", "Home Automation"];
@@ -94,7 +94,7 @@ export default async function PartnersPage() {
                               <Pencil className="h-3.5 w-3.5" />
                             </Link>
                           </Button>
-                          <DeletePartnerButton id={partner.id} />
+                          <DeleteButton url={`/api/admin/partners/${partner.id}`} label="Partner" />
                         </div>
                       </td>
                     </tr>

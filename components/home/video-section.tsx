@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { heroSectionData } from "@/lib/data";
 
-export default function VideoSection({ onVideoLoad }: { onVideoLoad?: () => void }) {
+export default function VideoSection() {
   return (
     <section
       className="relative w-full min-h-[80vh] md:h-[100dvh] overflow-hidden group flex items-center"
@@ -20,7 +20,6 @@ export default function VideoSection({ onVideoLoad }: { onVideoLoad?: () => void
         autoPlay
         muted
         loop
-        onLoadedMetadata={onVideoLoad}
       >
         <source src="/images/home/slides/videos/hero_new.mp4" type="video/mp4" />
         Your browser does not support the video tag.
