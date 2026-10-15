@@ -48,7 +48,7 @@ export default function CareersHero() {
                         className="flex flex-col gap-8"
                     >
                         <p className="text-lg md:text-xl text-slate-200 leading-relaxed font-normal font-inter">
-                            Build your career with Abu Dhabi's leading ELV and IT integrators. We're looking for passionate individuals to join our mission of delivering technological excellence.
+                            Build your career with Abu Dhabi&apos;s leading ELV and IT integrators. We&apos;re looking for passionate individuals to join our mission of delivering technological excellence.
                         </p>
                     </motion.div>
                 </div>

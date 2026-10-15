@@ -13,6 +13,7 @@ import {
     Mail,
     UserCheck,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -109,10 +110,12 @@ export function AdminSidebar() {
             <SidebarHeader className="h-16 flex items-center px-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
                 <Link href="/admin" className="flex items-center gap-3 transition-opacity hover:opacity-80">
                     <div className="relative h-10 w-40">
-                        <img
+                        <Image
                             src="/images/1.png"
                             alt="ELV Technologies"
-                            className="h-full w-auto object-contain"
+                            fill
+                            sizes="160px"
+                            className="object-contain object-left"
                         />
                     </div>
                 </Link>

@@ -17,19 +17,6 @@ export const heroSectionData = {
   },
 };
 
-export const introSectionData = {
-  heading: "A Short Introduction to Our World",
-  paragraphs: [
-    "We are a team of passionate engineers, designers, and strategists dedicated to delivering cutting-edge audio-visual and ELV solutions. Our commitment to quality, innovation, and customer satisfaction sets us apart.",
-    "With years of experience and a portfolio of successful projects, we have become a trusted partner for businesses across various industries. Let us bring your vision to life.",
-  ],
-  video: {
-    id: "dQw4w9WgXcQ",
-    thumbnail: "/images/home/slides/videos/hero_new.mp4",
-    alt: "Promotional video thumbnail",
-  },
-};
-
 export const faqSectionData = {
   heading: "Frequently Asked Questions",
   subheading: "Everything you need to know about our ELV and Audio-Visual solutions. Can't find what you're looking for? Contact our team directly.",
@@ -92,3 +79,8 @@ export const faqSectionData = {
     },
   ],
 };
+
+/** FAQs from the database, or the built-in ones above when the table is empty. */
+export function faqsOrFallback<T extends { question: string; answer: string }>(faqs?: T[] | null) {
+  return faqs && faqs.length > 0 ? faqs : faqSectionData.faqs;
+}

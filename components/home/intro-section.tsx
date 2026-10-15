@@ -85,7 +85,7 @@ export default function IntroSection() {
                                     Transform complexity into a competitive advantage.
                                 </h3>
                                 <p className="text-slate-200 text-lg sm:text-lg leading-relaxed mb-4 font-normal">
-                                    Don't let outdated technology bottleneck your growth. We design, deploy, and manage intelligent networks, robust security, and seamless AV environments tailored to your organization's unique workflows.
+                                    Don&apos;t let outdated technology bottleneck your growth. We design, deploy, and manage intelligent networks, robust security, and seamless AV environments tailored to your organization&apos;s unique workflows.
                                 </p>
                                 <p className="text-slate-200 text-lg sm:text-lg leading-relaxed mb-8">
                                     Experience zero-downtime integrations and intuitive systems that empower your team to work faster, safer, and smarter from day one.

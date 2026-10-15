@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
-import { CheckCircle } from "lucide-react";
+import { useEffect } from "react";
 import { motion } from 'framer-motion';
+import { useIntersection } from "@/hooks/use-intersection";
 
 const features = [
   "Representing reputed global manufacturers.",
@@ -14,6 +14,13 @@ const features = [
 ];
 
 export default function TrustedPartner() {
+  // preload="none" keeps the video off the network until it scrolls into view; autoPlay would override that.
+  const { ref: videoRef, isVisible } = useIntersection<HTMLVideoElement>(0.25);
+
+  useEffect(() => {
+    if (isVisible) videoRef.current?.play().catch(() => {});
+  }, [isVisible, videoRef]);
+
   return (
     <section className="relative bg-slate-50 py-32">
       {/* Background Elements */}
@@ -88,8 +95,8 @@ export default function TrustedPartner() {
               className="relative aspect-video overflow-hidden rounded-[5px] border border-slate-200 bg-black shadow-2xl group"
             >
               <video
+                ref={videoRef}
                 src="/images/aboutUS/aboutus.mp4"
-                autoPlay
                 muted
                 loop
                 playsInline

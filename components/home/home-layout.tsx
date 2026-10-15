@@ -1,5 +1,3 @@
-'use client';
-
 import dynamic from "next/dynamic";
 import VideoSection from "@/components/home/video-section";
 import IntroSection from "@/components/home/intro-section";
@@ -8,29 +6,33 @@ import ServicesBannerSection from "@/components/home/services-banner-section";
 import ServicesSection from "@/components/home/services-section";
 import CertificationsSection from "@/components/home/certifications-section";
 import ClientsSection from "@/components/home/clients-section";
-import { useLoading } from "@/hooks/use-loading";
+import CTASection from "@/components/home/cta-section";
 
 const ReviewsSection = dynamic(() => import("@/components/home/reviews-section"));
 const PartnersSection = dynamic(() => import("@/components/home/partners-section"));
 const IndustriesSection = dynamic(() => import("@/components/home/industries-section"));
 const FAQSection = dynamic(() => import("@/components/home/faq-section"));
-const CTASection = dynamic(() => import("@/components/home/cta-section"));
 
-export default function HomeLayout({ initialData }: { initialData: any }) {
-  const { stopLoading } = useLoading();
-  const { caseStudies, blogs, testimonials, faqs } = initialData || {};
+interface HomeLayoutProps {
+  caseStudies: any[];
+  testimonials: any[];
+  faqs: any[];
+  clients: any[];
+  partners: any[];
+}
 
+export default function HomeLayout({ caseStudies, testimonials, faqs, clients, partners }: HomeLayoutProps) {
   return (
-    <main>
+    <div>
       {/* 2. Video - Sticky Background */}
       <div className="sticky top-0 z-0">
-        <VideoSection onVideoLoad={stopLoading} />
+        <VideoSection />
       </div>
 
       {/* Content wrapper that slides over the sticky video */}
       <div className="relative z-10 bg-background flex flex-col">
         {/* 3. Our Clients */}
-        <ClientsSection />
+        <ClientsSection clients={clients} />
         {/* 4. About Us Banner */}
         <IntroSection />
         {/* 5. Featured Case Studies */}
@@ -44,7 +46,7 @@ export default function HomeLayout({ initialData }: { initialData: any }) {
         {/* 9. Testimonials (Reviews) */}
         <ReviewsSection testimonials={testimonials} />
         {/* 10. Our Partners */}
-        <PartnersSection />
+        <PartnersSection partners={partners} />
         {/* 11. Industries We Work With */}
         <IndustriesSection />
 
@@ -52,7 +54,6 @@ export default function HomeLayout({ initialData }: { initialData: any }) {
         <FAQSection initialData={faqs} />
         <CTASection />
       </div>
-    </main>
+    </div>
   );
 }
-

@@ -66,14 +66,13 @@ export async function rateLimit(key: string, options: RateLimitOptions): Promise
 }
 
 export function getIp(req: Request) {
-  // Vercel sets x-real-ip itself; x-forwarded-for's first entry can be supplied by the client.
-  const realIp = req.headers.get("x-real-ip");
-  if (realIp) return realIp.trim();
+  // On Vercel (and most proxies) the first x-forwarded-for entry is the client address.
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  if (forwarded) return forwarded;
 
-  const forwarded = req.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const parts = forwarded.split(",").map((p) => p.trim()).filter(Boolean);
-    if (parts.length) return parts[parts.length - 1];
+  for (const header of ["x-real-ip", "cf-connecting-ip"]) {
+    const value = req.headers.get(header)?.trim();
+    if (value) return value;
   }
   return "unknown";
 }

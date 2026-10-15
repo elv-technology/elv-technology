@@ -275,7 +275,7 @@ export default function ApplicationForm({ jobRoles }: ApplicationFormProps) {
                             />
                             <div className="space-y-1 leading-none">
                                 <Label htmlFor="isNotRobot">
-                                    I'm not a robot
+                                    I&apos;m not a robot
                                 </Label>
                                 {errors.isNotRobot && <p className="text-xs text-red-500 mt-1">{errors.isNotRobot.message}</p>}
                             </div>

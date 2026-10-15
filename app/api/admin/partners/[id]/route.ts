@@ -1,77 +1,44 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
 import { deleteFilesFromUploadThing } from "@/lib/uploadthing-server";
-import { requireAdmin } from '@/lib/auth';
+import { adminRoute, deleted, parseBody } from "@/lib/api";
+import { partnerSchema } from "@/lib/content-input";
+import { revalidateLogos } from "@/lib/revalidate";
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+type Params = { id: string };
 
-  try {
-    const body = await req.json();
-    
-    // 1. Fetch existing partner to check for logo changes
-    const existingPartner = await prisma.partner.findUnique({
-      where: { id: params.id },
-    });
+export const PATCH = adminRoute<Params>("update partner", async (req, { params }) => {
+  const data = await parseBody(req, partnerSchema.partial());
 
-    // 2. If logo is changing, delete the old one from UploadThing
-    if (existingPartner && body.logo && existingPartner.logo !== body.logo) {
-      await deleteFilesFromUploadThing(existingPartner.logo);
-    }
+  const existing = await prisma.partner.findUniqueOrThrow({
+    where: { id: params.id },
+    select: { logo: true },
+  });
 
-    const partner = await prisma.partner.update({
-      where: { id: params.id },
-      data: {
-        name: body.name,
-        logo: body.logo,
-        category: body.category,
-        website: body.website,
-        priority: body.priority,
-      },
-    });
+  const partner = await prisma.partner.update({
+    where: { id: params.id },
+    data,
+  });
 
-    revalidatePath("/");
-    revalidatePath("/partners-clients");
-
-    return NextResponse.json(partner);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to update partner" }, { status: 500 });
+  if (existing.logo && existing.logo !== partner.logo) {
+    await deleteFilesFromUploadThing(existing.logo);
   }
-}
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+  revalidateLogos();
 
-  try {
-    // 1. Fetch partner to get logo URL before deletion
-    const partner = await prisma.partner.findUnique({
-      where: { id: params.id },
-    });
+  return NextResponse.json(partner);
+});
 
-    // 2. Delete from database
-    await prisma.partner.delete({
-      where: { id: params.id },
-    });
+export const DELETE = adminRoute<Params>("delete partner", async (_req, { params }) => {
+  const partner = await prisma.partner.delete({
+    where: { id: params.id },
+    select: { logo: true },
+  });
 
-    // 3. Delete logo from UploadThing
-    if (partner?.logo) {
-      await deleteFilesFromUploadThing(partner.logo);
-    }
+  await deleteFilesFromUploadThing(partner.logo);
 
-    revalidatePath("/");
-    revalidatePath("/partners-clients");
+  revalidateLogos();
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to delete partner" }, { status: 500 });
-  }
-}
+  return deleted();
+});

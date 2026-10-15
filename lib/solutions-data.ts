@@ -708,3 +708,101 @@ export const solutionsData = {
         ]
     }
 };
+
+export type SolutionCategoryKey = Exclude<keyof typeof solutionsData, "hero">;
+
+export interface SolutionPageData {
+    categoryKey: SolutionCategoryKey;
+    metadata: { title: string; description: string };
+    schema: { name: string; description: string; serviceType: string };
+    hero: {
+        videoSrc: string;
+        /** Shown while the video loads, so the hero (the page's LCP) is never blank. */
+        poster: string;
+        tag: string;
+        /** Three heading lines; the middle one is highlighted in red. */
+        titleLines: [string, string, string];
+        description: string;
+    };
+}
+
+export const solutionPages = {
+    "audio-visual": {
+        categoryKey: "audioVisual",
+        metadata: {
+            title: "Audio Visual AV Systems Abu Dhabi | ETS Smart",
+            description: "ETS Smart is a top audio visual company in Abu Dhabi offering BGM systems, PA systems, digital signage, LED screens & AV integration for homes & businesses.",
+        },
+        schema: {
+            name: "Audio Visual (AV) Solutions & Integration",
+            description: "Professional BGM systems, Public Address (PA), digital signage, LED display screens, and AV integration in Abu Dhabi & UAE.",
+            serviceType: "Audio Visual Integration",
+        },
+        hero: {
+            videoSrc: "/images/solutions/audio-visual/hero.mp4",
+            poster: solutionsData.audioVisual.image,
+            tag: "Immersive Experience",
+            titleLines: ["Immersive", "Audio Visual", "Solutions"],
+            description: "Next-generation audio-visual systems tailored for seamless collaboration and exceptional quality.",
+        },
+    },
+    "network-communications": {
+        categoryKey: "networkAndCommunications",
+        metadata: {
+            title: "Network & SMATV Solutions in Abu Dhabi | ETS Smart",
+            description: "ETS Smart provides structured cabling, wireless network, SMATV, IPTV & IP phone solutions in Abu Dhabi. Trusted network & communications company in UAE.",
+        },
+        schema: {
+            name: "Network Infrastructure & Communications Solutions",
+            description: "Enterprise structured cabling, fiber optic networks, SMATV/IPTV, IP telephony, and wireless network solutions in Abu Dhabi & UAE.",
+            serviceType: "Network Infrastructure Integration",
+        },
+        hero: {
+            videoSrc: "/images/solutions/network-communications/hero.mp4",
+            poster: solutionsData.networkAndCommunications.image,
+            tag: "Connected & Reliable",
+            titleLines: ["Robust", "Network", "Solutions"],
+            description: "Enterprise-grade wired and wireless connectivity built for stability, speed, and security.",
+        },
+    },
+    "security-surveillance": {
+        categoryKey: "securityAndSurveillance",
+        metadata: {
+            title: "CCTV Installation & Security Abu Dhabi | ETS Smart",
+            description: "ETS Smart is an ADMCC-approved CCTV company in Abu Dhabi offering CCTV installation, access control & security system solutions for homes & businesses in UAE.",
+        },
+        schema: {
+            name: "Security & CCTV Camera System Installation",
+            description: "MCC-approved security system installation, AI CCTV camera surveillance, access control, and gate barriers in Abu Dhabi & UAE.",
+            serviceType: "Security System Integration",
+        },
+        hero: {
+            videoSrc: "/images/solutions/security-surveillance/hero.mp4",
+            poster: solutionsData.securityAndSurveillance.image,
+            tag: "Intelligent Defense",
+            titleLines: ["Smart", "Security", "Solutions"],
+            description: "Protecting your assets with smart, proactive monitoring and real-time behavioral analytics.",
+        },
+    },
+    "home-automation": {
+        categoryKey: "homeAutomation",
+        metadata: {
+            title: "Home Automation in Abu Dhabi | Smart Lighting – ETS Smart",
+            description: "ETS Smart provides smart home automation & lighting control systems in Abu Dhabi for villas & apartments. Energy-efficient, user-friendly solutions across UAE.",
+        },
+        schema: {
+            name: "Smart Home Automation & Lighting Control",
+            description: "Smart home automation systems, lighting controls, villa automation, motorized curtains, and climate control in Abu Dhabi & UAE.",
+            serviceType: "Home Automation Integration",
+        },
+        hero: {
+            videoSrc: "/images/solutions/home-automation/Ligting and Home Automation.mp4",
+            poster: solutionsData.homeAutomation.image,
+            tag: "The Future of Living",
+            titleLines: ["Elevate", "Your", "Environment"],
+            description: "Experience seamless harmony between lighting, climate, and security. Our intelligent automation systems are designed to adapt to your lifestyle.",
+        },
+    },
+} satisfies Record<string, SolutionPageData>;
+
+export type SolutionSlug = keyof typeof solutionPages;

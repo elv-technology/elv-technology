@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { ArrowRight, Trophy, Users, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useRef, useState } from 'react';
-import { useLoading } from '@/hooks/use-loading';
 
 const AnimatedCounter = ({ value, suffix = "" }: { value: number; suffix?: string }) => {
     const [displayValue, setDisplayValue] = useState(0);
@@ -27,12 +26,6 @@ const AnimatedCounter = ({ value, suffix = "" }: { value: number; suffix?: strin
 };
 
 export function HeroSection() {
-    const { stopLoading } = useLoading();
-
-    useEffect(() => {
-        stopLoading();
-    }, [stopLoading]);
-
     return (
 
         <div className="relative isolate overflow-hidden bg-slate-900 pb-10 pt-10 sm:pb-12">

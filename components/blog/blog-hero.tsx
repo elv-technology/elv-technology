@@ -1,16 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useLoading } from '@/hooks/use-loading';
-import { useEffect } from 'react';
 
 export default function BlogHero() {
-    const { stopLoading } = useLoading();
-
-    useEffect(() => {
-        stopLoading();
-    }, [stopLoading]);
-
     return (
 
         <section className="relative isolate overflow-hidden bg-[#0A0F1E] py-20 sm:py-24 lg:py-28 min-h-[500px] flex items-center">

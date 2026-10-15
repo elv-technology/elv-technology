@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
     Table,
     TableBody,
@@ -17,76 +17,45 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import type { FAQ } from '@prisma/client';
+import { useAdminCollection } from '@/hooks/admin/use-admin-collection';
+import { getErrorMessage } from '@/lib/admin/fetch-json';
+import { saveEntity } from '@/lib/admin/save-entity';
+import type { Serialized } from '@/lib/admin/types';
 
 export default function FaqAdminPage() {
-    const [faqs, setFaqs] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [editing, setEditing] = useState<any>(null);
+    const { items: faqs, setItems: setFaqs, loading, remove } = useAdminCollection<Serialized<FAQ>>('/api/admin/faq', {
+        loadError: 'Failed to load FAQs',
+        deleteConfirm: 'Delete this FAQ?',
+        deleteSuccess: 'FAQ deleted',
+        deleteError: 'Failed to delete FAQ',
+    });
+    const [editing, setEditing] = useState<Serialized<FAQ> | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    useEffect(() => { fetchContent(); }, []);
-
-    async function fetchContent() {
-        try {
-            const res = await fetch('/api/admin/faq');
-            const data = await res.json();
-            setFaqs(Array.isArray(data) ? data : []);
-        } catch (error) { toast.error('Failed to load FAQs'); }
-        finally { setLoading(false); }
-    }
-
-    const handleSave = async (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData(e.currentTarget as HTMLFormElement);
+        const formData = new FormData(e.currentTarget);
         const itemData = {
             question: formData.get('question'),
             answer: formData.get('answer'),
         };
 
         try {
-            const url = editing
-                ? `/api/admin/faq/${editing.id}`
-                : '/api/admin/faq';
-
-            const method = editing ? 'PATCH' : 'POST';
-
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(itemData)
-            });
-
-            if (res.ok) {
-                const saved = await res.json();
-                if (editing) {
-                    setFaqs(faqs.map(f => f.id === editing.id ? saved : f));
-                    toast.success('FAQ updated');
-                } else {
-                    setFaqs([saved, ...faqs]);
-                    toast.success('FAQ added');
-                }
-                setIsDialogOpen(false);
-                setEditing(null);
+            const saved = await saveEntity<Serialized<FAQ>>('faq', editing?.id, itemData);
+            if (editing) {
+                setFaqs(prev => prev.map(f => f.id === editing.id ? saved : f));
+                toast.success('FAQ updated');
             } else {
-                throw new Error('Failed to save');
+                setFaqs(prev => [saved, ...prev]);
+                toast.success('FAQ added');
             }
-        } catch (error) { toast.error('Error saving'); }
+            setIsDialogOpen(false);
+            setEditing(null);
+        } catch (error) {
+            toast.error(getErrorMessage(error, 'Error saving'));
+        }
     };
-
-    async function deleteItem(id: string) {
-        if (!confirm('Delete this FAQ?')) return;
-        try {
-            const res = await fetch(`/api/admin/faq/${id}`, {
-                method: 'DELETE',
-            });
-            if (res.ok) {
-                setFaqs(faqs.filter(f => f.id !== id));
-                toast.success('FAQ deleted');
-            } else {
-                throw new Error('Failed to delete');
-            }
-        } catch (error) { toast.error('Error'); }
-    }
 
     return (
         <div className="space-y-6">
@@ -142,7 +111,7 @@ export default function FaqAdminPage() {
                                                 <Button variant="outline" size="icon" onClick={() => { setEditing(f); setIsDialogOpen(true); }}>
                                                     <Pencil className="h-4 w-4" />
                                                 </Button>
-                                                <Button variant="outline" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => deleteItem(f.id)}>
+                                                <Button variant="outline" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => remove(f.id)}>
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </TableCell>

@@ -4,6 +4,9 @@ import { getCollection } from "@/lib/db";
 // Regenerate at most once an hour so new posts appear without a redeploy.
 export const revalidate = 3600;
 
+// Last meaningful change to the static pages; update when their content changes.
+const STATIC_PAGES_LAST_MODIFIED = new Date("2026-10-15");
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.etssmart.com";
 
@@ -24,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/careers",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
+    lastModified: STATIC_PAGES_LAST_MODIFIED,
     changeFrequency: "daily" as const,
     priority: route === "" ? 1.0 : 0.8,
   }));

@@ -1,78 +1,41 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { adminRoute, deleted, jsonError, parseBody } from '@/lib/api';
+import { testimonialSchema } from '@/lib/content-input';
+import { revalidateHome } from '@/lib/revalidate';
 
-export async function GET(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+type Params = { id: string };
 
-    try {
-        const testimonial = await prisma.testimonial.findUnique({
-            where: { id: params.id }
-        });
+export const GET = adminRoute<Params>('fetch testimonial', async (_req, { params }) => {
+    const item = await prisma.testimonial.findUnique({
+        where: { id: params.id }
+    });
 
-        if (!testimonial) {
-            return NextResponse.json({ error: 'Testimonial not found' }, { status: 404 });
-        }
+    if (!item) return jsonError('Testimonial not found', 404);
 
-        return NextResponse.json(testimonial);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch testimonial' }, { status: 500 });
-    }
-}
+    return NextResponse.json(item);
+});
 
-export async function PATCH(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const PATCH = adminRoute<Params>('update testimonial', async (req, { params }) => {
+    const data = await parseBody(req, testimonialSchema.partial());
 
-    try {
-        const body = await req.json();
-        const { content, rating, date, isNew } = body;
+    const item = await prisma.testimonial.update({
+        where: { id: params.id },
+        data,
+    });
 
-        const testimonial = await prisma.testimonial.update({
-            where: { id: params.id },
-            data: {
-                content,
-                rating: Number(rating),
-                date,
-                isNew: Boolean(isNew)
-            }
-        });
+    revalidateHome();
 
-        revalidatePath('/');
+    return NextResponse.json(item);
+});
 
-        return NextResponse.json(testimonial);
-    } catch (error) {
-        console.error('Failed to update testimonial:', error);
-        return NextResponse.json({ error: 'Failed to update testimonial' }, { status: 500 });
-    }
-}
+export const DELETE = adminRoute<Params>('delete testimonial', async (_req, { params }) => {
+    await prisma.testimonial.delete({
+        where: { id: params.id }
+    });
 
-export async function DELETE(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+    revalidateHome();
 
-    try {
-        await prisma.testimonial.delete({
-            where: { id: params.id }
-        });
-
-        revalidatePath('/');
-
-        return NextResponse.json({ message: 'Testimonial deleted successfully' });
-    } catch (error) {
-        console.error('Failed to delete testimonial:', error);
-        return NextResponse.json({ error: 'Failed to delete testimonial' }, { status: 500 });
-    }
-}
+    return deleted();
+});

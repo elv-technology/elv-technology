@@ -1,123 +1,54 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import { deleteFilesFromUploadThing } from "@/lib/uploadthing-server";
-import { requireAdmin } from '@/lib/auth';
-import { sanitizeHtml } from '@/lib/sanitize';
-import { optionalText } from '@/lib/content-input';
+import { deleteFilesFromUploadThing } from '@/lib/uploadthing-server';
+import { adminRoute, deleted, jsonError, parseBody } from '@/lib/api';
+import { blogSchema } from '@/lib/content-input';
+import { revalidateBlog } from '@/lib/revalidate';
 
-export async function GET(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+type Params = { id: string };
 
-    try {
-        const blog = await prisma.blog.findUnique({
-            where: { id: params.id } // Note: Assuming find by ID first, can add fallback to slug if needed
-        });
+export const GET = adminRoute<Params>('fetch blog', async (_req, { params }) => {
+    const blog = await prisma.blog.findUnique({
+        where: { id: params.id }
+    });
 
-        if (!blog) {
-            return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
-        }
+    if (!blog) return jsonError('Blog not found', 404);
 
-        return NextResponse.json(blog);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch blog' }, { status: 500 });
+    return NextResponse.json(blog);
+});
+
+export const PATCH = adminRoute<Params>('update blog', async (req, { params }) => {
+    const data = await parseBody(req, blogSchema.partial());
+
+    const existing = await prisma.blog.findUniqueOrThrow({
+        where: { id: params.id },
+        select: { slug: true, image: true },
+    });
+
+    const blog = await prisma.blog.update({
+        where: { id: params.id },
+        data,
+    });
+
+    if (existing.image && existing.image !== blog.image) {
+        await deleteFilesFromUploadThing(existing.image);
     }
-}
 
-export async function PATCH(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+    revalidateBlog(blog.slug, existing.slug);
 
-    try {
-        const body = await req.json();
-        const { title, slug, excerpt, content, image, category, author, date, seoTitle, seoDescription } = body;
+    return NextResponse.json(blog);
+});
 
-        // 1. Fetch existing blog to check for image changes
-        const existingBlog = await prisma.blog.findUnique({
-            where: { id: params.id },
-        });
+export const DELETE = adminRoute<Params>('delete blog', async (_req, { params }) => {
+    const blog = await prisma.blog.delete({
+        where: { id: params.id },
+        select: { slug: true, image: true },
+    });
 
-        // 2. If image is changing, delete the old one from UploadThing
-        if (existingBlog && image && existingBlog.image !== image) {
-            await deleteFilesFromUploadThing(existingBlog.image);
-        }
+    await deleteFilesFromUploadThing(blog.image);
 
-        const blog = await prisma.blog.update({
-            where: { id: params.id },
-            data: {
-                title,
-                slug,
-                excerpt,
-                content: typeof content === 'string' ? sanitizeHtml(content) : undefined,
-                image,
-                category,
-                author,
-                date: date ? new Date(date) : undefined,
-                ...(seoTitle !== undefined ? { seoTitle: optionalText(seoTitle) } : {}),
-                ...(seoDescription !== undefined ? { seoDescription: optionalText(seoDescription) } : {}),
-            }
-        });
+    revalidateBlog(blog.slug);
 
-        revalidatePath('/');
-        revalidatePath('/blog');
-        revalidatePath('/blog/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
-        revalidatePath('/sitemap.xml');
-        revalidatePath(`/blog/${blog.slug}`);
-        
-        // If slug changed, revalidate the old path as well
-        if (existingBlog && existingBlog.slug !== blog.slug) {
-            revalidatePath(`/blog/${existingBlog.slug}`);
-        }
-
-        return NextResponse.json(blog);
-    } catch (error) {
-        console.error('Failed to update blog:', error);
-        return NextResponse.json({ error: 'Failed to update blog' }, { status: 500 });
-    }
-}
-
-export async function DELETE(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
-
-    try {
-        // Find the blog first to get the slug for revalidation and image URL for deletion
-        const blog = await prisma.blog.findUnique({
-            where: { id: params.id },
-            select: { slug: true, image: true }
-        });
-
-        await prisma.blog.delete({
-            where: { id: params.id }
-        });
-
-        // Delete image from UploadThing
-        if (blog?.image) {
-            await deleteFilesFromUploadThing(blog.image);
-        }
-
-        revalidatePath('/');
-        revalidatePath('/blog');
-        revalidatePath('/blog/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
-        revalidatePath('/sitemap.xml');
-        if (blog?.slug) {
-            revalidatePath(`/blog/${blog.slug}`);
-        }
-
-        return NextResponse.json({ message: 'Blog deleted successfully' });
-    } catch (error) {
-        console.error('Failed to delete blog:', error);
-        return NextResponse.json({ error: 'Failed to delete blog' }, { status: 500 });
-    }
-}
+    return deleted();
+});

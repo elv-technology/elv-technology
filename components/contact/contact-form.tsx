@@ -102,7 +102,7 @@ export default function ContactForm() {
         Send a Message
       </h2>
       <p className="mt-4 text-lg text-gray-600">
-        Fill out the form below and we'll get back to you as soon as possible.
+        Fill out the form below and we&apos;ll get back to you as soon as possible.
       </p>
 
       <Form {...form}>
@@ -195,7 +195,7 @@ export default function ContactForm() {
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel className="cursor-pointer">
-                          I'm not a robot
+                          I&apos;m not a robot
                         </FormLabel>
                         <FormMessage />
                       </div>

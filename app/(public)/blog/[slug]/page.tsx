@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import ArticleSchema from "@/components/seo/ArticleSchema";
 import { formatContent } from "@/lib/format-content";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { blogMetaTitle, fitDescription, metaDescription } from "@/lib/seo";
+import { SITE_URL, blogMetaTitle, fitDescription, metaDescription, pageMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -32,29 +32,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         };
     }
 
-    const description = metaDescription(post.seoDescription, getDescription(post));
-    const url = `https://www.etssmart.com/blog/${params.slug}`;
-
-    return {
-        title: { absolute: blogMetaTitle(post.title, post.seoTitle) },
-        description: description,
-        alternates: {
-            canonical: url,
-        },
-        openGraph: {
-            title: post.title,
-            description: description,
-            url: url,
-            type: "article",
-            images: post.image ? [{ url: post.image }] : undefined,
-        },
-        twitter: {
-            card: "summary_large_image",
-            title: post.title,
-            description: description,
-            images: post.image ? [post.image] : undefined,
-        },
-    };
+    return pageMetadata({
+        title: blogMetaTitle(post.title, post.seoTitle),
+        description: metaDescription(post.seoDescription, getDescription(post)),
+        path: `/blog/${params.slug}`,
+        image: post.image,
+        type: "article",
+    });
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
@@ -64,7 +48,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         notFound();
     }
 
-    const url = `https://www.etssmart.com/blog/${params.slug}`;
+    const url = `${SITE_URL}/blog/${params.slug}`;
 
     // Render the content to HTML and strip anything unsafe on the server, before it reaches the page.
     const safePost = { ...post, content: sanitizeHtml(formatContent(post.content)) };

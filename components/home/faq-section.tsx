@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Plus, Minus, ChevronDown, ChevronUp } from "lucide-react";
-import { faqSectionData } from "@/lib/data";
+import { faqSectionData, faqsOrFallback } from "@/lib/data";
+import { useIntersection } from "@/hooks/use-intersection";
 
-const { heading, subheading, button: faqButton, faqs } = faqSectionData;
+const { heading, subheading, button: faqButton } = faqSectionData;
 
 function FAQItem({
   faq,
@@ -66,24 +67,12 @@ function FAQItem({
 
 export default function FAQSection({ initialData }: { initialData?: any[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const [isVisible, setIsVisible] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
+  const { ref: sectionRef, isVisible } = useIntersection<HTMLElement>();
 
-  const displayFaqs = initialData && initialData.length > 0 ? initialData : faqs;
+  const displayFaqs = faqsOrFallback(initialData);
   const initialVisibleCount = 4;
   const visibleFaqs = showAll ? displayFaqs : displayFaqs.slice(0, initialVisibleCount);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
 
   const handleShowLess = () => {
     setShowAll(false);

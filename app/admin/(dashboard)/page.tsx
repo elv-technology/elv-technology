@@ -16,9 +16,17 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { fetchJson } from "@/lib/admin/fetch-json";
+
+interface ContentCounts {
+    blogs: number;
+    caseStudies: number;
+    testimonials: number;
+    careers: number;
+}
 
 export default function AdminDashboard() {
-    const [stats, setStats] = useState({
+    const [stats, setStats] = useState<ContentCounts>({
         blogs: 0,
         caseStudies: 0,
         testimonials: 0,
@@ -30,13 +38,12 @@ export default function AdminDashboard() {
         async function fetchStats() {
             try {
                 setLoading(true);
-                const res = await fetch("/api/admin/content");
-                const data = await res.json();
+                const data = await fetchJson<Partial<ContentCounts>>("/api/admin/content", { cache: "no-store" });
                 setStats({
-                    blogs: data.blogs?.length || 0,
-                    caseStudies: data.caseStudies?.length || 0,
-                    testimonials: data.testimonials?.length || 0,
-                    careers: data.careers?.length || 0,
+                    blogs: data.blogs ?? 0,
+                    caseStudies: data.caseStudies ?? 0,
+                    testimonials: data.testimonials ?? 0,
+                    careers: data.careers ?? 0,
                 });
             } catch (error) {
                 console.error("Failed to fetch stats", error);
@@ -94,7 +101,7 @@ export default function AdminDashboard() {
                         Dashboard <span className="text-red-600">Overview</span>
                     </h2>
                     <p className="text-lg text-slate-500 dark:text-slate-400 mt-1 font-medium">
-                        Welcome back! Here's what's happening with your content.
+                        Welcome back! Here&apos;s what&apos;s happening with your content.
                     </p>
                 </motion.div>
 

@@ -72,27 +72,12 @@ const nextConfig = {
           },
         ],
       },
-      {
-        // Cache fonts
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
     ];
   },
   async redirects() {
     return [
       {
         source: '/public-address-solutions.html',
-        destination: '/solutions/audio-visual#public-address-bgm',
-        permanent: true,
-      },
-      {
-        source: '/public-address-solutions.htmll',
         destination: '/solutions/audio-visual#public-address-bgm',
         permanent: true,
       },

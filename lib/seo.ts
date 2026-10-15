@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+
+export const SITE_URL = "https://www.etssmart.com";
+export const SITE_NAME = "ELV Technology Solutions (ETS Smart)";
+const DEFAULT_OG_IMAGE = { url: "/images/og-image.jpg", width: 1200, height: 630, alt: "ELV Technology Solutions Abu Dhabi" };
+
 // Search engines truncate titles at roughly 60 characters and descriptions at roughly 155–160.
 export const MAX_TITLE_LENGTH = 60;
 export const MAX_DESCRIPTION_LENGTH = 155;
@@ -65,4 +71,45 @@ export function fitDescription(text: string | null | undefined, max: number = MA
     const cut = plain.slice(0, max - 1);
     const lastSpace = cut.lastIndexOf(" ");
     return `${(lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).replace(/[\s,;:.\-–—|]+$/, "")}…`;
+}
+
+interface PageMetadataOptions {
+    title: string;
+    description: string;
+    /** Path from the site root, e.g. "/about" ("/" for the home page). */
+    path: string;
+    /** Absolute URL or site-relative path of the share image; defaults to the site OG image. */
+    image?: string | null;
+    type?: "website" | "article";
+}
+
+/**
+ * Title, description, canonical URL, Open Graph and Twitter tags for a page. Next.js replaces (not merges)
+ * the root layout's openGraph/twitter objects, so every field is set here.
+ */
+export function pageMetadata({ title, description, path, image, type = "website" }: PageMetadataOptions): Metadata {
+    const url = `${SITE_URL}${path === "/" ? "/" : path}`;
+    const images = image ? [{ url: image }] : [DEFAULT_OG_IMAGE];
+
+    return {
+        title: { absolute: title },
+        description,
+        alternates: { canonical: url },
+        openGraph: {
+            title,
+            description,
+            url,
+            siteName: SITE_NAME,
+            locale: "en_US",
+            type,
+            images,
+        },
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+            images: images.map((i) => i.url),
+            creator: "@elv_technology",
+        },
+    };
 }

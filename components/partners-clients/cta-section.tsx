@@ -39,7 +39,7 @@ export function CTASection() {
                         transition={{ duration: 0.5, delay: 0.2 }}
                         className="mx-auto mt-8 max-w-2xl text-xl leading-8 text-slate-600"
                     >
-                        Join our growing list of satisfied partners and clients. Let's build something amazing together with ELV Technology Solutions.
+                        Join our growing list of satisfied partners and clients. Let&apos;s build something amazing together with ELV Technology Solutions.
                     </motion.p>
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}

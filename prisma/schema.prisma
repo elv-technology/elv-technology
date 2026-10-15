@@ -22,6 +22,8 @@ model Blog {
   seoDescription String? // optional meta description
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  @@index([published, createdAt])
 }
 
 model CaseStudy {
@@ -42,6 +44,8 @@ model CaseStudy {
   seoDescription String? // optional meta description
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  @@index([isFeatured, priority, createdAt])
 }
 
 model Career {
@@ -84,6 +88,8 @@ model Partner {
   priority  Int      @default(100)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([priority])
 }
 
 model Client {
@@ -94,6 +100,8 @@ model Client {
   priority  Int      @default(100)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([priority])
 }
 
 model KnowledgeBase {
@@ -117,6 +125,8 @@ model Inquiry {
   status    String   @default("new")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
 }
 
 model Application {
@@ -130,4 +140,6 @@ model Application {
   status    String   @default("applied")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
 }

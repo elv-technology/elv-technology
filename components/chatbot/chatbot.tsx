@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AnimatePresence, motion } from 'framer-motion';
-import { v4 as uuidv4 } from 'uuid';
 
 const CustomBotIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
@@ -193,7 +192,7 @@ export default function Chatbot() {
     setMessages((prev) => [
       ...prev,
       {
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         text,
         sender,
         timestamp: new Date(),
@@ -222,8 +221,8 @@ export default function Chatbot() {
       gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.5);
-    } catch (e) {
-      console.log('Audio playback blocked by browser policy');
+    } catch {
+      // Audio playback blocked by browser policy
     }
   };
 
@@ -255,6 +254,8 @@ export default function Chatbot() {
         }, 1500);
       }, 500);
     }
+    // Greet only when the panel opens, not whenever messages change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const sendMessage = async (text: string) => {
@@ -329,7 +330,7 @@ export default function Chatbot() {
             setShowTooltip(false);
           }}
           className="pointer-events-auto group relative flex items-center justify-center transition-all text-red-600 hover:text-red-700 drop-shadow-[0_10px_20px_rgba(220,38,38,0.4)]"
-          aria-label="Open AI ETS Assistant Chatbot"
+          aria-label={isOpen ? "Close AI ETS Assistant Chatbot" : "Open AI ETS Assistant Chatbot"}
         >
           {isOpen ? (
             <div className="flex h-[60px] w-[60px] items-center justify-center rounded-2xl bg-red-600 shadow-lg border border-red-500">
@@ -363,7 +364,7 @@ export default function Chatbot() {
                     </div>
                   </div>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors">
+                <button type="button" onClick={() => setIsOpen(false)} aria-label="Close chat" className="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors">
                   <X size={18} />
                 </button>
               </div>
@@ -454,6 +455,7 @@ export default function Chatbot() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Type your message..."
+                  aria-label="Type your message"
                   className="w-full bg-gray-50 border border-gray-200 rounded-full px-5 py-3 text-[14px] text-gray-900 focus:ring-2 focus:ring-red-600/20 focus:outline-none placeholder:text-gray-400"
                 />
               </div>

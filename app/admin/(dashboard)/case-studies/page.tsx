@@ -1,7 +1,6 @@
 'use client';
 
-
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
     Table,
     TableBody,
@@ -11,55 +10,22 @@ import {
     TableRow
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Briefcase, Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Plus, Pencil, Trash2, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
-import { toast } from 'sonner';
+import type { CaseStudy } from '@prisma/client';
+import { useAdminCollection } from '@/hooks/admin/use-admin-collection';
+import type { Serialized } from '@/lib/admin/types';
 
 export default function CaseStudiesAdminPage() {
-    const [caseStudies, setCaseStudies] = useState<any[]>([]);
+    const { items: caseStudies, loading, remove } = useAdminCollection<Serialized<CaseStudy>>('/api/admin/case-studies', {
+        loadError: 'Failed to load case studies',
+        deleteConfirm: 'Are you sure you want to delete this case study?',
+        deleteSuccess: 'Case study deleted successfully',
+        deleteError: 'Failed to delete case study',
+    });
     const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchCaseStudies();
-    }, []);
-
-    async function fetchCaseStudies() {
-        try {
-            const res = await fetch('/api/admin/case-studies');
-            if (res.ok) {
-                const data = await res.json();
-                setCaseStudies(data);
-            } else {
-                setCaseStudies([]);
-                toast.error('Failed to load case studies');
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Failed to load case studies');
-            setCaseStudies([]);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    async function deleteCaseStudy(id: string) {
-        if (!confirm('Are you sure you want to delete this case study?')) return;
-
-        try {
-            const res = await fetch(`/api/admin/case-studies/${id}`, { method: 'DELETE' });
-            if (res.ok) {
-                setCaseStudies(caseStudies.filter(c => c.id !== id && c.slug !== id));
-                toast.success('Case study deleted successfully');
-            } else {
-                toast.error('Failed to delete case study');
-            }
-        } catch (error) {
-            toast.error('Failed to delete case study');
-        }
-    }
 
     const filtered = caseStudies.filter(c =>
         c.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -135,7 +101,7 @@ export default function CaseStudiesAdminPage() {
                                                     variant="outline"
                                                     size="icon"
                                                     className="text-red-500 hover:text-red-600 border-red-100 hover:bg-red-50"
-                                                    onClick={() => deleteCaseStudy(cs.id)}
+                                                    onClick={() => remove(cs.id)}
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>

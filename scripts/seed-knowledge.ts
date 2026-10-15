@@ -2,7 +2,7 @@
  * Rebuilds the chatbot knowledge base (KnowledgeBase table) from the website's own content.
  *
  * Usage:
- *   ENV_FILE=.env.local npm run seed:knowledge
+ *   ENV_FILE=.env.local npm run seed:knowledge   (runs this file with tsx)
  *
  * Needs DATABASE_URL and GOOGLE_GENERATIVE_AI_API_KEY. It replaces all existing rows,
  * so run it again whenever solutions, services or FAQs change, or after changing the embedding model.
@@ -13,7 +13,7 @@ config({ path: process.env.ENV_FILE || ".env" });
 import { readFileSync } from "fs";
 import { join } from "path";
 import { prisma } from "@/lib/prisma";
-import { generateEmbedding } from "@/lib/chatbot/vector-store";
+import { generateEmbeddings } from "@/lib/chatbot/vector-store";
 import { solutionsData } from "@/lib/solutions-data";
 import { servicesData } from "@/lib/services-data";
 import { faqSectionData } from "@/lib/data";
@@ -91,25 +91,17 @@ async function main() {
     const chunks = await buildChunks();
     console.log(`Prepared ${chunks.length} knowledge chunks. Generating embeddings...`);
 
-    const rows: { content: string; category: string; vector: string }[] = [];
-    for (const [i, chunk] of chunks.entries()) {
-        const embedding = await generateEmbedding(chunk.content, "RETRIEVAL_DOCUMENT");
-        rows.push({ ...chunk, vector: `[${embedding.join(",")}]` });
-        process.stdout.write(`\r  ${i + 1}/${chunks.length}`);
-    }
-    console.log("\nWriting to the database...");
+    const embeddings = await generateEmbeddings(chunks.map((chunk) => chunk.content), "RETRIEVAL_DOCUMENT");
+    const rows = chunks.map((chunk, i) => ({ ...chunk, vector: `[${embeddings[i].join(",")}]` }));
+    console.log("Writing to the database...");
 
     // Replace everything in one transaction so the chatbot never sees a half-built knowledge base.
     await prisma.$transaction([
-        prisma.$executeRawUnsafe(`DELETE FROM "KnowledgeBase"`),
+        prisma.$executeRaw`DELETE FROM "KnowledgeBase"`,
         ...rows.map((row) =>
-            prisma.$executeRawUnsafe(
-                `INSERT INTO "KnowledgeBase" (id, content, category, embedding, "createdAt", "updatedAt")
-                 VALUES (gen_random_uuid()::text, $1, $2, $3::vector, NOW(), NOW())`,
-                row.content,
-                row.category,
-                row.vector
-            )
+            prisma.$executeRaw`
+                INSERT INTO "KnowledgeBase" (id, content, category, embedding, "createdAt", "updatedAt")
+                VALUES (gen_random_uuid()::text, ${row.content}, ${row.category}, ${row.vector}::vector, NOW(), NOW())`
         ),
     ]);
 

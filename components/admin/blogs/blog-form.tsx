@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Save, X, Plus, Trash2 } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 import { ImageUpload } from '@/components/admin/image-upload';
 import { SuccessDialog } from '@/components/admin/success-dialog';
 import dynamic from 'next/dynamic';
@@ -17,45 +17,67 @@ const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
 import { SeoFields } from '@/components/admin/seo-fields';
 import { blogMetaTitle } from '@/lib/seo';
+import { slugify } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/admin/fetch-json';
+import { resolveImage, saveEntity } from '@/lib/admin/save-entity';
+import type { ClientRecord, ImageValue } from '@/lib/admin/types';
+import type { Blog } from '@prisma/client';
 
 interface BlogFormProps {
-    initialData?: any;
+    initialData?: ClientRecord<Blog>;
     isEditing?: boolean;
+}
+
+interface BlogFormData {
+    title: string;
+    slug: string;
+    excerpt: string;
+    author: string;
+    category: string;
+    image: ImageValue;
+    content: string;
+    date: string;
+    seoTitle: string;
+    seoDescription: string;
+}
+
+const LEGACY_CONTENT_NOTICE = '<p><em>Content needs migration from old format...</em></p>';
+
+function toDateInput(value?: Date | string | null): string {
+    const date = value ? new Date(value) : new Date();
+    return (Number.isNaN(date.getTime()) ? new Date() : date).toISOString().split('T')[0];
+}
+
+/** Old posts stored content as JSON `{ sections }`; show a notice instead of crashing the editor. */
+function normalizeContent(content: string): string {
+    try {
+        const parsed = JSON.parse(content);
+        if (parsed && typeof parsed === 'object' && 'sections' in parsed) return LEGACY_CONTENT_NOTICE;
+    } catch {
+        // Already HTML.
+    }
+    return content;
+}
+
+function toFormData(initialData?: ClientRecord<Blog>): BlogFormData {
+    return {
+        title: initialData?.title ?? '',
+        slug: initialData?.slug ?? '',
+        excerpt: initialData?.excerpt ?? '',
+        author: initialData?.author ?? 'ELV Technology Solutions',
+        category: initialData?.category ?? '',
+        image: initialData?.image ?? '',
+        content: initialData?.content ? normalizeContent(initialData.content) : '',
+        date: toDateInput(initialData?.date),
+        seoTitle: initialData?.seoTitle ?? '',
+        seoDescription: initialData?.seoDescription ?? '',
+    };
 }
 
 export function BlogForm({ initialData, isEditing }: BlogFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState(initialData || {
-        title: '',
-        slug: '',
-        excerpt: '',
-        author: 'ELV Technology Solutions',
-        category: '',
-        image: '',
-        content: '',
-        date: new Date().toISOString().split('T')[0]
-    });
-
-    if (initialData && !formData.date) {
-        formData.date = initialData.date ? new Date(initialData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-    }
-
-    // Handle initial data parsing if it's the old JSON sections format (migration fallback)
-    if (isEditing && formData.content && typeof formData.content === 'string') {
-        try {
-            const parsed = JSON.parse(formData.content);
-            if (parsed.sections) {
-                // If it's the old format, we just show a warning or clear it out.
-                // For a proper migration, a DB script should convert it, 
-                // but we will protect the editor from crashing here.
-                formData.content = '<p><em>Content needs migration from old format...</em></p>';
-            }
-        } catch (e) {
-            // It's likely already standard HTML, leave it be.
-        }
-    }
-
+    const [formData, setFormData] = useState<BlogFormData>(() => toFormData(initialData));
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
     const handleSave = async (e: React.FormEvent) => {
@@ -69,51 +91,16 @@ export function BlogForm({ initialData, isEditing }: BlogFormProps) {
         setLoading(true);
 
         try {
-            let finalImageUrl = formData.image;
-            
-            // Upload file if it's a new File object
             if (formData.image instanceof File) {
                 toast.loading('Uploading image...', { id: 'upload-toast' });
-                
-                const { uploadFiles } = await import('@/lib/uploadthing');
-                const res = await uploadFiles("imageUploader", {
-                    files: [formData.image],
-                });
-                
-                if (res && res[0]) {
-                    finalImageUrl = res[0].url;
-                    toast.dismiss('upload-toast');
-                } else {
-                    toast.dismiss('upload-toast');
-                    throw new Error('Failed to upload image');
-                }
             }
+            const image = await resolveImage(formData.image);
+            toast.dismiss('upload-toast');
 
-            const url = isEditing
-                ? `/api/admin/blogs/${initialData.id}`
-                : '/api/admin/blogs';
-
-            const method = isEditing ? 'PATCH' : 'POST';
-
-            const payload = {
-                ...formData,
-                image: finalImageUrl,
-                content: formData.content,
-            };
-
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (res.ok) {
-                setShowSuccessDialog(true);
-            } else {
-                throw new Error('Failed to save');
-            }
+            await saveEntity('blogs', isEditing ? initialData?.id : undefined, { ...formData, image });
+            setShowSuccessDialog(true);
         } catch (error) {
-            toast.error('Error saving blog');
+            toast.error(getErrorMessage(error, 'Error saving blog'));
         } finally {
             setLoading(false);
             toast.dismiss('upload-toast');
@@ -174,10 +161,10 @@ export function BlogForm({ initialData, isEditing }: BlogFormProps) {
                                     value={formData.title}
                                     onChange={e => {
                                         const title = e.target.value;
-                                        setFormData((prev: any) => ({
-                                            ...prev, 
+                                        setFormData(prev => ({
+                                            ...prev,
                                             title,
-                                            slug: !isEditing ? title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : prev.slug
+                                            slug: !isEditing ? slugify(title) : prev.slug
                                         }));
                                     }}
                                     required
@@ -207,7 +194,6 @@ export function BlogForm({ initialData, isEditing }: BlogFormProps) {
                                     value={formData.image}
                                     onChange={(url) => setFormData({ ...formData, image: url })}
                                     onRemove={() => setFormData({ ...formData, image: '' })}
-                                    endpoint="imageUploader"
                                 />
                             </div>
                         </CardContent>
@@ -229,8 +215,8 @@ export function BlogForm({ initialData, isEditing }: BlogFormProps) {
                                 />
                             </div>
                             <SeoFields
-                                seoTitle={formData.seoTitle || ''}
-                                seoDescription={formData.seoDescription || ''}
+                                seoTitle={formData.seoTitle}
+                                seoDescription={formData.seoDescription}
                                 onChange={(field, value) => setFormData({ ...formData, [field]: value })}
                                 defaultTitle={blogMetaTitle(formData.title || '')}
                                 defaultDescription={formData.excerpt || ''}

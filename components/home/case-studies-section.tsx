@@ -24,7 +24,7 @@ export default function CaseStudiesSection({ initialData }: { initialData?: any[
                             Proven <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent/70">Results</span>, Global Expertise
                         </h2>
                         <p className="mt-6 text-lg text-muted-foreground leading-relaxed max-w-xl">
-                            Explore how we've helped leading organizations across the UAE transform their infrastructure with cutting-edge technology.
+                            Explore how we&apos;ve helped leading organizations across the UAE transform their infrastructure with cutting-edge technology.
                         </p>
                     </div>
 

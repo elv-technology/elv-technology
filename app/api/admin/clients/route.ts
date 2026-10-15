@@ -1,43 +1,22 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { requireAdmin } from '@/lib/auth';
-export const dynamic = "force-dynamic";
+import { adminRoute, parseBody } from "@/lib/api";
+import { clientSchema } from "@/lib/content-input";
+import { revalidateLogos } from "@/lib/revalidate";
 
-export async function GET(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const GET = adminRoute("fetch clients", async () => {
+  const clients = await prisma.client.findMany({
+    orderBy: { priority: "asc" },
+  });
+  return NextResponse.json(clients);
+});
 
-  try {
-    const clients = await prisma.client.findMany({
-      orderBy: { priority: "asc" },
-    });
-    return NextResponse.json(clients);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch clients" }, { status: 500 });
-  }
-}
+export const POST = adminRoute("create client", async (req) => {
+  const data = await parseBody(req, clientSchema);
+  const client = await prisma.client.create({ data });
 
-export async function POST(req: Request) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+  revalidateLogos();
 
-  try {
-    const body = await req.json();
-    const client = await prisma.client.create({
-      data: {
-        name: body.name,
-        logo: body.logo,
-        category: body.category,
-        priority: body.priority || 100,
-      },
-    });
-
-    revalidatePath("/");
-    revalidatePath("/partners-clients");
-
-    return NextResponse.json(client);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to create client" }, { status: 500 });
-  }
-}
+  return NextResponse.json(client);
+});

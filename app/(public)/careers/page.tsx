@@ -3,31 +3,22 @@ import JobOpeningsList from '@/components/careers/job-openings-list';
 import ApplicationForm from '@/components/careers/application-form';
 import { getCollection } from '@/lib/db';
 import { Career } from '@prisma/client';
-import { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: {
-    absolute: "Careers at ETS Smart | ELV Jobs Abu Dhabi"
-  },
+export const metadata = pageMetadata({
+  title: "Careers at ETS Smart | ELV Jobs Abu Dhabi",
   description: "Explore career opportunities at ELV Technology Solutions (ETS Smart) in Abu Dhabi. Join our team of ELV engineers, technicians, and project managers in UAE.",
-  alternates: {
-    canonical: "https://www.etssmart.com/careers",
-  },
-  openGraph: {
-    title: "Careers at ETS Smart | ELV Jobs Abu Dhabi",
-    description: "Explore career opportunities at ELV Technology Solutions (ETS Smart) in Abu Dhabi. Join our team of ELV engineers, technicians, and project managers in UAE.",
-    url: "https://www.etssmart.com/careers",
-  },
-};
+  path: "/careers",
+});
 
 
 export default async function CareersPage() {
     const jobOpenings = await getCollection('careers') as Career[];
 
     return (
-        <main className="bg-white dark:bg-slate-950 min-h-screen">
+        <div className="bg-white dark:bg-slate-950 min-h-screen">
             <CareersHero />
             <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16 lg:py-24">
                 <div className="lg:grid lg:grid-cols-12 lg:gap-16">
@@ -41,6 +32,6 @@ export default async function CareersPage() {
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     );
 }

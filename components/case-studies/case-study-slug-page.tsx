@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { useLoading } from "@/hooks/use-loading";
 
 interface CaseStudySolution {
   title: string;
@@ -43,8 +42,6 @@ interface CaseStudySlugPageProps {
 }
 
 export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPageProps) {
-  const { stopLoading } = useLoading();
-
   if (!study) {
     notFound();
   }
@@ -78,7 +75,6 @@ export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPa
                   sizes="100vw"
                   className="object-cover"
                   priority={i === 0}
-                  onLoad={i === 0 ? stopLoading : undefined}
                 />
               </div>
             ))}
@@ -91,7 +87,6 @@ export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPa
             sizes="100vw"
             className="object-cover"
             priority
-            onLoad={stopLoading}
           />
         )}
 
@@ -248,7 +243,7 @@ export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPa
 
               <div className="bg-red-700 p-6 rounded-2xl shadow-lg text-white">
                 <h3 className="text-xl font-bold mb-2">Ready to transform your business?</h3>
-                <p className="text-red-100 mb-6">Let's discuss how we can help you achieve similar results.</p>
+                <p className="text-red-100 mb-6">Let&apos;s discuss how we can help you achieve similar results.</p>
                 <Link href="/contact" className="w-full">
                   <Button variant="secondary" className="w-full bg-white text-red-700 hover:bg-red-50 font-bold">
                     Contact Us

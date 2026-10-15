@@ -1,120 +1,63 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import { deleteFilesFromUploadThing } from "@/lib/uploadthing-server";
-import { requireAdmin } from '@/lib/auth';
-import { pickCaseStudyData } from '@/lib/content-input';
+import { deleteFilesFromUploadThing } from '@/lib/uploadthing-server';
+import { adminRoute, deleted, jsonError, parseBody } from '@/lib/api';
+import { caseStudySchema } from '@/lib/content-input';
+import { revalidateCaseStudy } from '@/lib/revalidate';
+import { slugify } from '@/lib/utils';
 
-export async function GET(
-    request: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(request);
-    if (denied) return denied;
+type Params = { id: string };
 
-    try {
-        const caseStudy = await prisma.caseStudy.findUnique({
-            where: { id: params.id }
-        });
+export const GET = adminRoute<Params>('fetch case study', async (_request, { params }) => {
+    const caseStudy = await prisma.caseStudy.findUnique({
+        where: { id: params.id }
+    });
 
-        if (!caseStudy) {
-            return NextResponse.json({ error: 'Case study not found' }, { status: 404 });
-        }
+    if (!caseStudy) return jsonError('Case study not found', 404);
 
-        return NextResponse.json(caseStudy);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch case study' }, { status: 500 });
+    return NextResponse.json(caseStudy);
+});
+
+export const PATCH = adminRoute<Params>('update case study', async (request, { params }) => {
+    const { slug: rawSlug, ...data } = await parseBody(request, caseStudySchema.partial());
+
+    const slug = rawSlug === undefined ? undefined : slugify(rawSlug);
+    if (slug === '') return jsonError('Slug is required', 400);
+
+    const existing = await prisma.caseStudy.findUniqueOrThrow({
+        where: { id: params.id },
+        select: { slug: true, image: true, gallery: true },
+    });
+
+    const updated = await prisma.caseStudy.update({
+        where: { id: params.id },
+        data: { ...data, slug },
+    });
+
+    const kept = new Set([updated.image, ...updated.gallery]);
+    const removed = [existing.image, ...existing.gallery].filter((url) => url && !kept.has(url));
+    if (removed.length > 0) {
+        await deleteFilesFromUploadThing(removed);
     }
-}
 
-export async function PATCH(
-    request: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(request);
-    if (denied) return denied;
+    revalidateCaseStudy(updated.slug, existing.slug);
 
-    try {
-        const body = await request.json();
+    return NextResponse.json(updated);
+});
 
-        // 1. Fetch existing case study to check for file changes
-        const existingCaseStudy = await prisma.caseStudy.findUnique({
-            where: { id: params.id },
-        });
+export const DELETE = adminRoute<Params>('delete case study', async (_request, { params }) => {
+    const caseStudy = await prisma.caseStudy.delete({
+        where: { id: params.id },
+        select: { slug: true, image: true, gallery: true },
+    });
 
-        if (existingCaseStudy) {
-            // Delete old main image if changed
-            if (body.image && existingCaseStudy.image !== body.image) {
-                await deleteFilesFromUploadThing(existingCaseStudy.image);
-            }
-            // Delete old gallery images that are no longer in the updated gallery
-            if (body.gallery && Array.isArray(body.gallery)) {
-                const removedGalleryImages = existingCaseStudy.gallery.filter(
-                    url => !body.gallery.includes(url)
-                );
-                if (removedGalleryImages.length > 0) {
-                    await deleteFilesFromUploadThing(removedGalleryImages);
-                }
-            }
-        }
-
-        const updatedCaseStudy = await prisma.caseStudy.update({
-            where: { id: params.id },
-            data: pickCaseStudyData(body)
-        });
-
-        revalidatePath('/');
-        revalidatePath('/case-studies');
-        revalidatePath('/case-studies/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
-        revalidatePath('/sitemap.xml');
-        revalidatePath(`/case-studies/${updatedCaseStudy.slug}`);
-
-        // If slug changed, revalidate the old path as well
-        if (existingCaseStudy && existingCaseStudy.slug !== updatedCaseStudy.slug) {
-            revalidatePath(`/case-studies/${existingCaseStudy.slug}`);
-        }
-
-        return NextResponse.json(updatedCaseStudy);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to update case study' }, { status: 500 });
+    const files = [caseStudy.image, ...caseStudy.gallery].filter(Boolean);
+    if (files.length > 0) {
+        await deleteFilesFromUploadThing(files);
     }
-}
 
-export async function DELETE(
-    request: Request,
-    { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(request);
-    if (denied) return denied;
+    revalidateCaseStudy(caseStudy.slug);
 
-    try {
-        const caseStudy = await prisma.caseStudy.findUnique({
-            where: { id: params.id },
-            select: { slug: true, image: true, gallery: true }
-        });
-
-        await prisma.caseStudy.delete({
-            where: { id: params.id }
-        });
-
-        // Delete all files from UploadThing
-        if (caseStudy) {
-            const filesToDelete = [caseStudy.image, ...caseStudy.gallery].filter(Boolean) as string[];
-            if (filesToDelete.length > 0) {
-                await deleteFilesFromUploadThing(filesToDelete);
-            }
-        }
-
-        revalidatePath('/');
-        revalidatePath('/case-studies');
-        revalidatePath('/case-studies/[slug]', 'page'); // all detail pages (prev/next links, new slugs)
-        revalidatePath('/sitemap.xml');
-        if (caseStudy?.slug) {
-            revalidatePath(`/case-studies/${caseStudy.slug}`);
-        }
-
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to delete case study' }, { status: 500 });
-    }
-}
+    return deleted();
+});

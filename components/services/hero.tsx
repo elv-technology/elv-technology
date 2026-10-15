@@ -3,10 +3,8 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { servicesData } from '@/lib/services-data';
-import { useLoading } from '@/hooks/use-loading';
 
 export default function Hero() {
-  const { stopLoading } = useLoading();
   const { hero } = servicesData;
 
   return (
@@ -17,10 +15,9 @@ export default function Hero() {
           src={hero.image}
           alt={hero.title}
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="100vw"
           className="object-cover opacity-100"
           priority
-          onLoad={stopLoading}
         />
 
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/60" />

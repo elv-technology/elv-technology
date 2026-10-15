@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function useIntersection(options?: IntersectionObserverInit) {
-  const ref = useRef<HTMLElement>(null);
+/** Becomes visible once the element first scrolls into view, then stops observing. */
+export function useIntersection<T extends Element = HTMLDivElement>(threshold = 0.1) {
+  const ref = useRef<T>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -14,41 +15,15 @@ export function useIntersection(options?: IntersectionObserverInit) {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(entry.target);
+          observer.disconnect();
         }
       },
-      { threshold: 0.1, ...options }
+      { threshold }
     );
 
     observer.observe(element);
     return () => observer.disconnect();
-  }, [options]);
+  }, [threshold]);
 
   return { ref, isVisible };
-}
-
-export function useAnimateOnScroll() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate-fade-in-up");
-            observer.unobserve(entry.target);
-          }
-        }
-      },
-      { threshold: 0.08 }
-    );
-
-    const elements =
-      sectionRef.current?.querySelectorAll("[data-animate]");
-    elements?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
-  return sectionRef;
 }

@@ -1,48 +1,26 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/auth';
+import { adminRoute, deleted, parseBody } from '@/lib/api';
+import { inquiryUpdateSchema } from '@/lib/content-input';
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+type Params = { id: string };
 
-  try {
-    const { id } = params;
-    const body = await req.json();
-    const { status } = body;
+export const PATCH = adminRoute<Params>('update inquiry', async (req, { params }) => {
+  const data = await parseBody(req, inquiryUpdateSchema);
 
-    const inquiry = await prisma.inquiry.update({
-      where: { id },
-      data: { status },
-    });
+  const inquiry = await prisma.inquiry.update({
+    where: { id: params.id },
+    data,
+  });
 
-    return NextResponse.json(inquiry);
-  } catch (error) {
-    console.error('Failed to update inquiry:', error);
-    return NextResponse.json({ error: 'Failed to update inquiry' }, { status: 500 });
-  }
-}
+  return NextResponse.json(inquiry);
+});
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-    const denied = await requireAdmin(req);
-    if (denied) return denied;
+export const DELETE = adminRoute<Params>('delete inquiry', async (_req, { params }) => {
+  await prisma.inquiry.delete({
+    where: { id: params.id },
+  });
 
-  try {
-    const { id } = params;
-    await prisma.inquiry.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Failed to delete inquiry:', error);
-    return NextResponse.json({ error: 'Failed to delete inquiry' }, { status: 500 });
-  }
-}
+  return deleted();
+});

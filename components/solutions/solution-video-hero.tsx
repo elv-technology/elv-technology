@@ -1,29 +1,32 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ReactNode, useEffect, useState } from 'react';
-import { useLoading } from '@/hooks/use-loading';
+import { ReactNode, useState } from 'react';
 
 interface Props {
     videoSrc: string;
+    poster: string;
     tag: string;
     title: ReactNode;
     description: string;
 }
 
-export default function SolutionVideoHero({ videoSrc, tag, title, description }: Props) {
-    const { stopLoading } = useLoading();
+export default function SolutionVideoHero({ videoSrc, poster, tag, title, description }: Props) {
     const [videoReady, setVideoReady] = useState(false);
-
-    // Dismiss loading screen immediately — never block on large video files
-    useEffect(() => {
-        stopLoading();
-    }, [stopLoading]);
 
     return (
         <section className="relative min-h-[90vh] lg:min-h-screen w-full overflow-hidden bg-slate-900 flex items-center">
-            {/* Background Video — fades in when ready */}
+            {/* Poster image, cross-faded to the background video once it is ready */}
             <div className="absolute inset-0 z-0">
+                <Image
+                    src={poster}
+                    alt=""
+                    fill
+                    priority
+                    sizes="100vw"
+                    className={`object-cover transition-opacity duration-700 ${videoReady ? 'opacity-0' : 'opacity-60'}`}
+                />
                 <video
                     autoPlay
                     muted
@@ -31,7 +34,7 @@ export default function SolutionVideoHero({ videoSrc, tag, title, description }:
                     playsInline
                     preload="metadata"
                     onLoadedData={() => setVideoReady(true)}
-                    className={`h-full w-full object-cover transition-opacity duration-700 ${videoReady ? 'opacity-60' : 'opacity-0'}`}
+                    className={`relative h-full w-full object-cover transition-opacity duration-700 ${videoReady ? 'opacity-60' : 'opacity-0'}`}
                 >
                     <source src={videoSrc} type="video/mp4" />
                     Your browser does not support the video tag.

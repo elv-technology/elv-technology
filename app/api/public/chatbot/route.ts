@@ -91,6 +91,25 @@ const INTENTS = {
     ]
 };
 
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** One case-insensitive regex per keyword list, matching whole words/phrases only ("hi" must not match "this"). */
+function keywordPattern(keywords: string[]) {
+    const alternatives = keywords.map(k => escapeRegExp(k.trim()).replace(/\s+/g, '\\s+'));
+    return new RegExp(`\\b(?:${alternatives.join('|')})\\b`, 'i');
+}
+
+type Intent = { keywords: string[]; answer: string; suggestions?: string[] };
+const compile = (intents: Intent[]) => intents.map(intent => ({ ...intent, pattern: keywordPattern(intent.keywords) }));
+
+const OUT_OF_SCOPE = compile(INTENTS.OUT_OF_SCOPE);
+const SOLUTIONS_DETAIL = compile(INTENTS.SOLUTIONS_DETAIL);
+const WHAT_WE_DO = compile(INTENTS.WHAT_WE_DO);
+const GREETINGS = compile(INTENTS.GREETINGS);
+const GEOGRAPHY = compile(INTENTS.GEOGRAPHY);
+const GET_QUOTE = compile(INTENTS.GET_QUOTE);
+const LEAD_TRIGGERS = keywordPattern(['quote', 'price', 'install', 'need', 'project', 'looking for', 'schedule', 'visit', 'survey', 'buy', 'cost', 'site assessment', 'call back', 'callback', 'call']);
+
 const SYSTEM_PROMPT = `
 You are the ETS Assistant representing ELV Technology Solutions (Abu Dhabi, UAE).
 You provide expert advice on Security (CCTV), AV, Networking, and Smart Automation.
@@ -108,8 +127,7 @@ GUIDELINES:
 `;
 
 function shouldCaptureLead(input: string): boolean {
-    const triggers = ['quote', 'price', 'install', 'need', 'project', 'looking for', 'schedule', 'visit', 'survey', 'buy', 'cost', 'site assessment', 'call back', 'callback', 'call'];
-    return triggers.some(t => input.toLowerCase().includes(t));
+    return LEAD_TRIGGERS.test(input);
 }
 
 export async function POST(req: Request) {
@@ -132,12 +150,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Invalid message' }, { status: 400 });
         }
         const { message, history } = parsed.data;
-        const lowerMessage = message.toLowerCase();
 
         // 1. FAST PATH: Out of Scope
-        const outOfScopeMatch = INTENTS.OUT_OF_SCOPE.find(item => 
-            item.keywords.some(k => lowerMessage.includes(k))
-        );
+        const outOfScopeMatch = OUT_OF_SCOPE.find(item => item.pattern.test(message));
         if (outOfScopeMatch) {
             return NextResponse.json({ 
                 text: outOfScopeMatch.answer, 
@@ -147,41 +162,31 @@ export async function POST(req: Request) {
         }
 
         // 2. FAST PATH: Solution Details (Moved priority UP to catch specific services first)
-        const solutionDetailMatch = INTENTS.SOLUTIONS_DETAIL.find(item => 
-            item.keywords.some(k => lowerMessage.includes(k))
-        );
+        const solutionDetailMatch = SOLUTIONS_DETAIL.find(item => item.pattern.test(message));
         if (solutionDetailMatch) {
             return NextResponse.json({ text: solutionDetailMatch.answer, captureLead: false, suggestions: solutionDetailMatch.suggestions });
         }
 
         // 3. FAST PATH: What We Do (General list)
-        const whatWeDoMatch = INTENTS.WHAT_WE_DO.find(item => 
-            item.keywords.some(k => lowerMessage.includes(k))
-        );
+        const whatWeDoMatch = WHAT_WE_DO.find(item => item.pattern.test(message));
         if (whatWeDoMatch) {
             return NextResponse.json({ text: whatWeDoMatch.answer, captureLead: false, suggestions: whatWeDoMatch.suggestions });
         }
 
         // 4. FAST PATH: Greetings
-        const greetingMatch = INTENTS.GREETINGS.find(item => 
-            item.keywords.some(k => lowerMessage.includes(k)) && lowerMessage.length < 20
-        );
+        const greetingMatch = GREETINGS.find(item => item.pattern.test(message) && message.length < 20);
         if (greetingMatch) {
             return NextResponse.json({ text: greetingMatch.answer, captureLead: false, suggestions: ["Our Solutions", "Service Locations"] });
         }
 
         // 5. FAST PATH: Geography
-        const geoMatch = INTENTS.GEOGRAPHY.find(item => 
-            item.keywords.some(k => lowerMessage.includes(k))
-        );
+        const geoMatch = GEOGRAPHY.find(item => item.pattern.test(message));
         if (geoMatch) {
             return NextResponse.json({ text: geoMatch.answer, captureLead: false, suggestions: geoMatch.suggestions });
         }
 
         // 6. FAST PATH: Get Quote
-        const getQuoteMatch = INTENTS.GET_QUOTE.find(item => 
-            item.keywords.some(k => lowerMessage.includes(k))
-        );
+        const getQuoteMatch = GET_QUOTE.find(item => item.pattern.test(message));
         if (getQuoteMatch) {
             return NextResponse.json({ text: getQuoteMatch.answer, captureLead: true, suggestions: getQuoteMatch.suggestions });
         }
@@ -204,9 +209,6 @@ export async function POST(req: Request) {
         });
 
         const captureLead = shouldCaptureLead(message) || shouldCaptureLead(text);
-
-        // Logging
-        console.log(`[RAG-Chatbot] context: ${context ? 'found' : 'none'} | capture: ${captureLead}`);
 
         return NextResponse.json({ 
             text, 

@@ -8,13 +8,18 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Save, X, Plus, Trash2, List, Info } from 'lucide-react';
+import { Save, X, Info } from 'lucide-react';
 import { ImageUpload } from '@/components/admin/image-upload';
 import { SuccessDialog } from '@/components/admin/success-dialog';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import { SeoFields } from '@/components/admin/seo-fields';
 import { caseStudyMetaTitle } from '@/lib/seo';
+import { slugify } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/admin/fetch-json';
+import { resolveGallery, resolveImage, saveEntity } from '@/lib/admin/save-entity';
+import type { ClientRecord, ImageValue } from '@/lib/admin/types';
+import type { CaseStudy } from '@prisma/client';
 
 const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -29,30 +34,63 @@ const modules = {
 };
 
 interface CaseStudyFormProps {
-    initialData?: any;
+    initialData?: ClientRecord<CaseStudy>;
     isEditing?: boolean;
+}
+
+type Solution = Record<string, unknown> & { title: string; html: string };
+
+interface CaseStudyFormData {
+    slug: string;
+    client: string;
+    project: string;
+    location: string;
+    overview: string;
+    challenges: string[];
+    solution: Solution;
+    outcomes: string[];
+    image: ImageValue;
+    gallery: (string | File)[];
+    isFeatured: boolean;
+    priority: number;
+    seoTitle: string;
+    seoDescription: string;
+}
+
+const DEFAULT_SOLUTION_TITLE = 'Engineered and Implemented Solution';
+
+function toSolution(value: unknown): Solution {
+    const solution = value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
+    return {
+        ...solution,
+        title: typeof solution.title === 'string' ? solution.title : DEFAULT_SOLUTION_TITLE,
+        html: typeof solution.html === 'string' ? solution.html : '',
+    };
+}
+
+function toFormData(initialData?: ClientRecord<CaseStudy>): CaseStudyFormData {
+    return {
+        slug: initialData?.slug ?? '',
+        client: initialData?.client ?? '',
+        project: initialData?.project ?? '',
+        location: initialData?.location ?? '',
+        overview: initialData?.overview ?? '',
+        challenges: initialData?.challenges ?? [],
+        solution: toSolution(initialData?.solution),
+        outcomes: initialData?.outcomes ?? [],
+        image: initialData?.image ?? '',
+        gallery: initialData?.gallery ?? [],
+        isFeatured: initialData?.isFeatured ?? false,
+        priority: initialData?.priority ?? 0,
+        seoTitle: initialData?.seoTitle ?? '',
+        seoDescription: initialData?.seoDescription ?? '',
+    };
 }
 
 export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState(initialData || {
-        slug: '',
-        client: '',
-        project: '',
-        location: '',
-        overview: '',
-        challenges: [],
-        solution: {
-            title: 'Engineered and Implemented Solution',
-            html: ''
-        },
-        outcomes: [],
-        image: '',
-        gallery: [],
-        isFeatured: false,
-        priority: initialData?.priority || 0
-    });
+    const [formData, setFormData] = useState<CaseStudyFormData>(() => toFormData(initialData));
 
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
@@ -67,67 +105,21 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
         setLoading(true);
 
         try {
-            let finalImageUrl = formData.image;
-            let finalGallery = [...formData.gallery];
-            
-            const { uploadFiles } = await import('@/lib/uploadthing');
-
-            // 1. Upload featured image if it's a new File
             if (formData.image instanceof File) {
                 toast.loading('Uploading featured image...', { id: 'upload-toast' });
-                const res = await uploadFiles("imageUploader", { files: [formData.image] });
-                if (res && res[0]) {
-                    finalImageUrl = res[0].url;
-                } else {
-                    throw new Error('Failed to upload featured image');
-                }
             }
+            const image = await resolveImage(formData.image);
 
-            // 2. Upload gallery images if they are new Files
-            const newGalleryFiles = finalGallery.filter(f => f instanceof File) as File[];
-            if (newGalleryFiles.length > 0) {
+            if (formData.gallery.some(item => item instanceof File)) {
                 toast.loading('Uploading gallery images...', { id: 'upload-toast' });
-                const res = await uploadFiles("galleryUploader", { files: newGalleryFiles });
-                if (res) {
-                    let uploadIndex = 0;
-                    finalGallery = finalGallery.map(item => {
-                        if (item instanceof File) {
-                            return res[uploadIndex++].url;
-                        }
-                        return item;
-                    });
-                } else {
-                    throw new Error('Failed to upload gallery images');
-                }
             }
+            const gallery = await resolveGallery(formData.gallery.filter(Boolean));
 
             toast.loading('Saving case study...', { id: 'upload-toast' });
-
-            const url = isEditing
-                ? `/api/admin/case-studies/${initialData.id}`
-                : '/api/admin/case-studies';
-
-            const method = isEditing ? 'PATCH' : 'POST';
-
-            const payload = {
-                ...formData,
-                image: finalImageUrl,
-                gallery: finalGallery,
-            };
-
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (res.ok) {
-                setShowSuccessDialog(true);
-            } else {
-                throw new Error('Failed to save');
-            }
+            await saveEntity('case-studies', isEditing ? initialData?.id : undefined, { ...formData, image, gallery });
+            setShowSuccessDialog(true);
         } catch (error) {
-            toast.error('Error saving case study');
+            toast.error(getErrorMessage(error, 'Error saving case study'));
         } finally {
             setLoading(false);
             toast.dismiss('upload-toast');
@@ -193,10 +185,10 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                                     value={formData.project}
                                     onChange={e => {
                                         const project = e.target.value;
-                                        setFormData((prev: any) => ({
+                                        setFormData(prev => ({
                                             ...prev,
                                             project,
-                                            slug: !isEditing ? project.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : prev.slug
+                                            slug: !isEditing ? slugify(project) : prev.slug
                                         }));
                                     }}
                                     required
@@ -250,7 +242,6 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                                     value={formData.image}
                                     onChange={(url) => setFormData({ ...formData, image: url })}
                                     onRemove={() => setFormData({ ...formData, image: '' })}
-                                    endpoint="imageUploader"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -259,17 +250,16 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                                     <Button type="button" variant="outline" size="sm" onClick={() => addItem('gallery')}>+ Add Image</Button>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {formData.gallery.map((path: string, i: number) => (
+                                    {formData.gallery.map((path, i) => (
                                         <div key={i} className="relative">
                                             <ImageUpload
                                                 value={path}
                                                 onChange={(url) => {
                                                     const gallery = [...formData.gallery];
-                                                    gallery[i] = url;
+                                                    gallery[i] = url ?? '';
                                                     setFormData({ ...formData, gallery });
                                                 }}
                                                 onRemove={() => removeItem('gallery', i)}
-                                                endpoint="galleryUploader"
                                             />
                                         </div>
                                     ))}
@@ -290,8 +280,8 @@ export function CaseStudyForm({ initialData, isEditing }: CaseStudyFormProps) {
                     <CardHeader><CardTitle className="text-lg">Search Engine (SEO)</CardTitle></CardHeader>
                     <CardContent>
                         <SeoFields
-                            seoTitle={formData.seoTitle || ''}
-                            seoDescription={formData.seoDescription || ''}
+                            seoTitle={formData.seoTitle}
+                            seoDescription={formData.seoDescription}
                             onChange={(field, value) => setFormData({ ...formData, [field]: value })}
                             defaultTitle={caseStudyMetaTitle(formData.project || '')}
                             defaultDescription={formData.overview || ''}

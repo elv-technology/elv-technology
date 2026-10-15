@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -10,10 +10,12 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Briefcase, Trash2, Search, Eye, Download, UserCheck } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Trash2, Search, Eye, Download } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
+import type { Application } from '@prisma/client';
+import { useAdminCollection } from '@/hooks/admin/use-admin-collection';
+import type { Serialized } from '@/lib/admin/types';
 import {
   Dialog,
   DialogContent,
@@ -24,52 +26,13 @@ import {
 } from "@/components/ui/dialog";
 
 export default function ApplicationsAdminPage() {
-  const [applications, setApplications] = useState<any[]>([]);
+  const { items: applications, loading, remove } = useAdminCollection<Serialized<Application>>('/api/admin/applications', {
+    loadError: 'Failed to load applications',
+    deleteConfirm: 'Are you sure you want to delete this application?',
+    deleteSuccess: 'Application deleted successfully',
+    deleteError: 'Failed to delete application',
+  });
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [selectedApp, setSelectedApp] = useState<any>(null);
-
-  useEffect(() => {
-    fetchApplications();
-  }, []);
-
-  async function fetchApplications() {
-    try {
-      const res = await fetch('/api/admin/applications', { cache: 'no-store' });
-      const data = await res.json();
-
-      if (res.ok && Array.isArray(data)) {
-        setApplications(data);
-      } else {
-        setApplications([]);
-        if (!res.ok) toast.error('Failed to load applications');
-      }
-    } catch (error) {
-      console.error(error);
-      setApplications([]);
-      toast.error('Failed to load applications');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function deleteApplication(id: string) {
-    if (!confirm('Are you sure you want to delete this application?')) return;
-
-    try {
-      const res = await fetch(`/api/admin/applications/${id}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        setApplications(applications.filter(a => a.id !== id));
-        toast.success('Application deleted successfully');
-      } else {
-        throw new Error('Failed to delete');
-      }
-    } catch (error) {
-      toast.error('Failed to delete application');
-    }
-  }
 
   const filteredApps = applications.filter(item =>
     item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -153,7 +116,6 @@ export default function ApplicationsAdminPage() {
                             <Button 
                               variant="outline" 
                               size="icon" 
-                              onClick={() => setSelectedApp(item)}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -201,7 +163,7 @@ export default function ApplicationsAdminPage() {
                                   variant="destructive"
                                   size="sm"
                                   onClick={() => {
-                                    deleteApplication(item.id);
+                                    remove(item.id);
                                   }}
                                 >
                                   Delete Application
@@ -214,7 +176,7 @@ export default function ApplicationsAdminPage() {
                           variant="outline"
                           size="icon"
                           className="text-red-500 hover:text-red-600 border-red-100 hover:bg-red-50"
-                          onClick={() => deleteApplication(item.id)}
+                          onClick={() => remove(item.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

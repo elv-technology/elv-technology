@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
 import { z } from 'zod';
 import { CONTACT_CONFIG } from '@/lib/contact-config';
 import { prisma } from '@/lib/prisma';
 import { rateLimit, getIp } from '@/lib/rate-limit';
 import { escapeHtml, toHeaderSafe } from '@/lib/escape-html';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { sendSiteEmail } from '@/lib/mail';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -78,32 +76,11 @@ export async function POST(req: Request) {
 
     const role = position === 'Other' && otherPosition ? otherPosition : position;
 
-    // Save to database
-    let savedToDb = false;
-    try {
-      await prisma.application.create({
-        data: {
-          fullName,
-          email,
-          phone,
-          position: role,
-          message,
-          resumeUrl: safeFileName, // Storing filename as a reference
-        },
-      });
-      savedToDb = true;
-    } catch (dbError) {
-      console.error('Failed to save application to database:', dbError);
-    }
-
-    const toEmail = process.env.CONTACT_TO_EMAIL || CONTACT_CONFIG.toEmail;
-    const senderAddress = process.env.CONTACT_FROM_EMAIL || 'info@etssmart.com';
-    const fromEmail = `${toHeaderSafe(fullName)} (${toHeaderSafe(email)}) <${senderAddress}>`;
-
-    const { error: sendError } = await resend.emails.send({
-      from: fromEmail,
-      to: [toEmail],
-      replyTo: email,
+    // The CV only travels in the email, so the email must go out before the application counts as received.
+    // The database row is written afterwards so a failed send never leaves an application without its CV.
+    const sent = await sendSiteEmail({
+      senderName: fullName,
+      senderEmail: email,
       subject: `New Career Application: ${toHeaderSafe(role)} - ${toHeaderSafe(fullName)}`,
       html: `
         ${message ? `<p style="white-space: pre-wrap;">${escapeHtml(message)}</p>` : `<p><em>No cover letter provided. Please see attached resume.</em></p>`}
@@ -121,13 +98,29 @@ export async function POST(req: Request) {
         </p>
       `,
       attachments,
-    });
+    }, 'careers');
 
-    if (sendError) {
-      console.error('Resend error (careers):', sendError);
-      // Without the email the CV is lost, but the application record is still in the dashboard.
-      if (savedToDb) return NextResponse.json({ success: true });
-      return NextResponse.json({ error: 'Failed to send application. Please try again later.' }, { status: 502 });
+    if (!sent) {
+      return NextResponse.json(
+        { error: `We couldn't send your application. Please try again or email us at ${CONTACT_CONFIG.toEmail}.` },
+        { status: 500 }
+      );
+    }
+
+    try {
+      await prisma.application.create({
+        data: {
+          fullName,
+          email,
+          phone,
+          position: role,
+          message,
+          resumeUrl: safeFileName, // Storing filename as a reference
+        },
+      });
+    } catch (dbError) {
+      // The email (with the CV) already reached the team, so the applicant still gets a success response.
+      console.error('Failed to save application to database:', dbError);
     }
 
     return NextResponse.json({ success: true });

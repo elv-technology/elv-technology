@@ -8,6 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/admin/fetch-json";
+import { resolveImage, saveEntity } from "@/lib/admin/save-entity";
+import type { ImageValue } from "@/lib/admin/types";
 import { Partner } from "@prisma/client";
 
 interface PartnerFormProps {
@@ -19,10 +22,10 @@ export function PartnerForm({ initialData }: PartnerFormProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
-    logo: (initialData?.logo as any) || null,
+    logo: (initialData?.logo || null) as ImageValue,
     category: initialData?.category || "Security",
     website: initialData?.website || "",
-    priority: initialData?.priority || 100,
+    priority: (initialData?.priority ?? 100) as number | "",
   });
 
   const handleSave = async () => {
@@ -33,37 +36,16 @@ export function PartnerForm({ initialData }: PartnerFormProps) {
 
     setLoading(true);
     try {
-      let logoUrl = formData.logo;
+      if (formData.logo instanceof File) toast.info("Uploading logo...");
+      const logo = await resolveImage(formData.logo);
+      await saveEntity("partners", initialData?.id, { ...formData, logo, priority: formData.priority === "" ? 100 : formData.priority });
 
-      // Handle deferred image upload
-      if (formData.logo instanceof File) {
-        toast.info("Uploading logo...");
-        const { uploadFiles } = await import("@/lib/uploadthing");
-        const res = await uploadFiles("imageUploader", {
-          files: [formData.logo],
-        });
-        logoUrl = res[0].url;
-      }
-
-      const url = initialData 
-        ? `/api/admin/partners/${initialData.id}` 
-        : "/api/admin/partners";
-      
-      const res = await fetch(url, {
-        method: initialData ? "PATCH" : "POST",
-        body: JSON.stringify({ ...formData, logo: logoUrl }),
-      });
-
-      if (res.ok) {
-        toast.success(initialData ? "Partner updated" : "Partner created");
-        router.push("/admin/partners");
-        router.refresh();
-      } else {
-        toast.error("Failed to save partner");
-      }
+      toast.success(initialData ? "Partner updated" : "Partner created");
+      router.push("/admin/partners");
+      router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred");
+      toast.error(getErrorMessage(error, "Failed to save partner"));
     } finally {
       setLoading(false);
     }
@@ -117,7 +99,7 @@ export function PartnerForm({ initialData }: PartnerFormProps) {
               id="priority"
               type="number"
               value={formData.priority}
-              onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
+              onChange={(e) => setFormData({ ...formData, priority: e.target.value === "" ? "" : Number(e.target.value) })}
             />
           </div>
         </div>
@@ -128,7 +110,6 @@ export function PartnerForm({ initialData }: PartnerFormProps) {
             value={formData.logo}
             onChange={(file) => setFormData({ ...formData, logo: file })}
             onRemove={() => setFormData({ ...formData, logo: null })}
-            endpoint="imageUploader"
           />
           <p className="text-xs text-slate-500 mt-2">
             Recommended: PNG or SVG with transparent background

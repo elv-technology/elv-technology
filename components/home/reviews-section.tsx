@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { useIntersection } from "@/hooks/use-intersection";
 
 interface Testimonial {
   content: string;
@@ -14,19 +15,7 @@ export default function ReviewsSection({ testimonials }: { testimonials?: Testim
   const reviews = testimonials || [];
   const [currentReview, setCurrentReview] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.2 }
-    );
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const { ref: sectionRef, isVisible } = useIntersection<HTMLElement>(0.2);
 
   const goToReview = useCallback(
     (index: number) => {
@@ -145,7 +134,7 @@ export default function ReviewsSection({ testimonials }: { testimonials?: Testim
 
                   {/* Quote */}
                   <blockquote className='text-base sm:text-lg lg:text-xl leading-relaxed text-white font-medium relative z-10'>
-                    "{review.content}"
+                    &quot;{review.content}&quot;
                   </blockquote>
                 </div>
               ))}
