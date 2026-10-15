@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { CONTACT_CONFIG } from '@/lib/contact-config';
-import { prisma } from '@/lib/prisma';
+import * as applications from '@/lib/services/applications';
 import { rateLimit, getIp } from '@/lib/rate-limit';
 import { escapeHtml, toHeaderSafe } from '@/lib/escape-html';
 import { sendSiteEmail } from '@/lib/mail';
@@ -108,15 +108,13 @@ export async function POST(req: Request) {
     }
 
     try {
-      await prisma.application.create({
-        data: {
-          fullName,
-          email,
-          phone,
-          position: role,
-          message,
-          resumeUrl: safeFileName, // Storing filename as a reference
-        },
+      await applications.create({
+        fullName,
+        email,
+        phone,
+        position: role,
+        message,
+        resumeUrl: safeFileName, // Storing filename as a reference
       });
     } catch (dbError) {
       // The email (with the CV) already reached the team, so the applicant still gets a success response.

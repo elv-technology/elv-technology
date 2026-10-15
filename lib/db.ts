@@ -1,13 +1,29 @@
+import "server-only";
 import { cache } from "react";
+import type { Career, Client, FAQ, Partner, Prisma, Testimonial } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { htmlToExcerpt } from "@/lib/utils";
+import type { BlogPost, BlogSummary, CaseStudyDetail, CaseStudyListItem } from "@/lib/types";
 
 export interface FetchOptions {
     skip?: number;
     take?: number;
-    includeContent?: boolean;
 }
 
-const blogSelect = (includeContent: boolean) => ({
+/** Row type returned for each public collection. */
+export interface CollectionTypes {
+    blogs: BlogSummary;
+    "case-studies": CaseStudyListItem;
+    careers: Career;
+    testimonials: Testimonial;
+    faqs: FAQ;
+    partners: Partner;
+    clients: Client;
+}
+
+export type CollectionName = keyof CollectionTypes;
+
+const blogSummarySelect = {
     id: true,
     slug: true,
     title: true,
@@ -20,10 +36,11 @@ const blogSelect = (includeContent: boolean) => ({
     updatedAt: true,
     seoTitle: true,
     seoDescription: true,
-    content: includeContent,
-});
+} satisfies Prisma.BlogSelect;
 
-const caseStudySelect = (includeContent: boolean) => ({
+const blogPostSelect = { ...blogSummarySelect, content: true } satisfies Prisma.BlogSelect;
+
+const caseStudySummarySelect = {
     id: true,
     slug: true,
     project: true,
@@ -36,18 +53,53 @@ const caseStudySelect = (includeContent: boolean) => ({
     updatedAt: true,
     seoTitle: true,
     seoDescription: true,
-    overview: includeContent,
-    challenges: includeContent,
-    solution: includeContent,
-    gallery: includeContent,
-    outcomes: includeContent,
-});
+} satisfies Prisma.CaseStudySelect;
+
+const caseStudyDetailSelect = {
+    ...caseStudySummarySelect,
+    overview: true,
+    challenges: true,
+    solution: true,
+    gallery: true,
+    outcomes: true,
+} satisfies Prisma.CaseStudySelect;
+
+/** List cards show a short plain-text overview instead of the full rich-text HTML. */
+function toCaseStudySummary<T extends { overview: string }>(row: T): Omit<T, "overview"> & { overview: string } {
+    return { ...row, overview: htmlToExcerpt(row.overview) };
+}
 
 const caseStudyOrder = [
     { isFeatured: 'desc' as const },
     { priority: 'asc' as const },
     { createdAt: 'desc' as const },
 ];
+
+type Loader<T> = (skip: number, take: number) => Promise<T[]>;
+
+const loaders: { [K in CollectionName]: Loader<CollectionTypes[K]> } = {
+    blogs: (skip, take) => prisma.blog.findMany({
+        where: { published: true },
+        select: blogSummarySelect,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take
+    }),
+    "case-studies": async (skip, take) => {
+        const rows = await prisma.caseStudy.findMany({
+            select: { ...caseStudySummarySelect, overview: true },
+            orderBy: caseStudyOrder,
+            skip,
+            take
+        });
+        return rows.map(toCaseStudySummary);
+    },
+    careers: (skip, take) => prisma.career.findMany({ orderBy: { createdAt: 'desc' }, skip, take }),
+    testimonials: (skip, take) => prisma.testimonial.findMany({ orderBy: { createdAt: 'desc' }, skip, take }),
+    faqs: (skip, take) => prisma.fAQ.findMany({ orderBy: { createdAt: 'desc' }, skip, take }),
+    partners: (skip, take) => prisma.partner.findMany({ orderBy: { priority: 'asc' }, skip, take }),
+    clients: (skip, take) => prisma.client.findMany({ orderBy: { priority: 'asc' }, skip, take }),
+};
 
 // The local JSON dataset is only used when the database cannot be reached, and only outside production
 // (or when USE_LOCAL_DATA_FALLBACK=true, e.g. for an offline test build).
@@ -62,81 +114,51 @@ function handleDbError(what: string, error: unknown) {
     console.warn(`Prisma error for ${what}, falling back to local JSON dataset:`, error);
 }
 
-type JsonRow = Record<string, unknown>;
-type JsonDataset = Partial<Record<"blogs" | "caseStudies" | "careers" | "testimonials" | "faqs", JsonRow[]>>;
+// Sample rows are looser than the database (e.g. string dates, JSON blog content); callers treat them like Prisma results.
+interface JsonDataset {
+    blogs?: (BlogPost & { published?: boolean })[];
+    caseStudies?: CaseStudyDetail[];
+    careers?: Career[];
+    testimonials?: Testimonial[];
+    faqs?: FAQ[];
+}
 
 /** Loaded on demand so the sample dataset is never bundled into the normal (database) path. */
 async function loadJsonDataset(): Promise<JsonDataset> {
-    return (await import("@/data/db.json")).default as JsonDataset;
+    return (await import("@/data/db.json")).default as unknown as JsonDataset;
 }
 
-const isPublished = (row: JsonRow) => row.published !== false;
+const isPublished = (row: { published?: boolean }) => row.published !== false;
 
-// Rows are loosely typed sample data; callers treat them like the Prisma results.
-async function jsonFallback(collection: string, skip: number, take: number): Promise<any[]> {
+async function jsonFallback<K extends CollectionName>(collection: K, skip: number, take: number): Promise<CollectionTypes[K][]> {
     const data = await loadJsonDataset();
-    const page = (rows: JsonRow[] = []) => rows.slice(skip, skip + take);
-    switch (collection) {
-        case "blogs":
-            return page(data.blogs?.filter(isPublished));
-        case "case-studies":
-            return page(data.caseStudies);
-        case "careers":
-            return page(data.careers);
-        case "testimonials":
-            return page(data.testimonials);
-        case "faqs":
-            return page(data.faqs);
-        default:
-            return [];
-    }
+    const rows: { [C in CollectionName]?: CollectionTypes[C][] } = {
+        blogs: data.blogs?.filter(isPublished),
+        "case-studies": data.caseStudies?.map(toCaseStudySummary),
+        careers: data.careers,
+        testimonials: data.testimonials,
+        faqs: data.faqs,
+    };
+    return (rows[collection] ?? []).slice(skip, skip + take);
 }
 
-export const getCollection = async (collection: string, options: FetchOptions = {}) => {
-    const { skip = 0, take = 10, includeContent = false } = options;
+export async function getCollection<K extends CollectionName>(collection: K, options: FetchOptions = {}): Promise<CollectionTypes[K][]> {
+    const { skip = 0, take = 10 } = options;
 
     try {
-        switch (collection) {
-            case "blogs":
-                return await prisma.blog.findMany({
-                    where: { published: true },
-                    select: blogSelect(includeContent),
-                    orderBy: { createdAt: 'desc' },
-                    skip,
-                    take
-                });
-            case "case-studies":
-                return await prisma.caseStudy.findMany({
-                    select: caseStudySelect(includeContent),
-                    orderBy: caseStudyOrder,
-                    skip,
-                    take
-                });
-            case "careers":
-                return await prisma.career.findMany({ orderBy: { createdAt: 'desc' }, skip, take });
-            case "testimonials":
-                return await prisma.testimonial.findMany({ orderBy: { createdAt: 'desc' }, skip, take });
-            case "faqs":
-                return await prisma.fAQ.findMany({ orderBy: { createdAt: 'desc' }, skip, take });
-            case "partners":
-                return await prisma.partner.findMany({ orderBy: { priority: 'asc' }, skip, take });
-            case "clients":
-                return await prisma.client.findMany({ orderBy: { priority: 'asc' }, skip, take });
-            default:
-                return [];
-        }
+        return await loaders[collection](skip, take);
     } catch (error) {
         handleDbError(`collection '${collection}'`, error);
         return await jsonFallback(collection, skip, take);
     }
-};
+}
 
 /** Fetches one published blog post by slug (with content). Cached per request, so metadata and page share one query. */
-export const getBlogBySlug = cache(async (slug: string): Promise<any | null> => {
+export const getBlogBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
     try {
         return await prisma.blog.findFirst({
             where: { slug, published: true },
-            select: blogSelect(true),
+            select: blogPostSelect,
         });
     } catch (error) {
         handleDbError(`blog '${slug}'`, error);
@@ -146,11 +168,11 @@ export const getBlogBySlug = cache(async (slug: string): Promise<any | null> => 
 });
 
 /** Fetches one case study by slug (with content). Cached per request, so metadata and page share one query. */
-export const getCaseStudyBySlug = cache(async (slug: string): Promise<any | null> => {
+export const getCaseStudyBySlug = cache(async (slug: string): Promise<CaseStudyDetail | null> => {
     try {
         return await prisma.caseStudy.findUnique({
             where: { slug },
-            select: caseStudySelect(true),
+            select: caseStudyDetailSelect,
         });
     } catch (error) {
         handleDbError(`case study '${slug}'`, error);

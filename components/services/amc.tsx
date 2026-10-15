@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { servicesData } from '@/lib/services-data';
+import { servicesData } from '@/content/services';
 import { CheckCircle, ShieldCheck, Wrench, Clock, Activity, Zap, ArrowRight, Users, FileText, Layers } from 'lucide-react';
 
 export default function Amc() {

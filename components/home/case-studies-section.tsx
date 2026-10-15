@@ -6,7 +6,8 @@ import { motion } from 'framer-motion';
 import { ArrowRight, MapPin, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-export default function CaseStudiesSection({ initialData }: { initialData?: any[] }) {
+import type { CaseStudyListItem } from '@/lib/types';
+export default function CaseStudiesSection({ initialData }: { initialData?: CaseStudyListItem[] }) {
     // Only show the first 3 for a cleaner home page look
     const featuredStudies = initialData && initialData.length > 0 ? initialData.slice(0, 3) : [];
 

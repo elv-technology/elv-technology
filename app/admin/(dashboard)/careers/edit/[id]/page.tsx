@@ -1,13 +1,11 @@
 import { notFound } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import * as careers from '@/lib/services/careers';
 import { CareerForm } from '@/components/admin/careers/career-form';
 
 export const dynamic = 'force-dynamic';
 
 export default async function EditCareerPage({ params }: { params: { id: string } }) {
-    const career = await prisma.career.findUnique({
-        where: { id: params.id },
-    });
+    const career = await careers.getById(params.id);
 
     if (!career) {
         notFound();

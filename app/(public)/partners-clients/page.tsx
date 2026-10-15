@@ -15,10 +15,10 @@ export const metadata = pageMetadata({
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function PartnersAndClientsPage() {
-  const [partners, clients] = (await Promise.all([
+  const [partners, clients] = await Promise.all([
     getCollection('partners', { take: 500 }),
     getCollection('clients', { take: 500 }),
-  ])) as [any[], any[]];
+  ]);
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950 text-gray-900 dark:text-white">

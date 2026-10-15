@@ -1,3 +1,4 @@
+import "server-only";
 import { Resend } from "resend";
 import { CONTACT_CONFIG } from "@/lib/contact-config";
 import { toHeaderSafe } from "@/lib/escape-html";

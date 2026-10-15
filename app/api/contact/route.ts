@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import * as inquiries from '@/lib/services/inquiries';
 import { rateLimit, getIp } from '@/lib/rate-limit';
 import { escapeHtml } from '@/lib/escape-html';
 import { sendSiteEmail } from '@/lib/mail';
@@ -39,16 +39,7 @@ export async function POST(req: Request) {
     // Save to database
     let savedToDb = false;
     try {
-      await prisma.inquiry.create({
-        data: {
-          name,
-          email,
-          phone,
-          subject,
-          message,
-          source,
-        },
-      });
+      await inquiries.create({ name, email, phone, subject, message, source });
       savedToDb = true;
     } catch (dbError) {
       console.error('Failed to save inquiry to database:', dbError);

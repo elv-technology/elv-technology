@@ -2,7 +2,6 @@ import { pageMetadata } from '@/lib/seo';
 import BlogHero from '@/components/blog/blog-hero';
 import BlogList from '@/components/blog/blog-list';
 import { getCollection } from '@/lib/db';
-import { Blog } from '@prisma/client';
 
 export const metadata = pageMetadata({
   title: "ELV & AV Technology Blog Abu Dhabi | ETS Smart",
@@ -15,7 +14,7 @@ export const revalidate = 3600; // Revalidate every hour
 
 export default async function BlogPage() {
     // All published posts (without full content) so every article is linked from /blog and searchable.
-    const posts = await getCollection('blogs', { take: 500 }) as Blog[];
+    const posts = await getCollection('blogs', { take: 500 });
 
     return (
         <div>

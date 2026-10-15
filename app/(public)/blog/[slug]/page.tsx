@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import ArticleSchema from "@/components/seo/ArticleSchema";
 import { formatContent } from "@/lib/format-content";
 import { sanitizeHtml } from "@/lib/sanitize";
+import type { BlogSummary } from "@/lib/types";
 import { SITE_URL, blogMetaTitle, fitDescription, metaDescription, pageMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -13,14 +14,14 @@ export const revalidate = 3600;
 // renders [slug] pages on every request (hitting the database each time) despite `revalidate`.
 // Posts added later are built on their first visit, then cached the same way.
 export async function generateStaticParams() {
-    const posts = (await getCollection('blogs', { take: 500 })) as { slug: string }[];
+    const posts = await getCollection('blogs', { take: 500 });
     return posts.map((post) => ({ slug: post.slug }));
 }
 
 // Database errors are deliberately not caught here: a thrown error lets Next.js keep serving the last
 // good cached version of the page, whereas returning "not found" would cache a 404 for a real post.
 
-const getDescription = (post: any) =>
+const getDescription = (post: BlogSummary) =>
     post.excerpt || post.description || `${post.title} - Expert ELV & AV insights from ETS Smart Abu Dhabi UAE.`;
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {

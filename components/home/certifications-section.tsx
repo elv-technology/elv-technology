@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { certGroups } from '@/lib/about-data';
+import { certGroups } from '@/content/about';
 
 export default function CertificationsSection() {
     const ref = useRef(null);

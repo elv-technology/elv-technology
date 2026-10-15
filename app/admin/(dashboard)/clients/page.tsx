@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import * as clientsService from "@/lib/services/clients";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,7 @@ import Image from "next/image";
 import { DeleteButton } from "@/components/admin/delete-button";
 
 export default async function ClientsPage() {
-  const clients = await prisma.client.findMany({
-    orderBy: { priority: "asc" },
-  });
+  const clients = await clientsService.list();
 
   return (
     <div className="space-y-6">

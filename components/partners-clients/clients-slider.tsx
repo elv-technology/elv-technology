@@ -12,13 +12,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import Autoplay from 'embla-carousel-autoplay';
 import LogoImage from '@/components/logo-image';
-
-interface Client {
-    id: string;
-    name: string;
-    logo: string;
-    category?: string;
-}
+import type { Client } from '@prisma/client';
 
 interface ClientsSliderProps {
     initialData: Client[];
@@ -53,7 +47,7 @@ export function ClientsSlider({ initialData }: ClientsSliderProps) {
 
                 <div className="relative px-4 sm:px-6 lg:px-8 w-full">
                     <Carousel
-                        plugins={[plugin.current as any]}
+                        plugins={[plugin.current]}
                         className="w-full"
                         opts={{
                             align: 'start',

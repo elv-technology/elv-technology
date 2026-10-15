@@ -14,9 +14,9 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { prisma } from "@/lib/prisma";
 import { generateEmbeddings } from "@/lib/chatbot/vector-store";
-import { solutionsData } from "@/lib/solutions-data";
-import { servicesData } from "@/lib/services-data";
-import { faqSectionData } from "@/lib/data";
+import { solutionsData } from "@/content/solutions";
+import { servicesData } from "@/content/services";
+import { faqSectionData } from "@/content/home";
 
 interface Chunk {
     category: string;

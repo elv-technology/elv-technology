@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { heroSectionData } from "@/lib/data";
+import { heroSectionData } from "@/content/home";
 
 export default function VideoSection() {
   return (

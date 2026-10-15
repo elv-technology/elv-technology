@@ -1,12 +1,20 @@
+interface ContentSection {
+    type: string;
+    content?: string;
+    title?: string;
+    items?: string[];
+}
+
 // Converts stored blog content (HTML string, plain text, or JSON sections) into HTML.
 // Shared by the server page (which sanitizes the result) and the client component.
-export const formatContent = (content: any) => {
+export const formatContent = (content: unknown) => {
     if (!content) return '';
 
     // Handle structured JSON sections from db.json or database
-    if (typeof content === 'object' && content.sections) {
+    const sections = typeof content === 'object' ? (content as { sections?: ContentSection[] }).sections : undefined;
+    if (sections) {
         let html = '';
-        for (const sec of content.sections) {
+        for (const sec of sections) {
             if (sec.type === 'paragraph') {
                 html += `<p>${sec.content}</p>`;
             } else if (sec.type === 'heading') {

@@ -8,13 +8,14 @@ import {
 import Autoplay from 'embla-carousel-autoplay';
 import LogoImage from '@/components/logo-image';
 import { useIntersection } from '@/hooks/use-intersection';
+import type { Partner } from '@prisma/client';
 
 const CATEGORY_ORDER = ["Security", "AV", "Network & communication", "Home Automation"];
 
-function sortPartners(partners: any[]) {
+function sortPartners(partners: Partner[]) {
     return [...partners].sort((a, b) => {
-        const indexA = CATEGORY_ORDER.indexOf(a.category);
-        const indexB = CATEGORY_ORDER.indexOf(b.category);
+        const indexA = CATEGORY_ORDER.indexOf(a.category ?? '');
+        const indexB = CATEGORY_ORDER.indexOf(b.category ?? '');
 
         if (indexA !== indexB) {
             if (indexA === -1) return 1;
@@ -26,7 +27,7 @@ function sortPartners(partners: any[]) {
     });
 }
 
-export default function PartnersSection({ partners }: { partners: any[] }) {
+export default function PartnersSection({ partners }: { partners: Partner[] }) {
     const { ref: sectionRef, isVisible } = useIntersection<HTMLElement>();
     const partnersList = sortPartners(partners);
 

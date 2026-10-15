@@ -7,6 +7,8 @@ import ServicesSection from "@/components/home/services-section";
 import CertificationsSection from "@/components/home/certifications-section";
 import ClientsSection from "@/components/home/clients-section";
 import CTASection from "@/components/home/cta-section";
+import type { Client, Partner, Testimonial } from "@prisma/client";
+import type { CaseStudyListItem, FaqItem } from "@/lib/types";
 
 const ReviewsSection = dynamic(() => import("@/components/home/reviews-section"));
 const PartnersSection = dynamic(() => import("@/components/home/partners-section"));
@@ -14,11 +16,11 @@ const IndustriesSection = dynamic(() => import("@/components/home/industries-sec
 const FAQSection = dynamic(() => import("@/components/home/faq-section"));
 
 interface HomeLayoutProps {
-  caseStudies: any[];
-  testimonials: any[];
-  faqs: any[];
-  clients: any[];
-  partners: any[];
+  caseStudies: CaseStudyListItem[];
+  testimonials: Testimonial[];
+  faqs: FaqItem[];
+  clients: Client[];
+  partners: Partner[];
 }
 
 export default function HomeLayout({ caseStudies, testimonials, faqs, clients, partners }: HomeLayoutProps) {

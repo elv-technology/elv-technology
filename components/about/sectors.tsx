@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { sectors } from "@/lib/about-data";
+import { sectors } from "@/content/about";
 
 import Image from "next/image";
 

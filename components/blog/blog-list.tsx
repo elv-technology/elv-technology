@@ -9,8 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, User, ArrowRight, Search, Mail } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import type { BlogSummary } from '@/lib/types';
 
-export default function BlogList({ initialPosts }: { initialPosts: any[] }) {
+export default function BlogList({ initialPosts }: { initialPosts: BlogSummary[] }) {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
 

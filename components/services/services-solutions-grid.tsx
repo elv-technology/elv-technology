@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { solutionsData } from '@/lib/solutions-data';
+import { solutionsData, type SolutionItem } from '@/content/solutions';
 import { ArrowRight, Shield, Key, PlusSquare, Music, MonitorPlay, Users, Monitor, Wifi, Network, Tv, Home, Lightbulb } from 'lucide-react';
 import {
     Carousel,
@@ -15,7 +15,7 @@ import Link from 'next/link';
 
 export default function ServicesSolutionsGrid() {
     // Extract all solution items from the nested structure and attach their parent category ID
-    const allSolutions = [
+    const allSolutions: (SolutionItem & { categoryId: string })[] = [
         ...solutionsData.securityAndSurveillance.items.map(item => ({ ...item, categoryId: solutionsData.securityAndSurveillance.id })),
         ...solutionsData.audioVisual.items.map(item => ({ ...item, categoryId: solutionsData.audioVisual.id })),
         ...solutionsData.networkAndCommunications.items.map(item => ({ ...item, categoryId: solutionsData.networkAndCommunications.id })),
@@ -131,8 +131,7 @@ className="object-cover transition-transform duration-700 group-hover:scale-110"
                                 <div className="mt-auto pt-5 border-t border-slate-700/50">
                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 block">Key Features</span>
                                     <ul className="space-y-2 mb-6">
-                                        {/* @ts-ignore - Content structure varies between solution types */}
-                                        {((solution.content as any)?.subsections?.[0]?.points || (solution.content as any)?.keyFeatures?.points || []).slice(0, 3).map((pt: any, i: number) => (
+                                        {(solution.content?.subsections?.[0]?.points || solution.content?.keyFeatures?.points || []).slice(0, 3).map((pt, i) => (
                                             <li key={i} className="flex items-start gap-2 text-xs text-slate-400 font-medium">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1 shrink-0 ring-1 ring-red-900/50" />
                                                 <span className="line-clamp-1">{typeof pt === 'string' ? pt : 'Feature'}</span>

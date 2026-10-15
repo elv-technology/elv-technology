@@ -1,11 +1,9 @@
-import { prisma } from "@/lib/prisma";
+import * as partnersService from "@/lib/services/partners";
 import { PartnerForm } from "@/components/admin/partners/partner-form";
 import { notFound } from "next/navigation";
 
 export default async function EditPartnerPage({ params }: { params: { id: string } }) {
-  const partner = await prisma.partner.findUnique({
-    where: { id: params.id },
-  });
+  const partner = await partnersService.getById(params.id);
 
   if (!partner) {
     notFound();

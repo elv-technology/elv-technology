@@ -1,4 +1,5 @@
 // Node-only password verification (scrypt). Do not import from middleware.
+import "server-only";
 import { scryptSync, timingSafeEqual } from "crypto";
 
 /**

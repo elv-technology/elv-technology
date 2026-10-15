@@ -34,19 +34,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Database errors are not caught: a failed refresh keeps the last good sitemap instead of
   // publishing one without any blog posts or case studies.
-  const [blogs, caseStudies] = (await Promise.all([
+  const [blogs, caseStudies] = await Promise.all([
     getCollection("blogs", { take: 500 }),
     getCollection("case-studies", { take: 500 }),
-  ])) as [any[], any[]];
+  ]);
 
-  const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog: any) => ({
+  const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog) => ({
     url: `${baseUrl}/blog/${blog.slug}`,
     lastModified: blog.updatedAt ? new Date(blog.updatedAt) : new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
 
-  const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((study: any) => ({
+  const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((study) => ({
     url: `${baseUrl}/case-studies/${study.slug}`,
     lastModified: study.updatedAt ? new Date(study.updatedAt) : new Date(),
     changeFrequency: "weekly" as const,

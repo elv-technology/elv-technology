@@ -18,7 +18,7 @@ export default async function CaseStudies() {
   return (
     <div>
       <Hero />
-      <CaseStudiesList initialData={caseStudies as any[]} />
+      <CaseStudiesList initialData={caseStudies} />
     </div>
   );
 }

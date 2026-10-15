@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import { formatContent } from "@/lib/format-content";
+import type { BlogPost } from "@/lib/types";
 
 interface BlogSlugPageProps {
-    post: any;
+    post: BlogPost;
 }
 
 export default function BlogSlugPage({ post }: BlogSlugPageProps) {

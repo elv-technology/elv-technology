@@ -1,3 +1,4 @@
+import "server-only";
 import { revalidatePath } from "next/cache";
 
 function revalidateDetail(base: string, slugs: (string | null | undefined)[]) {
