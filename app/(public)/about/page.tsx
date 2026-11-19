@@ -8,7 +8,7 @@ import TrustedPartner from "@/components/about/trusted-partner";
 import CTASection from "@/components/home/cta-section";
 
 export const metadata = pageMetadata({
-  title: "About Us | MCC Approved ELV Company Abu Dhabi | ETS Smart",
+  title: "About ETS Smart | MCC Approved ELV Company in Abu Dhabi",
   description: "ETS Smart is an ISO & MCC-approved ELV and audio visual company in Abu Dhabi. Trusted integrator for ELV systems, AV solutions & security across the UAE.",
   path: "/about",
 });

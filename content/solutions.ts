@@ -785,7 +785,7 @@ export const solutionPages = {
     "audio-visual": {
         categoryKey: "audioVisual",
         metadata: {
-            title: "Audio Visual AV Systems Abu Dhabi | ETS Smart",
+            title: "Audio Visual Solutions in Abu Dhabi | BGM & PA – ETS Smart",
             description: "ETS Smart is a top audio visual company in Abu Dhabi offering BGM systems, PA systems, digital signage, LED screens & AV integration for homes & businesses.",
         },
         schema: {
@@ -823,7 +823,7 @@ export const solutionPages = {
     "security-surveillance": {
         categoryKey: "securityAndSurveillance",
         metadata: {
-            title: "CCTV Installation & Security Abu Dhabi | ETS Smart",
+            title: "CCTV Installation Company in Abu Dhabi | ETS Smart",
             description: "ETS Smart is an ADMCC-approved CCTV company in Abu Dhabi offering CCTV installation, access control & security system solutions for homes & businesses in UAE.",
         },
         schema: {

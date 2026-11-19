@@ -6,7 +6,7 @@ import { faqsOrFallback } from "@/lib/faqs";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "ELV Companies Abu Dhabi | MCC Approved | ETS Smart",
+  title: "ELV Companies in Abu Dhabi | MCC Approved – ETS Smart",
   description: "ETS Smart is an MCC-approved ELV company in Abu Dhabi offering CCTV, Access Control, AV Systems & Home Automation. Trusted by 100+ enterprise clients in UAE.",
   path: "/",
 });

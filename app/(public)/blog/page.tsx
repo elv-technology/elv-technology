@@ -4,7 +4,7 @@ import BlogList from '@/components/blog/blog-list';
 import { getCollection } from '@/lib/db';
 
 export const metadata = pageMetadata({
-  title: "ELV & AV Technology Blog Abu Dhabi | ETS Smart",
+  title: "ELV & AV Technology Blog Abu Dhabi | ETS Smart UAE",
   description: "Read expert insights on ELV systems, CCTV, access control, AV solutions & structured cabling in Abu Dhabi. Stay informed with ETS Smart's knowledge hub.",
   path: "/blog",
 });

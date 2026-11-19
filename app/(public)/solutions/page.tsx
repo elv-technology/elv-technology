@@ -4,7 +4,7 @@ import SolutionsPageLineup from '@/components/solutions/solutions-page-lineup';
 import { CTASection } from '@/components/partners-clients/cta-section';
 
 export const metadata = pageMetadata({
-  title: "ELV & Security Solutions Abu Dhabi | ETS Smart",
+  title: "ELV & AV Solutions in Abu Dhabi | ETS Smart UAE",
   description: "Explore ETS Smart's full range of ELV solutions in Abu Dhabi — security & CCTV, audio visual, home automation & network communications across the UAE.",
   path: "/solutions",
 });
