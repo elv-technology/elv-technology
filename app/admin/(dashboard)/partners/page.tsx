@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import * as partnersService from "@/lib/services/partners";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,7 @@ import Image from "next/image";
 import { DeleteButton } from "@/components/admin/delete-button";
 
 export default async function PartnersPage() {
-  const partners = await prisma.partner.findMany({
-    orderBy: { priority: "asc" },
-  });
+  const partners = await partnersService.list();
 
   // Group partners by category
   const CATEGORY_ORDER = ["Security", "AV", "Network & communication", "Home Automation"];

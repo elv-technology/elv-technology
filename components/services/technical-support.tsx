@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { servicesData } from '@/lib/services-data';
+import { servicesData } from '@/content/services';
 import { CheckCircle, Server, Shield, Monitor, Clock, ShieldCheck, BarChart3, Users, Wrench, FileText, Layers } from 'lucide-react';
 
 export default function TechnicalSupport() {

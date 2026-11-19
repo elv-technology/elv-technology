@@ -3,21 +3,32 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, Calendar, User, Share2, Facebook, Twitter, Linkedin, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, Calendar, User, Facebook, Twitter, Linkedin, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import { formatContent } from "@/lib/format-content";
+import { SITE_URL } from "@/lib/seo";
+import type { BlogPost } from "@/lib/types";
 
 interface BlogSlugPageProps {
-    post: any;
+    post: BlogPost;
 }
 
 export default function BlogSlugPage({ post }: BlogSlugPageProps) {
     if (!post) {
         notFound();
     }
+
+    const shareUrl = `${SITE_URL}/blog/${post.slug}`;
+    const encodedUrl = encodeURIComponent(shareUrl);
+    const encodedTitle = encodeURIComponent(post.title);
+    const shareLinks = [
+        { name: "Facebook", Icon: Facebook, href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
+        { name: "X (Twitter)", Icon: Twitter, href: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}` },
+        { name: "LinkedIn", Icon: Linkedin, href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` },
+    ];
 
     return (
         <div className="bg-white dark:bg-slate-950 min-h-screen pb-24">
@@ -78,15 +89,18 @@ export default function BlogSlugPage({ post }: BlogSlugPageProps) {
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mr-2">Share:</span>
-                                    <button className="h-8 w-8 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                                        <Facebook className="h-4 w-4" />
-                                    </button>
-                                    <button className="h-8 w-8 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                                        <Twitter className="h-4 w-4" />
-                                    </button>
-                                    <button className="h-8 w-8 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                                        <Linkedin className="h-4 w-4" />
-                                    </button>
+                                    {shareLinks.map(({ name, Icon, href }) => (
+                                        <a
+                                            key={name}
+                                            href={href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label={`Share on ${name}`}
+                                            className="h-8 w-8 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                                        >
+                                            <Icon className="h-4 w-4" />
+                                        </a>
+                                    ))}
                                 </div>
                             </div>
 

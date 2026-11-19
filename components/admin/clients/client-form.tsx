@@ -41,7 +41,6 @@ export function ClientForm({ initialData }: ClientFormProps) {
       router.push("/admin/clients");
       router.refresh();
     } catch (error) {
-      console.error(error);
       toast.error(getErrorMessage(error, "Failed to save client"));
     } finally {
       setLoading(false);

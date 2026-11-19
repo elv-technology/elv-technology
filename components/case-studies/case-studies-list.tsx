@@ -8,8 +8,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import type { CaseStudyListItem } from "@/lib/types";
 
-export default function CaseStudiesList({ initialData }: { initialData: any[] }) {
+export default function CaseStudiesList({ initialData }: { initialData: CaseStudyListItem[] }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredStudies = useMemo(() => {

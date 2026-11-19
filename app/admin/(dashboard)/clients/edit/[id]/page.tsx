@@ -1,11 +1,9 @@
-import { prisma } from "@/lib/prisma";
+import * as clientsService from "@/lib/services/clients";
 import { ClientForm } from "@/components/admin/clients/client-form";
 import { notFound } from "next/navigation";
 
 export default async function EditClientPage({ params }: { params: { id: string } }) {
-  const client = await prisma.client.findUnique({
-    where: { id: params.id },
-  });
+  const client = await clientsService.getById(params.id);
 
   if (!client) {
     notFound();

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion } from "framer-motion";
 import { Settings, Lightbulb, Code2, Wrench, ArrowRight } from "lucide-react";
-import { servicesData } from "@/lib/services-data";
+import { servicesData } from "@/content/services";
 import { Button } from "@/components/ui/button";
 
 export default function ServicesBannerSection() {

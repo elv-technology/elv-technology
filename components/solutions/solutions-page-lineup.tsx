@@ -1,11 +1,11 @@
 'use client';
 
-import { solutionsData } from "@/lib/solutions-data";
+import { solutionsData } from "@/content/solutions";
 import { ArrowRight, Shield, Music, Wifi, Home } from "lucide-react"; // Import relevant icons
 import { LogoIcon } from "@/components/ui/logo";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 const iconMap = {
     'security-surveillance': Shield,
@@ -32,7 +32,7 @@ export default function SolutionsPageLineup() {
         }
     };
 
-    const itemVariants: any = {
+    const itemVariants: Variants = {
         hidden: { opacity: 0, y: 30 },
         visible: {
             opacity: 1,

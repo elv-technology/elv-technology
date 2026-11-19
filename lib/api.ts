@@ -1,13 +1,11 @@
+import "server-only";
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { ZodError, type ZodTypeAny, type z } from "zod";
 import { requireAdmin } from "@/lib/auth";
+import { HttpError } from "@/lib/services/errors";
 
-export class HttpError extends Error {
-    constructor(public status: number, message: string) {
-        super(message);
-    }
-}
+export { HttpError };
 
 export const jsonError = (error: string, status: number) => NextResponse.json({ error }, { status });
 

@@ -5,14 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import LogoImage from '@/components/logo-image';
-
-interface Partner {
-    id: string;
-    name: string;
-    logo: string;
-    category: string;
-    priority: number;
-}
+import type { Partner } from '@prisma/client';
 
 interface PartnersTabsProps {
     initialData: Partner[];
@@ -20,18 +13,18 @@ interface PartnersTabsProps {
 
 function buildCategories(partners: Partner[]) {
     const CATEGORY_ORDER = ["Security", "AV", "Network & communication", "Home Automation"];
-    const categoryTitles = Array.from(new Set(partners.map((p: any) => p.category)))
-        .sort((a: any, b: any) => {
-            const indexA = CATEGORY_ORDER.indexOf(a as string);
-            const indexB = CATEGORY_ORDER.indexOf(b as string);
-            if (indexA === -1 && indexB === -1) return (a as string).localeCompare(b as string);
+    const categoryTitles = Array.from(new Set(partners.map((p) => p.category as string)))
+        .sort((a, b) => {
+            const indexA = CATEGORY_ORDER.indexOf(a);
+            const indexB = CATEGORY_ORDER.indexOf(b);
+            if (indexA === -1 && indexB === -1) return a.localeCompare(b);
             if (indexA === -1) return 1;
             if (indexB === -1) return -1;
             return indexA - indexB;
         });
     return categoryTitles.map(title => ({
         title,
-        logos: partners.filter((p: any) => p.category === title)
+        logos: partners.filter((p) => p.category === title)
     }));
 }
 
@@ -79,7 +72,7 @@ export function PartnersTabs({ initialData }: PartnersTabsProps) {
                                         transition={{ duration: 0.3 }}
                                         className="flex flex-wrap justify-center gap-4"
                                     >
-                                        {category.logos.map((logo: any, index: number) => (
+                                        {category.logos.map((logo, index) => (
                                             <Card
                                                 key={logo.id}
                                                 className="flex items-center justify-center p-2 w-32 sm:w-40 md:w-44 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:shadow-lg transition-shadow duration-300 group rounded-[3px]"

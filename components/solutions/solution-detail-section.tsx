@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
 
-import { solutionsData, type SolutionCategoryKey } from "@/lib/solutions-data";
+import { solutionsData, type SolutionCategory, type SolutionCategoryKey, type SolutionContent } from "@/content/solutions";
 
 interface SolutionDetailProps {
     categoryKey: SolutionCategoryKey;
@@ -11,17 +11,17 @@ interface SolutionDetailProps {
 
 export default function SolutionDetailSection({ categoryKey, itemId, index }: SolutionDetailProps) {
     // Find the specific item from the data
-    const categoryData = solutionsData[categoryKey] as any; // Type assertion needed due to structural differences
-    const item = categoryData.items.find((i: any) => i.id === itemId);
+    const categoryData: SolutionCategory = solutionsData[categoryKey];
+    const item = categoryData.items.find((i) => i.id === itemId);
 
     if (!item) return null;
     const isImageRight = index % 2 === 0;
 
     // Helper to extract points safely
-    const getSubPoints = (content: any) => {
+    const getSubPoints = (content: SolutionContent): string[] => {
         if (content.subsections && content.subsections.length > 0) {
             if (content.subsections[0].points) return content.subsections[0].points;
-            if (content.subsections[0].subitems) return content.subsections[0].subitems.flatMap((s: any) => s.points || []);
+            if (content.subsections[0].subitems) return content.subsections[0].subitems.flatMap((s) => s.points || []);
         }
         if (content.keyFeatures) return content.keyFeatures.points;
         if (content.applications) return content.applications.points;
@@ -102,7 +102,7 @@ export default function SolutionDetailSection({ categoryKey, itemId, index }: So
                     <div className="flex-1 w-full sticky top-32">
                         <div className="relative aspect-[4/3] rounded-[5px] overflow-hidden shadow-xl shadow-slate-200 dark:shadow-slate-900/50 group">
                             <Image
-                                src={(item as any).image2 || item.image || "/images/placeholders/default.jpg"}
+                                src={item.image2 || item.image || "/images/placeholders/default.jpg"}
                                 alt={`${item.title} secondary features`}
                                 fill
                                 sizes="(max-width: 1024px) 100vw, 600px"

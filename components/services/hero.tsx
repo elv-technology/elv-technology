@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { servicesData } from '@/lib/services-data';
+import { servicesData } from '@/content/services';
 
 export default function Hero() {
   const { hero } = servicesData;

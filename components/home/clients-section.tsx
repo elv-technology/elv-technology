@@ -8,8 +8,9 @@ import {
 import Autoplay from 'embla-carousel-autoplay';
 import LogoImage from '@/components/logo-image';
 import { useIntersection } from '@/hooks/use-intersection';
+import type { Client } from '@prisma/client';
 
-export default function ClientsSection({ clients }: { clients: any[] }) {
+export default function ClientsSection({ clients }: { clients: Client[] }) {
   const { ref: sectionRef, isVisible } = useIntersection<HTMLElement>();
 
   return (

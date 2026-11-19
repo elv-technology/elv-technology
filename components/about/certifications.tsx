@@ -3,7 +3,7 @@
 import { BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { certGroups } from '@/lib/about-data';
+import { certGroups } from '@/content/about';
 
 export default function Certifications() {
   return (

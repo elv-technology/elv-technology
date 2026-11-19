@@ -11,34 +11,11 @@ import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-
-interface CaseStudySolution {
-  title: string;
-  components?: Array<{
-    name: string;
-    details: string;
-  }>;
-  points?: string[];
-  html?: string;
-}
-
-interface CaseStudy {
-  slug: string;
-  project: string;
-  client: string;
-  image: string;
-  overview: string;
-  challenges: string[];
-  solution: CaseStudySolution;
-  gallery?: string[];
-  outcomes: string[];
-  location: string;
-  category?: string;
-}
+import type { CaseStudySummary, CaseStudyView } from "@/lib/types";
 
 interface CaseStudySlugPageProps {
-  study: CaseStudy;
-  allStudies: CaseStudy[];
+  study: CaseStudyView;
+  allStudies: CaseStudySummary[];
 }
 
 export default function CaseStudySlugPage({ study, allStudies }: CaseStudySlugPageProps) {

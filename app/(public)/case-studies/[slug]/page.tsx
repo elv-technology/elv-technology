@@ -3,6 +3,7 @@ import { getCollection, getCaseStudyBySlug } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { sanitizeHtml } from "@/lib/sanitize";
+import type { CaseStudySolution } from "@/lib/types";
 import { caseStudyMetaTitle, metaDescription, pageMetadata } from "@/lib/seo";
 
 // Cached for an hour like blog posts (the admin refreshes it immediately on every change),
@@ -11,7 +12,7 @@ export const revalidate = 3600;
 
 // Pre-builds every case study at deploy time and makes the route cacheable (see blog/[slug]/page.tsx).
 export async function generateStaticParams() {
-  const studies = (await getCollection('case-studies', { take: 500 })) as { slug: string }[];
+  const studies = await getCollection('case-studies', { take: 500 });
   return studies.map((study) => ({ slug: study.slug }));
 }
 
@@ -46,8 +47,8 @@ export default async function CaseStudyPage({ params }: { params: { slug: string
 
   // Strip anything unsafe from the rich-text solution on the server, before it reaches the page.
   const solution = study.solution && typeof study.solution === 'object' && !Array.isArray(study.solution)
-    ? { ...study.solution, html: (study.solution as any).html ? sanitizeHtml((study.solution as any).html) : undefined }
+    ? { ...study.solution, html: study.solution.html ? sanitizeHtml(study.solution.html as string) : undefined }
     : study.solution;
 
-  return <CaseStudySlugPage study={{ ...study, solution } as any} allStudies={allStudies as any} />;
+  return <CaseStudySlugPage study={{ ...study, solution: solution as CaseStudySolution | null }} allStudies={allStudies} />;
 }

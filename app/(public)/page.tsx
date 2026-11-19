@@ -2,11 +2,11 @@ import { preload } from "react-dom";
 import HomeLayout from "@/components/home/home-layout";
 import FaqSchema from "@/components/seo/FaqSchema";
 import { getCollection } from "@/lib/db";
-import { faqsOrFallback } from "@/lib/data";
+import { faqsOrFallback } from "@/lib/faqs";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "ELV Companies Abu Dhabi | MCC Approved | ETS Smart",
+  title: "ELV Companies in Abu Dhabi | MCC Approved – ETS Smart",
   description: "ETS Smart is an MCC-approved ELV company in Abu Dhabi offering CCTV, Access Control, AV Systems & Home Automation. Trusted by 100+ enterprise clients in UAE.",
   path: "/",
 });
@@ -22,17 +22,17 @@ export default async function HomePage() {
     getCollection('clients', { take: 500 }),
     getCollection('partners', { take: 500 }),
   ]);
-  const faqs = faqsOrFallback(dbFaqs as any[]);
+  const faqs = faqsOrFallback(dbFaqs);
 
   return (
     <>
       <FaqSchema faqs={faqs} />
       <HomeLayout
-        caseStudies={caseStudies as any[]}
-        testimonials={testimonials as any[]}
+        caseStudies={caseStudies}
+        testimonials={testimonials}
         faqs={faqs}
-        clients={clients as any[]}
-        partners={partners as any[]}
+        clients={clients}
+        partners={partners}
       />
     </>
   );

@@ -3,7 +3,7 @@ import ServiceSchema from "@/components/seo/ServiceSchema";
 import SolutionVideoHero from "@/components/solutions/solution-video-hero";
 import SolutionDetailSection from "@/components/solutions/solution-detail-section";
 import { CTASection } from "@/components/partners-clients/cta-section";
-import { solutionPages, solutionsData, type SolutionSlug } from "@/lib/solutions-data";
+import { solutionPages, solutionsData, type SolutionSlug } from "@/content/solutions";
 import { SITE_URL, pageMetadata } from "@/lib/seo";
 
 export function solutionPageMetadata(slug: SolutionSlug): Metadata {

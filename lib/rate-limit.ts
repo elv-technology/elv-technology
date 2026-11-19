@@ -1,3 +1,5 @@
+import "server-only";
+
 export interface RateLimitOptions {
   limit: number;
   windowMs: number;

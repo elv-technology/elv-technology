@@ -2,7 +2,6 @@ import CareersHero from '@/components/careers/careers-hero';
 import JobOpeningsList from '@/components/careers/job-openings-list';
 import ApplicationForm from '@/components/careers/application-form';
 import { getCollection } from '@/lib/db';
-import { Career } from '@prisma/client';
 import { pageMetadata } from '@/lib/seo';
 
 export const revalidate = 3600;
@@ -15,7 +14,7 @@ export const metadata = pageMetadata({
 
 
 export default async function CareersPage() {
-    const jobOpenings = await getCollection('careers') as Career[];
+    const jobOpenings = await getCollection('careers');
 
     return (
         <div className="bg-white dark:bg-slate-950 min-h-screen">

@@ -7,7 +7,7 @@ import TechnicalSupport from '@/components/services/technical-support';
 import ServicesSolutionsGrid from '@/components/services/services-solutions-grid';
 
 export const metadata = pageMetadata({
-  title: "ELV & AV System Services Abu Dhabi | ETS Smart",
+  title: "ELV & AV Services in Abu Dhabi | AMC & Support – ETS Smart",
   description: "ETS Smart offers ELV, AV & IT services in Abu Dhabi — technical support, AMC, programming & commissioning for CCTV, access control & AV systems across UAE.",
   path: "/services",
 });

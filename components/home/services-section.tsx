@@ -1,7 +1,7 @@
 import Link from "next/link";
 import FadeIn from "@/components/fade-in";
 import { MonitorPlay, Shield, Network, Home } from "lucide-react";
-import { solutionsData } from "@/lib/solutions-data";
+import { solutionsData } from "@/content/solutions";
 
 // Dynamically mapped categories from solutionsData
 const serviceCategories = [

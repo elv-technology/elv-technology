@@ -1,4 +1,59 @@
 import { Shield, Radio, Server, Home, Video, Mic2, Network, Lock, Bell, Users, Accessibility, Music, Monitor, MonitorPlay, Wifi, Phone, Cpu, Lamp } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+export interface SolutionPointList {
+    title?: string;
+    subtitle?: string;
+    description?: string;
+    points: string[];
+}
+
+export interface SolutionSubsection {
+    title: string;
+    description?: string;
+    subPointsTitle?: string;
+    points?: string[];
+    subitems?: { title: string; points: string[] }[];
+    closing?: string;
+}
+
+export interface SolutionContent {
+    heading: string;
+    description: string[];
+    keyFeatures?: SolutionPointList;
+    applications?: SolutionPointList;
+    subsections?: SolutionSubsection[];
+    closing?: string;
+    extraSection?: { title: string; content: string };
+}
+
+export interface SolutionItem {
+    title: string;
+    id: string;
+    icon: LucideIcon;
+    image: string;
+    image2?: string;
+    content: SolutionContent;
+}
+
+export interface SolutionCategory {
+    title: string;
+    id: string;
+    description: string;
+    intro?: string[];
+    metadata?: { title: string; description: string };
+    image: string;
+    image2?: string;
+    items: SolutionItem[];
+}
+
+export interface SolutionsData {
+    hero: { title: string; subtitle: string; description: string };
+    securityAndSurveillance: SolutionCategory;
+    audioVisual: SolutionCategory;
+    networkAndCommunications: SolutionCategory;
+    homeAutomation: SolutionCategory;
+}
 
 export const solutionsData = {
     hero: {
@@ -707,7 +762,7 @@ export const solutionsData = {
             }
         ]
     }
-};
+} satisfies SolutionsData;
 
 export type SolutionCategoryKey = Exclude<keyof typeof solutionsData, "hero">;
 
@@ -730,7 +785,7 @@ export const solutionPages = {
     "audio-visual": {
         categoryKey: "audioVisual",
         metadata: {
-            title: "Audio Visual AV Systems Abu Dhabi | ETS Smart",
+            title: "Audio Visual Solutions in Abu Dhabi | BGM & PA – ETS Smart",
             description: "ETS Smart is a top audio visual company in Abu Dhabi offering BGM systems, PA systems, digital signage, LED screens & AV integration for homes & businesses.",
         },
         schema: {
@@ -768,7 +823,7 @@ export const solutionPages = {
     "security-surveillance": {
         categoryKey: "securityAndSurveillance",
         metadata: {
-            title: "CCTV Installation & Security Abu Dhabi | ETS Smart",
+            title: "CCTV Installation Company in Abu Dhabi | ETS Smart",
             description: "ETS Smart is an ADMCC-approved CCTV company in Abu Dhabi offering CCTV installation, access control & security system solutions for homes & businesses in UAE.",
         },
         schema: {

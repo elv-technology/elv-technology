@@ -2,8 +2,10 @@
 
 import { useState, useRef } from "react";
 import { Plus, Minus, ChevronDown, ChevronUp } from "lucide-react";
-import { faqSectionData, faqsOrFallback } from "@/lib/data";
+import { faqSectionData } from "@/content/home";
+import { faqsOrFallback } from "@/lib/faqs";
 import { useIntersection } from "@/hooks/use-intersection";
+import type { FaqItem } from "@/lib/types";
 
 const { heading, subheading, button: faqButton } = faqSectionData;
 
@@ -14,7 +16,7 @@ function FAQItem({
   index,
   isVisible,
 }: {
-  faq: any;
+  faq: FaqItem;
   isOpen: boolean;
   onToggle: () => void;
   index: number;
@@ -65,7 +67,7 @@ function FAQItem({
   );
 }
 
-export default function FAQSection({ initialData }: { initialData?: any[] }) {
+export default function FAQSection({ initialData }: { initialData?: FaqItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [showAll, setShowAll] = useState(false);
   const { ref: sectionRef, isVisible } = useIntersection<HTMLElement>();

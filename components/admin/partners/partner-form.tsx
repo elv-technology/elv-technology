@@ -44,7 +44,6 @@ export function PartnerForm({ initialData }: PartnerFormProps) {
       router.push("/admin/partners");
       router.refresh();
     } catch (error) {
-      console.error(error);
       toast.error(getErrorMessage(error, "Failed to save partner"));
     } finally {
       setLoading(false);

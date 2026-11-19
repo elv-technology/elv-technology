@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { servicesData } from '@/lib/services-data';
+import { servicesData } from '@/content/services';
 import { Cpu, Terminal, Settings, CheckCircle2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 export default function Programming() {
