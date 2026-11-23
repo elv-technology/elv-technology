@@ -172,6 +172,33 @@ const nextConfig = {
         source: '/blog/www.etssmart.com',
         destination: '/',
         permanent: true,
+      },
+      // Old-site URLs still crawled by Google (found in the November 2026 GSC 404 report)
+      {
+        source: '/index.html',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/partners.html',
+        destination: '/partners-clients',
+        permanent: true,
+      },
+      {
+        source: '/time-attendance-system-abu-dhabi.html',
+        destination: '/solutions/security-surveillance#access-control',
+        permanent: true,
+      },
+      {
+        source: '/ip-telephone-solutions.html',
+        destination: '/solutions/network-communications#ip-phones',
+        permanent: true,
+      },
+      {
+        // Old WordPress tag page that still ranks (position ~2) for "nurse call system"
+        source: '/blog/tag/nurse-call-system-in-abu-dhabi',
+        destination: '/solutions/security-surveillance#nurse-call',
+        permanent: true,
       }
     ];
   },
